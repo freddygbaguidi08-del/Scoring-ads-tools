@@ -528,12 +528,23 @@ async function callAPI(r,nets){
     +"\nRéseaux: "+nets.map(function(n){return nm[n];}).join(", ")
     +"\n\nRéponds UNIQUEMENT en JSON valide sans markdown:\n{"+parts.join(",")+"}";
   if(!API_KEY||!API_KEY.startsWith("sk-ant")){alert("Entre ta cle API Anthropic en haut de la page (commence par sk-ant-).");return{};}
+  var reqBody={model:"claude-3-5-haiku-20241022",max_tokens:2000,messages:[{role:"user",content:prompt}]};
   var resp=await fetch("https://api.anthropic.com/v1/messages",{
     method:"POST",
-    headers:{"Content-Type":"application/json","x-api-key":API_KEY,"anthropic-version":"2023-06-01","anthropic-dangerous-direct-browser-access":"true"},
-    body:JSON.stringify({model:"claude-sonnet-4-20250514",max_tokens:1800,messages:[{role:"user",content:prompt}]})
+    headers:{
+      "Content-Type":"application/json",
+      "x-api-key":API_KEY,
+      "anthropic-version":"2023-06-01",
+      "anthropic-dangerous-direct-browser-access":"true"
+    },
+    body:JSON.stringify(reqBody)
   });
-  if(!resp.ok)throw new Error("API erreur "+resp.status);
+  if(!resp.ok){
+    var errText=await resp.text();
+    console.error("API error",resp.status,errText);
+    throw new Error("API erreur "+resp.status+": "+errText.slice(0,200));
+  }
+  // resp.ok already checked above
   var j=await resp.json();
   var raw=(j.content&&j.content[0]?j.content[0].text:"{}")||"{}";
   raw=raw.replace(/```json|```/g,"").trim();
