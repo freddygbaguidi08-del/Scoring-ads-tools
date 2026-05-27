@@ -86,9 +86,22 @@ tr.sel td{background:#f0f8f3}
 .mbts{display:flex;gap:7px;justify-content:flex-end;margin-top:.85rem}
 .prog{background:var(--bord);border-radius:4px;height:5px;margin:.5rem 0}
 .progb{background:var(--grn);height:100%;border-radius:4px;transition:width .3s}
+
+.apibar{display:flex;align-items:center;gap:8px;padding:.5rem 1.1rem;background:#fef3e2;border-bottom:1px solid #f0d9a0;flex-wrap:wrap}
+.apibar .abtxt{font-size:12px;color:#7a4a00;flex:1;min-width:200px}
+.apibar .abinp{flex:2;min-width:200px;padding:5px 9px;border:1px solid #d0cec5;border-radius:7px;font-size:12px;font-family:inherit}
+.apibar.ok{background:#e8f4ee;border-color:#b0d8be}
+.apibar.ok .abtxt{color:#085041}
 </style>
 </head>
 <body>
+
+
+<div class="apibar" id="apibar">
+  <div class="abtxt" id="api-status">🔑 <b>Clé API Anthropic requise</b> pour générer les ads. Obtiens ta clé sur <a href="https://console.anthropic.com" target="_blank" style="color:#7a4a00">console.anthropic.com</a></div>
+  <input class="abinp" type="password" id="api-key-input" placeholder="sk-ant-..." oninput="saveApiKey(this.value)">
+  <button class="btn" onclick="document.getElementById('api-key-input').type==='password'?document.getElementById('api-key-input').type='text':document.getElementById('api-key-input').type='password'">👁</button>
+</div>
 
 <div class="topbar">
   <h1>🛍 UrbanElectroStore — Scoring & Ads</h1>
@@ -514,9 +527,10 @@ async function callAPI(r,nets){
     +"\nPotentiel: "+r[4]+"/10"
     +"\nRéseaux: "+nets.map(function(n){return nm[n];}).join(", ")
     +"\n\nRéponds UNIQUEMENT en JSON valide sans markdown:\n{"+parts.join(",")+"}";
+  if(!API_KEY||!API_KEY.startsWith("sk-ant")){alert("Entre ta cle API Anthropic en haut de la page (commence par sk-ant-).");return{};}
   var resp=await fetch("https://api.anthropic.com/v1/messages",{
     method:"POST",
-    headers:{"Content-Type":"application/json"},
+    headers:{"Content-Type":"application/json","x-api-key":API_KEY,"anthropic-version":"2023-06-01","anthropic-dangerous-direct-browser-access":"true"},
     body:JSON.stringify({model:"claude-sonnet-4-20250514",max_tokens:1800,messages:[{role:"user",content:prompt}]})
   });
   if(!resp.ok)throw new Error("API erreur "+resp.status);
@@ -695,8 +709,33 @@ function confirmImport(){
 }
 
 // INIT
+updateApiBar();
+updateApiBar();
 renderCatTabs();
 render();
+
+var API_KEY = localStorage.getItem('anthropic_key') || '';
+
+function saveApiKey(v){
+  API_KEY = v.trim();
+  localStorage.setItem('anthropic_key', API_KEY);
+  updateApiBar();
+}
+
+function updateApiBar(){
+  var bar = document.getElementById('apibar');
+  var status = document.getElementById('api-status');
+  var input = document.getElementById('api-key-input');
+  if(input) input.value = API_KEY;
+  if(API_KEY && API_KEY.startsWith('sk-ant')){
+    bar.className = 'apibar ok';
+    status.innerHTML = '✅ <b>Clé API valide détectée</b> — Le générateur est prêt. Ta clé est stockée localement.';
+  } else {
+    bar.className = 'apibar';
+    status.innerHTML = '🔑 <b>Clé API Anthropic requise</b> pour générer les ads. Obtiens ta clé sur <a href="https://console.anthropic.com" target="_blank" style="color:#7a4a00">console.anthropic.com</a>';
+  }
+}
+
 </script>
 </body>
 </html>
