@@ -132,6 +132,9 @@ tr.sel td{background:#f0f8f3}
   <button class="mtab" onclick="showMain('perf')">&#128200; Performance</button>
   <button class="mtab" onclick="showMain('contenu')">&#9997; Contenu AI</button>
   <button class="mtab" onclick="showMain('rapport')">&#128196; Rapport</button>
+  <button class="mtab" onclick="showMain('dashboard')">&#128202; Dashboard</button>
+  <button class="mtab" onclick="showMain('checklist')">&#9989; Checklist</button>
+  <button class="mtab" onclick="showMain('geo')">&#127758; Geo-ciblage</button>
 </div>
 
 <div class="panel on" id="tab-scoring">
@@ -391,6 +394,58 @@ tr.sel td{background:#f0f8f3}
     <span style="font-size:11px;color:var(--mut)" id="rpt-date"></span>
   </div>
   <div id="rapport-content"></div>
+</div>
+
+
+<!-- TAB DASHBOARD -->
+<div class="panel" id="tab-dashboard">
+  <div style="margin-top:.5rem;margin-bottom:.65rem;display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+    <button class="btn bg" onclick="renderDashboard()">Actualiser</button>
+    <span style="font-size:11px;color:var(--mut)" id="dash-date"></span>
+  </div>
+  <div class="stats" id="dash-kpis"></div>
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(290px,1fr));gap:10px;margin-top:.5rem">
+    <div class="card-section"><h3>Top 10 priorites ads</h3><div style="position:relative;height:220px"><canvas id="chart-top10"></canvas></div></div>
+    <div class="card-section"><h3>Score moyen par categorie</h3><div style="position:relative;height:220px"><canvas id="chart-cats"></canvas></div></div>
+    <div class="card-section"><h3>ROAS par campagne</h3><div style="position:relative;height:220px"><canvas id="chart-roas"></canvas></div></div>
+    <div class="card-section"><h3>Budget recommande par categorie</h3><div style="position:relative;height:220px"><canvas id="chart-adv"></canvas></div></div>
+  </div>
+</div>
+
+<!-- TAB CHECKLIST -->
+<div class="panel" id="tab-checklist">
+  <div class="al ai" style="margin-top:.5rem;margin-bottom:.65rem">Verifie chaque point avant de lancer une pub. Un produit mal prepare = budget gaspille.</div>
+  <div class="ctrls">
+    <select id="chk-product" onchange="renderChecklist()" style="min-width:260px"></select>
+    <button class="btn" onclick="resetChecklist()">Reinitialiser</button>
+    <button class="btn bb" onclick="genChecklistAI()">IA : Analyser ce produit</button>
+  </div>
+  <div id="checklist-score-bar" style="margin:.55rem 0"></div>
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(255px,1fr));gap:9px;margin-top:.5rem" id="checklist-grid"></div>
+  <div id="checklist-ai-result" style="margin-top:.65rem"></div>
+</div>
+
+<!-- TAB GEO CIBLAGE -->
+<div class="panel" id="tab-geo">
+  <div class="al ai" style="margin-top:.5rem;margin-bottom:.65rem">L IA analyse le profil acheteur de chaque produit et recommande les zones geographiques les plus rentables pour tes pubs.</div>
+  <div class="ctrls">
+    <select id="geo-product" style="min-width:250px"></select>
+    <select id="geo-market">
+      <option value="france">France (regions + villes)</option>
+      <option value="europe">Europe francophone</option>
+      <option value="world">Monde francophone</option>
+      <option value="all">Tous marches confondus</option>
+    </select>
+    <select id="geo-budget">
+      <option value="small">Budget modeste (moins de 200 EUR/mois)</option>
+      <option value="medium">Budget moyen (200 a 1000 EUR/mois)</option>
+      <option value="large">Budget important (plus de 1000 EUR/mois)</option>
+    </select>
+    <button class="btn bd" onclick="generateGeo()">Analyser les zones</button>
+  </div>
+  <div id="geo-loading" style="display:none" class="loading"><div class="spin"></div><span id="geo-msg">Analyse en cours...</span></div>
+  <div id="geo-result"></div>
+  <div id="geo-empty" class="ads-empty" style="margin-top:.5rem">Selectionne un produit et clique Analyser les zones.</div>
 </div>
 
 <div class="mbg" id="imp-modal" style="display:none" onclick="if(event.target===this)closeImport()">
@@ -781,7 +836,7 @@ function updateSelPanel() {
 // ============================================================
 // NAVIGATION
 // ============================================================
-var TAB_IDS = ["scoring","ads","marge","saisonnal","perf","contenu","rapport"];
+var TAB_IDS = ["scoring","ads","marge","saisonnal","perf","contenu","rapport","dashboard","checklist","geo"];
 function showMain(t) {
   document.querySelectorAll(".mtab").forEach(function(b, i){
     b.classList.toggle("on", TAB_IDS[i] === t);
@@ -789,12 +844,15 @@ function showMain(t) {
   document.querySelectorAll(".panel").forEach(function(p){ p.classList.remove("on"); });
   var el = document.getElementById("tab-" + t);
   if (el) el.classList.add("on");
-  if (t === "ads")      updateSelPanel();
-  if (t === "marge")    renderMarg();
-  if (t === "saisonnal")renderSeasonal();
-  if (t === "perf")     renderCampaigns();
-  if (t === "rapport")  buildReport();
-  if (t === "contenu")  populateCtProducts();
+  if (t === "ads")       updateSelPanel();
+  if (t === "marge")     renderMarg();
+  if (t === "saisonnal") renderSeasonal();
+  if (t === "perf")      renderCampaigns();
+  if (t === "rapport")   buildReport();
+  if (t === "contenu")   populateCtProducts();
+  if (t === "dashboard") renderDashboard();
+  if (t === "checklist") renderChecklist();
+  if (t === "geo")       populateGeoProducts();
 }
 function sendToAds() { showMain("ads"); }
 function toggleNet(btn) {
@@ -1524,6 +1582,332 @@ function dl(content, filename) {
 }
 
 // ============================================================
+
+// ============================================================
+// DASHBOARD Chart.js
+// ============================================================
+function loadChartJS(cb) {
+  if (typeof Chart !== "undefined") { cb(); return; }
+  var s = document.createElement("script");
+  s.src = "https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js";
+  s.onload = function() { cb(); };
+  s.onerror = function() { alert("Impossible de charger Chart.js. Verifie ta connexion."); };
+  document.head.appendChild(s);
+}
+var chartInst = {};
+function destroyCh(id) { if (chartInst[id]) { try { chartInst[id].destroy(); } catch(e) {} delete chartInst[id]; } }
+
+function renderDashboard() {
+  var el = document.getElementById("dash-date");
+  if (el) el.textContent = "Mis a jour le " + new Date().toLocaleDateString("fr-FR");
+  buildDashKPIs();
+  loadChartJS(buildDashCharts);
+}
+
+function buildDashKPIs() {
+  var wins  = PRODUCTS.filter(function(r){ return r[7]==="win"; }).length;
+  var ready = PRODUCTS.filter(function(r){ var s=calcScore(r); return s!==null && s>=65; }).length;
+  var totS=0, totR=0;
+  campaigns.forEach(function(c){ totS+=c.spend; totR+=c.revenue; });
+  var roas = totS>0 ? (totR/totS).toFixed(2) : "--";
+  var budget = parseFloat((document.getElementById("budget-total")||{}).value)||500;
+  var el = document.getElementById("dash-kpis");
+  if (!el) return;
+  el.innerHTML = [
+    {lb:"Catalogue",    vl:PRODUCTS.length},
+    {lb:"Prix avantageux", vl:wins+"/"+PRODUCTS.length},
+    {lb:"Prets pour ads",  vl:ready},
+    {lb:"ROAS global",     vl:roas+"x"},
+    {lb:"Budget recommande",vl:Math.round(budget)+" EUR"},
+    {lb:"Campagnes",        vl:campaigns.length}
+  ].map(function(x){
+    return "<div class='stat'><div class='lb'>"+x.lb+"</div><div class='vl'>"+x.vl+"</div></div>";
+  }).join("");
+}
+
+function buildDashCharts() {
+  var COLS = ["#1D9E75","#378ADD","#D85A30","#7F77DD","#BA7517","#D4537E","#639922","#E24B4A","#888780","#0F6E56"];
+  // Chart 1: Top 10 priority
+  destroyCh("top10");
+  var top10 = PRODUCTS.slice().sort(function(a,b){ return calcPrio(b)-calcPrio(a); }).slice(0,10);
+  var c1 = document.getElementById("chart-top10");
+  if (c1) chartInst["top10"] = new Chart(c1, {
+    type:"bar",
+    data:{labels:top10.map(function(r){ return r[1].slice(0,18); }),
+      datasets:[{label:"Priorite",data:top10.map(function(r){ return Math.round(calcPrio(r)); }),
+      backgroundColor:top10.map(function(r,i){ return COLS[i%COLS.length]+"cc"; }),borderRadius:4}]},
+    options:{responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{display:false}},
+      scales:{x:{ticks:{font:{size:9},maxRotation:40}},y:{beginAtZero:true}}}
+  });
+  // Chart 2: Score by category (horizontal bar)
+  destroyCh("cats");
+  var catD = {};
+  PRODUCTS.forEach(function(r){ var s=calcScore(r); if(!catD[r[2]])catD[r[2]]={sum:0,cnt:0}; catD[r[2]].cnt++; if(s!==null)catD[r[2]].sum+=s; });
+  var catK = Object.keys(catD);
+  var c2 = document.getElementById("chart-cats");
+  if (c2) chartInst["cats"] = new Chart(c2, {
+    type:"bar",
+    data:{labels:catK,datasets:[{label:"Score moyen",
+      data:catK.map(function(k){ var d=catD[k]; return d.cnt>0&&d.sum>0?Math.round(d.sum/d.cnt):0; }),
+      backgroundColor:catK.map(function(k,i){ return COLS[i%COLS.length]+"cc"; }),borderRadius:4}]},
+    options:{indexAxis:"y",responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{display:false}},scales:{x:{beginAtZero:true,max:100},y:{ticks:{font:{size:9}}}}}
+  });
+  // Chart 3: ROAS per campaign
+  destroyCh("roas");
+  var c3 = document.getElementById("chart-roas");
+  if (c3) {
+    if (!campaigns.length) {
+      c3.parentElement.innerHTML = "<div style='height:220px;display:flex;align-items:center;justify-content:center;color:var(--mut);font-size:12px'>Aucune campagne dans l onglet Performance.</div>";
+    } else {
+      var recent = campaigns.slice().reverse().slice(0,10);
+      chartInst["roas"] = new Chart(c3, {
+        type:"bar",
+        data:{labels:recent.map(function(c){ return c.product.slice(0,12)+" ("+c.network+")"; }),
+          datasets:[{label:"ROAS",data:recent.map(function(c){ return c.spend>0?parseFloat((c.revenue/c.spend).toFixed(2)):0; }),
+          backgroundColor:recent.map(function(c){ var r=c.spend>0?c.revenue/c.spend:0; return r>=3?"#1D9E75cc":r>=2?"#BA7517cc":"#E24B4Acc"; }),borderRadius:4}]},
+        options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},
+          scales:{x:{ticks:{font:{size:9},maxRotation:40}},y:{beginAtZero:true,ticks:{callback:function(v){return v+"x";}}}}}
+      });
+    }
+  }
+  // Chart 4: Budget by category (doughnut)
+  destroyCh("adv");
+  var c4 = document.getElementById("chart-adv");
+  if (c4) {
+    var budget = parseFloat((document.getElementById("budget-total")||{}).value)||500;
+    var topP = PRODUCTS.slice().sort(function(a,b){ return calcPrio(b)-calcPrio(a); }).slice(0,8);
+    var wsum = topP.reduce(function(s,r){ return s+calcPrio(r); },0);
+    var catBud = {};
+    topP.forEach(function(r){ var alloc=wsum>0?Math.round((calcPrio(r)/wsum)*budget):0; catBud[r[2]]=(catBud[r[2]]||0)+alloc; });
+    var cbK = Object.keys(catBud).filter(function(k){ return catBud[k]>0; });
+    chartInst["adv"] = new Chart(c4, {
+      type:"doughnut",
+      data:{labels:cbK.map(function(k){ return k+" ("+catBud[k]+" EUR)"; }),
+        datasets:[{data:cbK.map(function(k){ return catBud[k]; }),
+        backgroundColor:cbK.map(function(k,i){ return COLS[i%COLS.length]+"dd"; }),borderWidth:1}]},
+      options:{responsive:true,maintainAspectRatio:false,
+        plugins:{legend:{position:"bottom",labels:{font:{size:10},padding:8}}}}
+    });
+  }
+}
+
+// ============================================================
+// CHECKLIST PRE-LAUNCH
+// ============================================================
+var CHECKLIST_ITEMS = [
+  {id:"fiche",   cat:"Fiche produit", label:"Titre optimise (marque + modele + caracteristique)",  help:"60 chars min avec les mots-cles principaux"},
+  {id:"desc",    cat:"Fiche produit", label:"Description longue et detaillee (300+ mots)",          help:"Mots-cles naturels, benefices client, caracteristiques techniques"},
+  {id:"photos",  cat:"Fiche produit", label:"5+ photos haute qualite (fond blanc + usage)",         help:"Vue principale, details, usage en situation, comparatif taille"},
+  {id:"prix_ok", cat:"Prix",          label:"Prix competitif vs concurrent principal",              help:"Verifier Cdiscount, Amazon, Fnac avant de lancer"},
+  {id:"promo",   cat:"Prix",          label:"Avantage clair visible (livraison, garantie, retour)", help:"Livraison gratuite ou retour 30j = taux de conversion +20%"},
+  {id:"stock",   cat:"Stock",         label:"Stock suffisant pour 2+ semaines de pub",             help:"Prevoir 3x le stock habituel. Rupture en campagne = budget perdu"},
+  {id:"dispo",   cat:"Stock",         label:"Delai de livraison affiche et rapide (3-5j max)",     help:"Au-dela de 5j le taux de conversion chute de 40%"},
+  {id:"pixel",   cat:"Tracking",      label:"Pixel Meta installe et teste (Events Manager)",       help:"Verifier Add to Cart, Purchase, View Content dans Events Manager"},
+  {id:"gads",    cat:"Tracking",      label:"Google Tag et GA4 configures avec conversions",       help:"Objectifs de conversion definis dans Google Ads avant lancement"},
+  {id:"mobile",  cat:"Technique",     label:"Page produit optimisee mobile",                       help:"+70% des achats sur mobile. Tester sur vrai smartphone"},
+  {id:"vitesse", cat:"Technique",     label:"Page charge en moins de 3 secondes",                 help:"Chaque seconde de delai = -7% de conversion. Test: PageSpeed Insights"},
+  {id:"avis",    cat:"Social proof",  label:"Au moins 5 avis clients positifs",                    help:"Les avis augmentent le taux de conversion de 25 a 35%"},
+  {id:"retour",  cat:"Social proof",  label:"Politique de retour claire et visible",               help:"30 jours minimum. Le mentionner dans l ad augmente le CTR"},
+  {id:"cta",     cat:"Page produit",  label:"Bouton Ajouter au panier visible sans scroll",        help:"Above the fold sur mobile. Couleur contrastee recommandee"},
+  {id:"upsell",  cat:"Page produit",  label:"Produits complementaires suggeres",                   help:"Augmente le panier moyen de 10 a 30%"}
+];
+var checklistState = {};
+
+function populateChecklistProducts() {
+  var sel = document.getElementById("chk-product");
+  if (!sel) return;
+  sel.innerHTML = PRODUCTS.slice().sort(function(a,b){ return calcPrio(b)-calcPrio(a); }).map(function(r){
+    return "<option value='"+r[0]+"'>"+r[1]+" ("+fp(r[3])+")</option>";
+  }).join("");
+}
+
+function renderChecklist() {
+  var sel = document.getElementById("chk-product");
+  if (!sel) return;
+  var pid   = parseInt(sel.value);
+  var state = checklistState[pid] || {};
+  var cats  = {};
+  CHECKLIST_ITEMS.forEach(function(item){ if(!cats[item.cat])cats[item.cat]=[]; cats[item.cat].push(item); });
+  var total = CHECKLIST_ITEMS.length;
+  var done  = CHECKLIST_ITEMS.filter(function(item){ return state[item.id]; }).length;
+  var pct   = Math.round((done/total)*100);
+  var bc    = pct>=80?"#1D9E75":pct>=50?"#BA7517":"#E24B4A";
+  var sb    = document.getElementById("checklist-score-bar");
+  if (sb) sb.innerHTML = "<div style='display:flex;align-items:center;gap:10px;margin-bottom:.4rem'>"
+    +"<div style='flex:1;height:9px;background:var(--bg);border-radius:5px;overflow:hidden'>"
+      +"<div style='height:100%;background:"+bc+";width:"+pct+"%;transition:width .4s'></div></div>"
+    +"<span style='font-size:13px;font-weight:600;color:"+bc+"'>"+pct+"% pret</span>"
+    +"<span style='font-size:12px;color:var(--mut)'>("+done+"/"+total+" valides)</span></div>"
+    +(pct>=80?"<div class='al ag'>Produit pret pour le lancement!</div>"
+      :pct>=50?"<div class='al ao'>Quelques points a verifier avant lancement.</div>"
+      :"<div class='al ar'>Produit pas encore pret. Complete les points ci-dessous.</div>");
+  var grid = document.getElementById("checklist-grid");
+  if (!grid) return;
+  grid.innerHTML = Object.keys(cats).map(function(cat){
+    var items   = cats[cat];
+    var catDone = items.filter(function(i){ return state[i.id]; }).length;
+    return "<div class='card-section'><h3 style='display:flex;justify-content:space-between'><span>"+cat+"</span>"
+      +"<span style='font-size:11px;color:var(--mut);font-weight:400'>"+catDone+"/"+items.length+"</span></h3>"
+      +items.map(function(item){
+        var chk = state[item.id]?"checked":"";
+        var cl  = state[item.id]?"color:#085041":"color:var(--txt)";
+        return "<label style='display:flex;align-items:flex-start;gap:8px;padding:.4rem 0;cursor:pointer;border-bottom:0.5px solid var(--bord)'>"
+          +"<input type='checkbox' "+chk+" onchange='toggleCheckItem("+pid+",\""+item.id+"\",this.checked)' style='margin-top:2px;flex-shrink:0'>"
+          +"<div><div style='font-size:12px;font-weight:500;"+cl+"'>"+item.label+"</div>"
+            +"<div style='font-size:11px;color:var(--mut);margin-top:1px'>"+item.help+"</div></div></label>";
+      }).join("")+"</div>";
+  }).join("");
+}
+
+function toggleCheckItem(pid, itemId, val) {
+  if (!checklistState[pid]) checklistState[pid] = {};
+  checklistState[pid][itemId] = val;
+  renderChecklist();
+}
+
+function resetChecklist() {
+  var sel = document.getElementById("chk-product"); if(!sel) return;
+  checklistState[parseInt(sel.value)] = {};
+  renderChecklist();
+  var r = document.getElementById("checklist-ai-result"); if(r) r.innerHTML="";
+}
+
+async function genChecklistAI() {
+  var sel = document.getElementById("chk-product"); if(!sel) return;
+  var pid = parseInt(sel.value);
+  var row = null;
+  for(var i=0;i<PRODUCTS.length;i++) if(PRODUCTS[i][0]===pid){row=PRODUCTS[i];break;}
+  if (!row) return;
+  var state   = checklistState[pid]||{};
+  var missing = CHECKLIST_ITEMS.filter(function(item){ return !state[item.id]; }).map(function(i){ return i.label; });
+  var resEl   = document.getElementById("checklist-ai-result");
+  if (resEl) resEl.innerHTML = "<div class='loading'><div class='spin'></div> Analyse IA en cours...</div>";
+  var prompt  = "Expert e-commerce. Analyse les points manquants avant le lancement publicitaire.\n"
+    + "Produit: "+row[1]+"\nCategorie: "+row[2]+"\nPrix: "+row[3]+" EUR\n"
+    + "Concurrent: "+row[5]+" ("+row[6]+")\n\n"
+    + "Points NON valides:\n"+missing.map(function(m,i){ return (i+1)+". "+m; }).join("\n")+"\n\n"
+    + "Pour chaque point manquant, donne: 1) Pourquoi critique pour CE produit 2) Action concrete a faire 3) Impact estime sur le taux de conversion. Sois bref et actionnable.";
+  try {
+    var raw = await callAI(prompt, 1200);
+    if (resEl) resEl.innerHTML = "<div class='card-section'><h3>Analyse IA - "+row[1]+"</h3>"
+      +"<div style='font-size:12.5px;line-height:1.7;white-space:pre-wrap;color:var(--txt)'>"+raw+"</div></div>";
+  } catch(e) {
+    if (resEl) resEl.innerHTML = "<div class='al ao'>Erreur: "+e.message+"</div>";
+  }
+}
+
+// ============================================================
+// GEO-CIBLAGE IA
+// ============================================================
+function populateGeoProducts() {
+  var sel = document.getElementById("geo-product"); if(!sel) return;
+  sel.innerHTML = PRODUCTS.slice().sort(function(a,b){ return calcPrio(b)-calcPrio(a); }).map(function(r){
+    return "<option value='"+r[0]+"'>"+r[1]+" ("+fp(r[3])+")</option>";
+  }).join("");
+}
+
+async function generateGeo() {
+  var sel    = document.getElementById("geo-product"); if(!sel) return;
+  var pid    = parseInt(sel.value);
+  var mkt    = (document.getElementById("geo-market")||{}).value||"france";
+  var budget = (document.getElementById("geo-budget")||{}).value||"medium";
+  var row    = null;
+  for(var i=0;i<PRODUCTS.length;i++) if(PRODUCTS[i][0]===pid){row=PRODUCTS[i];break;}
+  if (!row) return;
+  var loadEl=document.getElementById("geo-loading"), resEl=document.getElementById("geo-result"), empEl=document.getElementById("geo-empty");
+  if(loadEl)loadEl.style.display="flex"; if(resEl)resEl.innerHTML=""; if(empEl)empEl.style.display="none";
+  var msgEl=document.getElementById("geo-msg"); if(msgEl) msgEl.textContent="Analyse pour "+row[1]+"...";
+  var budLbl={small:"modeste moins de 200 EUR/mois",medium:"moyen 200 a 1000 EUR/mois",large:"important plus de 1000 EUR/mois"};
+  var mktLbl={france:"France regions et villes",europe:"Europe francophone",world:"Monde francophone",all:"Tous marches"};
+  var schema='{"resume":"string","profil_acheteur":"string","zones":[{"rang":1,"zone":"string","pays":"string","score":8,"potentiel":"Eleve","raisons":["r1","r2"],"canaux":["Meta","Google"],"cpc_estime":"0.5-1.2 EUR","conseil_ciblage":"string"}],"villes_exclure":["v1"],"conseil_global":"string"}';
+  var prompt="Expert media buying France. Analyse le potentiel geographique pour des pubs.\n"
+    +"Produit: "+row[1]+"\nCategorie: "+row[2]+"\nPrix: "+row[3]+" EUR\n"
+    +"Budget: "+(budLbl[budget]||budget)+"\nMarche: "+(mktLbl[mkt]||mkt)+"\n"
+    +"Avantage prix: "+(row[7]==="win"?"Prix plus bas que concurrent":"Prix similaire")+"\n\n"
+    +"Genere exactement 8 zones geographiques classees par potentiel ROI.\n"
+    +"Criteres: pouvoir achat, densite urbaine, interet pour la categorie, concurrence pub, profil demographique.\n"
+    +"Pour France: mix regions ET villes. Pour Europe/Monde: pays + villes cles.\n"
+    +"Pour chaque zone: rang, zone (nom), pays, score 1-10, potentiel (Eleve/Moyen/Faible), 2 raisons, canaux recommandes, CPC estime, conseil ciblage.\n\n"
+    +"Reponds UNIQUEMENT en JSON valide sans markdown:\n"+schema;
+  try {
+    var raw  = await callAI(prompt, 1600);
+    var data = safeJSON(raw);
+    if(loadEl)loadEl.style.display="none";
+    if(resEl)resEl.innerHTML = renderGeoResult(data, row);
+  } catch(e) {
+    if(loadEl)loadEl.style.display="none";
+    if(resEl)resEl.innerHTML="<div class='al ao'>Erreur: "+e.message+"</div>";
+    if(empEl)empEl.style.display="block";
+  }
+}
+
+function renderGeoResult(data, row) {
+  if (!data||!data.zones) return "<div class='al ao'>Donnees invalides. Reessaie.</div>";
+  var potC={Eleve:["#e8f4ee","#085041"],Moyen:["#fef3e2","#7a4a00"],Faible:["#fef2f2","#7a1a1a"]};
+  var netC={Meta:"#1877f2",Google:"#ea4335",TikTok:"#010101",Pinterest:"#e60023"};
+  var h="<div style='margin-bottom:.75rem'>"
+    +"<div style='display:flex;align-items:center;gap:10px;margin-bottom:.45rem'>"
+    +"<b style='font-size:13px'>"+row[1]+"</b>"
+    +"<span style='font-size:11px;color:var(--mut)'>"+fp(row[3])+" - "+row[2]+"</span></div>"
+    +(data.profil_acheteur?"<div class='al ai' style='margin-bottom:.45rem'><b>Profil acheteur :</b> "+data.profil_acheteur+"</div>":"")
+    +(data.resume?"<div style='font-size:12px;color:var(--mut);margin-bottom:.6rem'>"+data.resume+"</div>":"")
+    +"</div>";
+  h+="<div style='display:grid;grid-template-columns:repeat(auto-fill,minmax(255px,1fr));gap:8px;margin-bottom:.7rem'>";
+  (data.zones||[]).forEach(function(z,i){
+    var pc=potC[z.potentiel]||potC["Moyen"];
+    var rc=i===0?"#1D9E75":i===1?"#378ADD":i===2?"#BA7517":"var(--mut)";
+    var sp=Math.round((z.score/10)*100);
+    h+="<div class='card-section'>"
+      +"<div style='display:flex;align-items:center;justify-content:space-between;margin-bottom:.4rem'>"
+        +"<div style='display:flex;align-items:center;gap:7px'>"
+          +"<span style='font-size:16px;font-weight:600;color:"+rc+"'>#"+z.rang+"</span>"
+          +"<div><div style='font-size:13px;font-weight:500'>"+z.zone+"</div>"
+            +"<div style='font-size:10px;color:var(--mut)'>"+z.pays+"</div></div>"
+        +"</div>"
+        +"<span class='bdg' style='background:"+pc[0]+";color:"+pc[1]+"'>"+z.potentiel+"</span>"
+      +"</div>"
+      +"<div style='display:flex;align-items:center;gap:6px;margin-bottom:.35rem'>"
+        +"<div style='flex:1;height:6px;background:var(--bg);border-radius:3px;overflow:hidden'>"
+          +"<div style='height:100%;background:"+rc+";width:"+sp+"%'></div></div>"
+        +"<span style='font-size:11px;font-weight:600;color:"+rc+"'>"+z.score+"/10</span>"
+      +"</div>";
+    if(z.raisons&&z.raisons.length){
+      h+="<div style='font-size:11px;color:var(--txt);margin-bottom:.3rem'>"
+        +z.raisons.map(function(r){ return "<div style='display:flex;gap:4px;margin-bottom:1px'><span style='color:#1D9E75;flex-shrink:0'>+</span>"+r+"</div>"; }).join("")
+        +"</div>";
+    }
+    if(z.canaux&&z.canaux.length){
+      h+="<div style='display:flex;gap:3px;flex-wrap:wrap;margin-bottom:.3rem'>"
+        +z.canaux.map(function(c){ return "<span style='font-size:10px;font-weight:600;padding:2px 6px;border-radius:4px;background:"+(netC[c]||"#888")+"22;color:"+(netC[c]||"#888")+"'>"+c+"</span>"; }).join("")
+        +"</div>";
+    }
+    if(z.cpc_estime) h+="<div style='font-size:11px;color:var(--mut)'>CPC estime : <b style='color:var(--txt)'>"+z.cpc_estime+"</b></div>";
+    if(z.conseil_ciblage) h+="<div style='font-size:11px;color:var(--mut);font-style:italic;margin-top:2px'>"+z.conseil_ciblage+"</div>";
+    h+="</div>";
+  });
+  h+="</div>";
+  if(data.villes_exclure&&data.villes_exclure.length)
+    h+="<div class='al ao' style='margin-bottom:.55rem'><b>Zones a exclure :</b> "+data.villes_exclure.join(", ")+"</div>";
+  if(data.conseil_global)
+    h+="<div class='card-section'><h3>Conseil strategique</h3><div style='font-size:12.5px;line-height:1.7;color:var(--txt)'>"+data.conseil_global+"</div></div>";
+  var safeData = JSON.stringify(data).replace(/\\/g,"\\\\").replace(/'/g,"\\'");
+  var safeName = row[1].replace(/'/g,"\\'");
+  h+="<div style='margin-top:.6rem'><button class='btn bg' onclick='exportGeoCSV("+JSON.stringify(JSON.stringify(data))+",\""+row[1].slice(0,25)+"\")'>Exporter CSV geo-ciblage</button></div>";
+  return h;
+}
+
+function exportGeoCSV(dataStr, productName) {
+  var data;
+  try { data = JSON.parse(dataStr); } catch(e) { alert("Erreur export: donnees invalides"); return; }
+  var rows=[["Rang","Zone","Pays","Score","Potentiel","Canaux","CPC estime","Conseil"]];
+  (data.zones||[]).forEach(function(z){
+    rows.push([z.rang,"\""+z.zone+"\"","\""+z.pays+"\"",z.score,"\""+z.potentiel+"\"","\""+(z.canaux||[]).join(",")+"\"",(z.cpc_estime||""),"\""+( z.conseil_ciblage||"")+"\""]);
+  });
+  dl(rows.map(function(r){return r.join(",");}).join("\n"),"geo_"+productName.replace(/\s/g,"_").slice(0,25)+".csv");
+}
+
 // INIT -- EN DERNIER
 // ============================================================
 updateApiBar();
@@ -1533,6 +1917,8 @@ renderSeasonal();
 renderMarg();
 renderCampaigns();
 populateCtProducts();
+populateChecklistProducts();
+populateGeoProducts();
 buildReport();
 document.getElementById("c-date").value = new Date().toISOString().slice(0,10);
 
