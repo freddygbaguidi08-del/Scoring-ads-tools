@@ -3,177 +3,185 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>UrbanElectroStore — Scoring & Ads</title>
+<title>UrbanElectroStore — Cockpit E-commerce</title>
 <style>
-:root{--bg:#f7f6f3;--sur:#fff;--bord:#e5e3dc;--bord2:#d0cec5;--txt:#18180f;--mut:#7a7870;--grn:#085041;--grn-bg:#e8f4ee;--orn:#7a4a00;--orn-bg:#fef3e2;--red:#7a1a1a;--red-bg:#fef2f2;--blu:#0c3d6e;--blu-bg:#e8f0fb;--pur:#3b2a8a;--pur-bg:#edeafb;--r:9px}
+:root{--bg:#f7f6f3;--sur:#fff;--bord:#e5e3dc;--bord2:#d0cec5;--txt:#18180f;--mut:#7a7870;--grn:#085041;--gnbg:#e8f4ee;--orn:#7a4a00;--orbg:#fef3e2;--red:#7a1a1a;--rdbg:#fef2f2;--blu:#0c3d6e;--blbg:#e8f0fb;--pur:#3b2a8a;--pubg:#edeafb;--r:9px}
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:-apple-system,Arial,sans-serif;background:var(--bg);color:var(--txt);font-size:13px}
-/* API BAR */
-.apibar{display:flex;align-items:center;gap:8px;padding:.5rem 1.1rem;background:#fef3e2;border-bottom:1px solid #f0d9a0;flex-wrap:wrap}
-.apibar.ok{background:#e8f4ee;border-color:#b0d8be}
-.api-status{font-size:12px;color:#7a4a00;flex:1;min-width:170px}
-.apibar.ok .api-status{color:#085041}
-.api-sel{padding:5px 9px;border:1px solid var(--bord2);border-radius:7px;font-size:12px;background:#fff;cursor:pointer}
-.api-inp{flex:2;min-width:160px;padding:5px 9px;border:1px solid var(--bord2);border-radius:7px;font-size:12px;font-family:inherit}
-/* TOPBAR */
-.topbar{display:flex;align-items:center;justify-content:space-between;padding:.6rem 1.1rem;background:var(--sur);border-bottom:1px solid var(--bord);gap:8px;flex-wrap:wrap}
+.apibar{display:flex;align-items:center;gap:8px;padding:.5rem 1rem;background:var(--orbg);border-bottom:1px solid #f0d9a0;flex-wrap:wrap}
+.apibar.ok{background:var(--gnbg);border-color:#b0d8be}
+.apist{font-size:12px;color:var(--orn);flex:1;min-width:150px}
+.apibar.ok .apist{color:var(--grn)}
+.apisel{padding:5px 8px;border:1px solid var(--bord2);border-radius:7px;font-size:12px;background:#fff;cursor:pointer}
+.apiinp{flex:2;min-width:140px;padding:5px 8px;border:1px solid var(--bord2);border-radius:7px;font-size:12px;font-family:inherit}
+.topbar{display:flex;align-items:center;justify-content:space-between;padding:.55rem 1rem;background:var(--sur);border-bottom:1px solid var(--bord);gap:8px;flex-wrap:wrap}
 .topbar h1{font-size:14px;font-weight:600}
-.topbar-r{display:flex;gap:6px;flex-wrap:wrap}
-/* TABS */
-.maintabs{display:flex;background:var(--sur);border-bottom:1px solid var(--bord)}
-.mtab{padding:.55rem 1.1rem;font-size:12.5px;font-weight:500;border:none;background:transparent;cursor:pointer;color:var(--mut);border-bottom:2px solid transparent}
+.topr{display:flex;gap:5px;flex-wrap:wrap}
+.maintabs{display:flex;background:var(--sur);border-bottom:1px solid var(--bord);flex-wrap:wrap;gap:0}
+.mtab{padding:.5rem .9rem;font-size:12px;font-weight:500;border:none;background:transparent;cursor:pointer;color:var(--mut);border-bottom:2px solid transparent;white-space:nowrap}
 .mtab.on{color:var(--txt);border-bottom-color:var(--txt)}
-.panel{display:none;padding:.7rem 1rem 2rem}
+.panel{display:none;padding:.65rem .9rem 2rem}
 .panel.on{display:block}
-/* ALERTS */
-.alert{padding:.5rem .85rem;border-radius:var(--r);font-size:11.5px;margin-bottom:.6rem}
-.ag{background:var(--grn-bg);color:var(--grn)}.ao{background:var(--orn-bg);color:var(--orn)}.ai{background:var(--blu-bg);color:var(--blu)}
-/* STATS */
-.stats{display:flex;gap:7px;margin-bottom:.65rem;flex-wrap:wrap}
-.stat{flex:1;min-width:100px;background:var(--sur);border:1px solid var(--bord);border-radius:var(--r);padding:.5rem .8rem}
+.al{padding:.5rem .8rem;border-radius:var(--r);font-size:11.5px;margin-bottom:.55rem}
+.ag{background:var(--gnbg);color:var(--grn)}.ao{background:var(--orbg);color:var(--orn)}.ai{background:var(--blbg);color:var(--blu)}.ar{background:var(--rdbg);color:var(--red)}
+.stats{display:flex;gap:7px;margin-bottom:.6rem;flex-wrap:wrap}
+.stat{flex:1;min-width:90px;background:var(--sur);border:1px solid var(--bord);border-radius:var(--r);padding:.45rem .75rem}
 .stat .lb{font-size:10px;color:var(--mut);text-transform:uppercase;letter-spacing:.3px}
-.stat .vl{font-size:18px;font-weight:600;margin-top:1px}
-/* CONTROLS */
-.ctrls{display:flex;gap:6px;margin-bottom:.6rem;flex-wrap:wrap;align-items:center}
+.stat .vl{font-size:17px;font-weight:600;margin-top:1px}
+.ctrls{display:flex;gap:5px;margin-bottom:.55rem;flex-wrap:wrap;align-items:center}
 .ctrls input,.ctrls select{padding:5px 8px;border:1px solid var(--bord2);border-radius:7px;background:var(--sur);color:var(--txt);font-size:12px;outline:none}
-.ctrls input{min-width:160px}
-/* BUTTONS */
-.btn{display:inline-flex;align-items:center;gap:4px;padding:5px 12px;border-radius:7px;border:1px solid var(--bord2);background:var(--sur);color:var(--txt);font-size:12px;cursor:pointer;white-space:nowrap;font-family:inherit}
+.ctrls input{min-width:150px}
+.btn{display:inline-flex;align-items:center;gap:4px;padding:5px 11px;border-radius:7px;border:1px solid var(--bord2);background:var(--sur);color:var(--txt);font-size:12px;cursor:pointer;white-space:nowrap;font-family:inherit}
 .btn:hover{background:var(--bg)}
-.bg{background:var(--grn-bg);color:var(--grn);border-color:transparent}.bg:hover{background:#d4ecdf}
-.bb{background:var(--blu-bg);color:var(--blu);border-color:transparent}.bb:hover{background:#d5e7f6}
-.bp{background:var(--pur-bg);color:var(--pur);border-color:transparent}.bp:hover{background:#dddaf5}
+.bg{background:var(--gnbg);color:var(--grn);border-color:transparent}.bg:hover{background:#d4ecdf}
+.bb{background:var(--blbg);color:var(--blu);border-color:transparent}.bb:hover{background:#d5e7f6}
+.bp{background:var(--pubg);color:var(--pur);border-color:transparent}.bp:hover{background:#dddaf5}
 .bd{background:var(--txt);color:#fff;border-color:transparent}.bd:hover{background:#333}
-.bsm{padding:3px 8px;font-size:10px}
-/* SUBTABS */
-.subtabs{display:flex;gap:4px;margin-bottom:.6rem;flex-wrap:wrap}
-.stab{padding:4px 10px;border:1px solid var(--bord2);border-radius:20px;font-size:11px;cursor:pointer;background:var(--sur);color:var(--mut)}
+.bsm{padding:3px 7px;font-size:10px}
+.subtabs{display:flex;gap:4px;margin-bottom:.55rem;flex-wrap:wrap}
+.stab{padding:3px 9px;border:1px solid var(--bord2);border-radius:20px;font-size:11px;cursor:pointer;background:var(--sur);color:var(--mut)}
 .stab.on{background:var(--txt);color:#fff;border-color:transparent}
-/* TABLE */
 .tw{overflow-x:auto;border:1px solid var(--bord);border-radius:var(--r);background:var(--sur)}
-table{width:100%;border-collapse:collapse;min-width:960px}
+table{width:100%;border-collapse:collapse;min-width:900px}
 th{padding:6px 7px;text-align:left;font-size:10px;font-weight:600;color:var(--mut);text-transform:uppercase;letter-spacing:.3px;border-bottom:1px solid var(--bord);background:#fafaf8;white-space:nowrap;cursor:pointer}
 th:hover{background:#f2f1ee}
 td{padding:5px 7px;border-bottom:1px solid #f0efe9;vertical-align:middle}
 tr:last-child td{border-bottom:none}
 tr:hover td{background:#fafaf8}
 tr.sel td{background:#f0f8f3}
-.pn{max-width:185px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:12px}
+.pn{max-width:175px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:12px}
 .bdg{display:inline-block;padding:2px 7px;border-radius:20px;font-size:10px;font-weight:500;white-space:nowrap}
 .inp{width:42px;padding:3px 4px;border:1px solid var(--bord2);border-radius:5px;text-align:center;font-size:11px;font-family:inherit}
+.inp-lg{width:70px;padding:3px 5px;border:1px solid var(--bord2);border-radius:5px;text-align:center;font-size:11px;font-family:inherit}
 .stars{font-size:11px;letter-spacing:-1px}
 .sh{color:#085041;font-weight:600}.sm{color:#7a4a00;font-weight:600}.sl{color:#7a1a1a;font-weight:600}
-/* ADS */
-.net-tabs{display:flex;gap:5px;margin-bottom:.7rem;flex-wrap:wrap}
-.ntab{padding:6px 13px;border:1px solid var(--bord2);border-radius:8px;font-size:12px;cursor:pointer;background:var(--sur)}
+.net-tabs{display:flex;gap:5px;margin-bottom:.65rem;flex-wrap:wrap}
+.ntab{padding:6px 12px;border:1px solid var(--bord2);border-radius:8px;font-size:12px;cursor:pointer;background:var(--sur)}
 .ntab.on{border-color:var(--txt);background:var(--txt);color:#fff}
-.sel-tags{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:.65rem}
+.sel-tags{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:.6rem}
 .sel-tag{display:inline-flex;align-items:center;gap:5px;padding:3px 9px;background:var(--sur);border:1px solid var(--bord2);border-radius:20px;font-size:11px}
 .rm{cursor:pointer;color:var(--mut);font-size:14px;line-height:1}.rm:hover{color:var(--red)}
 .ads-empty{padding:2rem;text-align:center;color:var(--mut);border:2px dashed var(--bord2);border-radius:var(--r)}
-.adgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(295px,1fr));gap:10px;margin-top:.6rem}
-.adcard{background:var(--sur);border:1px solid var(--bord);border-radius:var(--r);padding:.8rem .95rem;position:relative}
-.adcard-hd{display:flex;justify-content:space-between;align-items:center;margin-bottom:.55rem}
+.adgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:9px;margin-top:.55rem}
+.adcard{background:var(--sur);border:1px solid var(--bord);border-radius:var(--r);padding:.75rem .9rem;position:relative}
+.adcard-hd{display:flex;justify-content:space-between;align-items:center;margin-bottom:.5rem}
 .nlabel{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;padding:2px 7px;border-radius:4px}
-.adsec{margin-bottom:.5rem}
-.adsec .stl{font-size:9.5px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;color:var(--mut);margin-bottom:2px}
-.adsec .sct{font-size:12px;line-height:1.5}
+.adsec{margin-bottom:.45rem}
+.stl{font-size:9.5px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;color:var(--mut);margin-bottom:2px}
+.sct{font-size:12px;line-height:1.5}
 .tags{display:flex;flex-wrap:wrap;gap:3px;margin-top:2px}
 .tag{display:inline-block;padding:2px 6px;background:var(--bg);border:1px solid var(--bord2);border-radius:4px;font-size:10px;color:var(--mut)}
-.varbx{background:var(--bg);border-radius:7px;padding:.45rem .6rem;margin-bottom:.35rem}
+.varbx{background:var(--bg);border-radius:7px;padding:.4rem .55rem;margin-bottom:.3rem}
 .loading{display:flex;align-items:center;gap:8px;color:var(--mut);padding:1rem;font-size:12px}
 .spin{width:14px;height:14px;border:2px solid var(--bord2);border-top-color:var(--txt);border-radius:50%;animation:sp .7s linear infinite}
 @keyframes sp{to{transform:rotate(360deg)}}
-/* MODAL */
 .mbg{position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:100;display:flex;align-items:center;justify-content:center;padding:1rem}
-.modal{background:var(--sur);border-radius:12px;width:100%;max-width:500px;padding:1.4rem;max-height:80vh;overflow-y:auto}
-.modal h2{font-size:14px;font-weight:600;margin-bottom:.85rem}
-.fdrop{border:2px dashed var(--bord2);border-radius:var(--r);padding:2rem;text-align:center;cursor:pointer}
+.modal{background:var(--sur);border-radius:12px;width:100%;max-width:490px;padding:1.3rem;max-height:80vh;overflow-y:auto}
+.modal h2{font-size:14px;font-weight:600;margin-bottom:.8rem}
+.fdrop{border:2px dashed var(--bord2);border-radius:var(--r);padding:1.75rem;text-align:center;cursor:pointer}
 .fdrop:hover,.fdrop.drag{border-color:var(--txt)}
 .fdrop input{display:none}
-.mbts{display:flex;gap:7px;justify-content:flex-end;margin-top:.85rem}
-.prog{background:var(--bord);border-radius:4px;height:5px;margin:.5rem 0}
+.mbts{display:flex;gap:7px;justify-content:flex-end;margin-top:.8rem}
+.prog{background:var(--bord);border-radius:4px;height:5px;margin:.45rem 0}
 .progb{background:var(--grn);height:100%;border-radius:4px;transition:width .3s}
+.heat-grid{display:grid;gap:3px}
+.heat-cell{border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:600;padding:4px;min-height:28px;cursor:default}
+.heat-hdr{font-size:10px;color:var(--mut);text-align:center;padding:2px}
+.heat-lbl{font-size:11px;color:var(--txt);padding:4px 6px;white-space:nowrap}
+.form-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:.55rem;align-items:flex-end}
+.form-group{display:flex;flex-direction:column;gap:3px}
+.form-group label{font-size:10px;color:var(--mut);text-transform:uppercase;letter-spacing:.3px}
+.form-group input,.form-group select{padding:5px 8px;border:1px solid var(--bord2);border-radius:7px;font-size:12px;font-family:inherit;background:var(--sur);color:var(--txt)}
+.card-section{background:var(--sur);border:1px solid var(--bord);border-radius:var(--r);padding:.85rem 1rem;margin-bottom:.75rem}
+.card-section h3{font-size:13px;font-weight:500;margin-bottom:.65rem}
+.rpt-block{background:var(--sur);border:1px solid var(--bord);border-radius:var(--r);padding:1rem 1.1rem;margin-bottom:.75rem}
+.rpt-block h3{font-size:13px;font-weight:500;margin-bottom:.6rem;padding-bottom:.4rem;border-bottom:1px solid var(--bord)}
+@media print{.apibar,.topbar,.maintabs,.ctrls,.subtabs,.btn,.topr{display:none!important}.panel{display:block!important;padding:0}.rpt-block{break-inside:avoid}}
 </style>
 </head>
 <body>
 
-<!-- ===== API BAR ===== -->
 <div class="apibar" id="apibar">
-  <span class="api-status" id="api-status">🔑 Choisis un fournisseur et colle ta clé gratuite</span>
-  <select class="api-sel" id="prov-sel" onchange="changeProvider()">
-    <option value="groq">🟢 Groq — GRATUIT (recommandé)</option>
-    <option value="gemini">🔵 Google Gemini — GRATUIT</option>
-    <option value="anthropic">⚪ Anthropic — Payant</option>
+  <span class="apist" id="apist">Choisis un fournisseur et colle ta cle gratuite</span>
+  <select class="apisel" id="prov-sel" onchange="changeProvider()">
+    <option value="groq">Groq (GRATUIT - recommande)</option>
+    <option value="gemini">Google Gemini (GRATUIT)</option>
+    <option value="anthropic">Anthropic (Payant)</option>
   </select>
-  <input class="api-inp" type="password" id="api-inp" placeholder="Colle ta clé ici..." oninput="saveKey(this.value)">
-  <button class="btn" style="padding:5px 9px" onclick="toggleKeyVis()">👁</button>
-  <a id="key-link" href="https://console.groq.com/keys" target="_blank" class="btn bg" style="font-size:11px">Obtenir clé gratuite →</a>
+  <input class="apiinp" type="password" id="api-inp" placeholder="Colle ta cle ici..." oninput="saveKey(this.value)">
+  <button class="btn" style="padding:5px 8px" onclick="toggleKeyVis()">&#128065;</button>
+  <a id="key-link" href="https://console.groq.com/keys" target="_blank" class="btn bg" style="font-size:11px">Obtenir cle gratuite</a>
+  <button class="btn" id="test-btn" onclick="testConnection()" style="font-size:11px">Tester la connexion</button>
+  <span id="test-result" style="font-size:11px;max-width:300px"></span>
 </div>
 
-<!-- ===== TOP BAR ===== -->
 <div class="topbar">
-  <h1>🛍 UrbanElectroStore — Scoring & Ads</h1>
-  <div class="topbar-r">
-    <button class="btn" onclick="openImport()">⬆ Importer XML / CSV</button>
-    <button class="btn bg" onclick="exportScoring()">⬇ Exporter scoring CSV</button>
+  <h1>&#128722; UrbanElectroStore &mdash; Cockpit E-commerce</h1>
+  <div class="topr">
+    <button class="btn" onclick="openImport()">&#8679; Importer XML/CSV</button>
+    <button class="btn bg" onclick="exportScoring()">&#8681; Scoring CSV</button>
+    <button class="btn" onclick="printReport()">&#128438; Imprimer rapport</button>
   </div>
 </div>
 
-<!-- ===== MAIN TABS ===== -->
 <div class="maintabs">
-  <button class="mtab on" onclick="showMain('products')">📊 Produits &amp; Scoring</button>
-  <button class="mtab" onclick="showMain('ads')">🎯 Generateur Ads</button>
+  <button class="mtab on" onclick="showMain('scoring')">&#128202; Produits</button>
+  <button class="mtab" onclick="showMain('ads')">&#127919; Ads</button>
+  <button class="mtab" onclick="showMain('marge')">&#128176; Marge &amp; ROI</button>
+  <button class="mtab" onclick="showMain('saisonnal')">&#128197; Saisonnalite</button>
+  <button class="mtab" onclick="showMain('perf')">&#128200; Performance</button>
+  <button class="mtab" onclick="showMain('contenu')">&#9997; Contenu AI</button>
+  <button class="mtab" onclick="showMain('rapport')">&#128196; Rapport</button>
 </div>
 
-<!-- ===== TAB PRODUITS ===== -->
-<div class="panel on" id="tab-products">
-  <div style="display:flex;gap:7px;flex-wrap:wrap;margin-top:.5rem;margin-bottom:.65rem">
-    <div class="alert ag" style="flex:1;min-width:200px">✅ <b>3 opportunités :</b> Scheppach MP132-40 à 99,99EUR (Cdiscount = 119,99EUR) · Husqvarna AM305 à 1049EUR (LM = 1199EUR) · Dyson V8 à 269,99EUR</div>
-    <div class="alert ao" style="flex:1;min-width:200px">⚠️ <b>Concurrence forte :</b> Vélos HITWAY (149+ offres Idealo) · MacBook Air (Fnac/Darty à parité) · HP Victus (Boulanger très actif)</div>
+<div class="panel on" id="tab-scoring">
+  <div style="display:flex;gap:7px;flex-wrap:wrap;margin-top:.5rem;margin-bottom:.6rem">
+    <div class="al ag" style="flex:1;min-width:200px"><b>3 opportunites immédiates :</b> Scheppach MP132-40 à 99.99 EUR (Cdiscount = 119.99 EUR) &#183; Husqvarna AM305 à 1049 EUR (LM = 1199 EUR) &#183; Dyson V8 à 269.99 EUR</div>
+    <div class="al ao" style="flex:1;min-width:200px"><b>Concurrence forte :</b> Velos HITWAY (149+ offres Idealo) &#183; MacBook Air (Fnac/Darty a parité) &#183; HP Victus (Boulanger très actif)</div>
   </div>
   <div class="stats">
-    <div class="stat"><div class="lb">Total</div><div class="vl" id="s-total">0</div></div>
+    <div class="stat"><div class="lb">Total produits</div><div class="vl" id="s-total">0</div></div>
     <div class="stat"><div class="lb">Prix avantageux</div><div class="vl" id="s-win">0</div></div>
-    <div class="stat"><div class="lb">Scorés</div><div class="vl" id="s-scored">0</div></div>
-    <div class="stat"><div class="lb">Prêts ads</div><div class="vl" id="s-ready">0</div></div>
-    <div class="stat"><div class="lb">Score moyen</div><div class="vl" id="s-avg">—</div></div>
+    <div class="stat"><div class="lb">Scores</div><div class="vl" id="s-scored">0</div></div>
+    <div class="stat"><div class="lb">Prets ads</div><div class="vl" id="s-ready">0</div></div>
+    <div class="stat"><div class="lb">Score moyen</div><div class="vl" id="s-avg">&#8212;</div></div>
   </div>
   <div class="subtabs" id="cat-tabs"></div>
   <div class="ctrls">
     <input type="text" id="srch" placeholder="Rechercher..." oninput="render()">
     <select id="srt" onchange="render()">
-      <option value="priority">Priorité ads</option>
-      <option value="mkt">Potentiel marché</option>
+      <option value="priority">Priorite ads</option>
+      <option value="mkt">Potentiel marche</option>
       <option value="score">Score final</option>
       <option value="price">Prix</option>
       <option value="name">Nom</option>
     </select>
     <select id="fadv" onchange="render()">
       <option value="">Tous les prix</option>
-      <option value="win">Prix avantageux</option>
-      <option value="par">Parité</option>
-      <option value="loss">Désavantageux</option>
+      <option value="win">Avantageux</option>
+      <option value="par">Parite</option>
+      <option value="loss">Desavantageux</option>
     </select>
     <select id="fads" onchange="render()">
-      <option value="">Toutes intensités ads</option>
+      <option value="">Toutes intensites ads</option>
       <option value="high">Forte</option>
       <option value="med">Moyenne</option>
       <option value="low">Faible</option>
     </select>
-    <button class="btn bp" onclick="sendToAds()">🎯 Générer ads pour sélectionnés</button>
+    <button class="btn bp" onclick="sendToAds()">Generer ads pour selection</button>
+    <button class="btn bb" onclick="autoScore()">IA : Auto-scorer</button>
   </div>
   <div class="tw">
     <table>
       <thead><tr>
         <th><input type="checkbox" id="chk-all" onchange="toggleAll(this.checked)"></th>
         <th onclick="sortBy('name')">Produit</th>
-        <th>Catégorie</th>
+        <th>Categorie</th>
         <th onclick="sortBy('price')">Prix</th>
         <th onclick="sortBy('mkt')">Potentiel</th>
-        <th>Concurrent · Prix</th>
+        <th>Concurrent &#183; Prix</th>
         <th>Avantage prix</th>
-        <th>Intensité ads</th>
+        <th>Intensite ads</th>
         <th>CTR</th><th>Panier</th><th>Ventes</th><th>Social</th>
         <th onclick="sortBy('score')">Score</th>
         <th>Statut</th>
@@ -183,118 +191,303 @@ tr.sel td{background:#f0f8f3}
   </div>
 </div>
 
-<!-- ===== TAB ADS ===== -->
 <div class="panel" id="tab-ads">
-  <div class="alert ai" id="sel-info" style="margin-top:.5rem;margin-bottom:.65rem">Sélectionne des produits dans Produits &amp; Scoring, puis génère les ads ici.</div>
+  <div class="al ai" id="sel-info" style="margin-top:.5rem;margin-bottom:.6rem">Selectionne des produits dans Produits, puis genere les ads ici.</div>
   <div class="sel-tags" id="sel-tags"></div>
-  <div style="margin-bottom:.65rem">
-    <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;color:var(--mut);margin-bottom:.4rem">Réseaux publicitaires</div>
+  <div style="margin-bottom:.6rem">
+    <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;color:var(--mut);margin-bottom:.35rem">Reseaux publicitaires</div>
     <div class="net-tabs">
-      <button class="ntab on" data-net="meta" onclick="toggleNet(this)">📘 Meta (FB + IG)</button>
-      <button class="ntab on" data-net="google" onclick="toggleNet(this)">🔍 Google Shopping</button>
-      <button class="ntab on" data-net="tiktok" onclick="toggleNet(this)">🎵 TikTok</button>
-      <button class="ntab on" data-net="pinterest" onclick="toggleNet(this)">📌 Pinterest</button>
+      <button class="ntab on" data-net="meta" onclick="toggleNet(this)">Meta (FB+IG)</button>
+      <button class="ntab on" data-net="google" onclick="toggleNet(this)">Google Shopping</button>
+      <button class="ntab on" data-net="tiktok" onclick="toggleNet(this)">TikTok</button>
+      <button class="ntab on" data-net="pinterest" onclick="toggleNet(this)">Pinterest</button>
     </div>
   </div>
-  <div style="display:flex;gap:7px;margin-bottom:.7rem;flex-wrap:wrap">
-    <button class="btn bd" onclick="generateAds()">⚡ Générer les ads</button>
-    <button class="btn bg" onclick="exportAds()">⬇ Exporter ads CSV</button>
-    <button class="btn" onclick="clearAds()">🗑 Effacer</button>
+  <div class="ctrls">
+    <select id="ads-lang">
+      <option value="fr">Langue : Francais</option>
+      <option value="be">Langue : Belgique (Fr)</option>
+      <option value="ch">Langue : Suisse (Fr)</option>
+      <option value="ca">Langue : Canada (Fr)</option>
+    </select>
+    <select id="ads-tone">
+      <option value="persuasif">Ton : Persuasif</option>
+      <option value="informatif">Ton : Informatif</option>
+      <option value="urgence">Ton : Urgence</option>
+      <option value="premium">Ton : Premium</option>
+    </select>
   </div>
-  <div id="ads-loading" style="display:none" class="loading"><div class="spin"></div><span id="load-msg">Génération...</span></div>
+  <div style="display:flex;gap:7px;margin-bottom:.65rem;flex-wrap:wrap">
+    <button class="btn bd" onclick="generateAds()">Generer les ads</button>
+    <button class="btn bg" onclick="exportAds()">Exporter ads CSV</button>
+    <button class="btn" onclick="clearAds()">Effacer</button>
+  </div>
+  <div id="ads-loading" style="display:none" class="loading"><div class="spin"></div><span id="load-msg">Generation...</span></div>
   <div id="ads-results"></div>
-  <div id="ads-empty" class="ads-empty">🎯 Sélectionne des produits dans l onglet Produits, choisis les réseaux, puis clique Générer.</div>
+  <div class="al ao" style="font-size:11.5px;margin-bottom:.5rem">
+  <b>Si tu vois "Failed to fetch" :</b>
+  1. Desactive ton ad blocker (uBlock, AdBlock) pour ce site
+  2. Verifie ta cle API avec le bouton "Tester la connexion" en haut
+  3. Assure-toi que ta connexion internet fonctionne
+</div>
+<div id="ads-empty" class="ads-empty">Selectionne des produits dans Produits, choisis les reseaux, puis clique Generer.</div>
 </div>
 
-<!-- ===== MODAL IMPORT ===== -->
+<div class="panel" id="tab-marge">
+  <div style="margin-top:.5rem;margin-bottom:.75rem;display:flex;gap:10px;flex-wrap:wrap;align-items:flex-start">
+    <div class="card-section" style="flex:1;min-width:250px">
+      <h3>Repartiteur de budget</h3>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Budget total/mois (EUR)</label>
+          <input type="number" id="budget-total" value="500" min="0" style="width:130px" oninput="renderAlloc()">
+        </div>
+        <div class="form-group">
+          <label>ROAS cible par defaut</label>
+          <input type="number" id="roas-default" value="3" min="1" step="0.1" style="width:100px" oninput="renderAlloc()">
+        </div>
+      </div>
+      <div id="alloc-result" style="margin-top:.5rem;font-size:12px;color:var(--mut)">Entre ton budget pour voir la repartition.</div>
+    </div>
+    <div class="card-section" style="flex:1;min-width:250px">
+      <h3>Legende des marges</h3>
+      <div style="font-size:12px;line-height:1.9;color:var(--txt)">
+        <span style="display:inline-block;width:12px;height:12px;border-radius:3px;background:#1D9E75;margin-right:6px;vertical-align:middle"></span>Excellente marge &gt; 35%<br>
+        <span style="display:inline-block;width:12px;height:12px;border-radius:3px;background:#BA7517;margin-right:6px;vertical-align:middle"></span>Marge correcte 20-35%<br>
+        <span style="display:inline-block;width:12px;height:12px;border-radius:3px;background:#E24B4A;margin-right:6px;vertical-align:middle"></span>Marge faible &lt; 20%<br>
+        <span style="display:inline-block;width:12px;height:12px;border-radius:3px;background:#888780;margin-right:6px;vertical-align:middle"></span>Prix achat non renseigne
+      </div>
+    </div>
+  </div>
+  <div class="al ai">Entre ton <b>prix d achat HT</b> pour chaque produit. Le calcul de marge, CPA max et budget ads se fait automatiquement.</div>
+  <div class="tw" style="margin-top:.5rem">
+    <table id="marge-table" style="min-width:850px">
+      <thead><tr>
+        <th>Produit</th>
+        <th>Prix vente</th>
+        <th>Prix achat HT</th>
+        <th>Marge brute</th>
+        <th>Marge %</th>
+        <th>ROAS cible</th>
+        <th>CPA max</th>
+        <th>Budget/jour max</th>
+        <th>Statut marge</th>
+      </tr></thead>
+      <tbody id="marge-body"></tbody>
+    </table>
+  </div>
+</div>
+
+<div class="panel" id="tab-saisonnal">
+  <div class="al ai" style="margin-top:.5rem;margin-bottom:.75rem">
+    Demande estimee par mois pour chaque categorie. <b>Mois actuel encadre.</b> Couleur verte = forte demande, blanche = faible.
+  </div>
+  <div style="overflow-x:auto">
+    <div id="seasonal-grid"></div>
+  </div>
+  <div class="card-section" style="margin-top:.75rem">
+    <h3>Recommandations de timing</h3>
+    <div id="seasonal-reco" style="font-size:12px;line-height:1.9"></div>
+  </div>
+</div>
+
+<div class="panel" id="tab-perf">
+  <div style="margin-top:.5rem;margin-bottom:.65rem;display:flex;gap:10px;flex-wrap:wrap;align-items:flex-start">
+    <div class="card-section" style="flex:1;min-width:300px">
+      <h3>Ajouter une campagne</h3>
+      <div class="form-row">
+        <div class="form-group" style="flex:2;min-width:150px">
+          <label>Produit</label>
+          <input type="text" id="c-product" placeholder="Nom du produit..." style="width:100%">
+        </div>
+        <div class="form-group">
+          <label>Reseau</label>
+          <select id="c-network">
+            <option>Meta</option><option>Google</option><option>TikTok</option><option>Pinterest</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label>Budget depense (EUR)</label><input type="number" id="c-spend" placeholder="50" min="0" step="0.01" style="width:110px"></div>
+        <div class="form-group"><label>Clics</label><input type="number" id="c-clicks" placeholder="500" min="0" style="width:90px"></div>
+        <div class="form-group"><label>Commandes</label><input type="number" id="c-orders" placeholder="3" min="0" style="width:90px"></div>
+        <div class="form-group"><label>CA genere (EUR)</label><input type="number" id="c-revenue" placeholder="300" min="0" step="0.01" style="width:110px"></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group" style="flex:2;min-width:150px"><label>Note (optionnel)</label><input type="text" id="c-note" placeholder="ex: visuel produit blanc..." style="width:100%"></div>
+        <div class="form-group"><label>Date</label><input type="date" id="c-date" style="width:130px"></div>
+      </div>
+      <button class="btn bg" onclick="addCampaign()" style="margin-top:.35rem">+ Ajouter</button>
+    </div>
+    <div class="card-section" style="flex:1;min-width:250px">
+      <h3>Totaux globaux</h3>
+      <div id="perf-totals" style="font-size:12px;line-height:2;color:var(--txt)">Aucune campagne enregistree.</div>
+    </div>
+  </div>
+  <div class="stats" id="perf-stats" style="margin-bottom:.6rem"></div>
+  <div class="tw">
+    <table style="min-width:900px">
+      <thead><tr>
+        <th>Produit</th><th>Reseau</th><th>Date</th><th>Budget</th><th>Clics</th>
+        <th>Commandes</th><th>CA</th><th>ROAS</th><th>CPA</th><th>CTR</th><th>Statut</th><th>Note</th><th></th>
+      </tr></thead>
+      <tbody id="perf-body"></tbody>
+    </table>
+  </div>
+  <div class="card-section" style="margin-top:.75rem">
+    <h3>Comparateur A/B</h3>
+    <div style="display:flex;gap:12px;flex-wrap:wrap">
+      <div style="flex:1;min-width:220px">
+        <div style="font-size:11px;font-weight:600;color:var(--mut);margin-bottom:.35rem">Variation A</div>
+        <div class="form-row"><div class="form-group"><label>Impressions</label><input type="number" id="ab-a-imp" placeholder="10000" min="0" style="width:120px"></div><div class="form-group"><label>Clics</label><input type="number" id="ab-a-clk" placeholder="150" min="0" style="width:100px"></div><div class="form-group"><label>Commandes</label><input type="number" id="ab-a-ord" placeholder="5" min="0" style="width:100px"></div></div>
+      </div>
+      <div style="flex:1;min-width:220px">
+        <div style="font-size:11px;font-weight:600;color:var(--mut);margin-bottom:.35rem">Variation B</div>
+        <div class="form-row"><div class="form-group"><label>Impressions</label><input type="number" id="ab-b-imp" placeholder="10000" min="0" style="width:120px"></div><div class="form-group"><label>Clics</label><input type="number" id="ab-b-clk" placeholder="200" min="0" style="width:100px"></div><div class="form-group"><label>Commandes</label><input type="number" id="ab-b-ord" placeholder="8" min="0" style="width:100px"></div></div>
+      </div>
+    </div>
+    <button class="btn bd" onclick="calcAB()" style="margin-top:.35rem">Comparer A vs B</button>
+    <div id="ab-result" style="margin-top:.5rem;font-size:13px"></div>
+  </div>
+</div>
+
+<div class="panel" id="tab-contenu">
+  <div class="al ai" style="margin-top:.5rem;margin-bottom:.65rem">Selectionne un produit et un type de contenu. L IA genere le contenu en quelques secondes.</div>
+  <div class="card-section">
+    <h3>Generateur de contenu</h3>
+    <div class="form-row">
+      <div class="form-group" style="flex:2;min-width:200px">
+        <label>Produit</label>
+        <select id="ct-product" style="width:100%"></select>
+      </div>
+      <div class="form-group" style="flex:1;min-width:180px">
+        <label>Type de contenu</label>
+        <select id="ct-type">
+          <option value="seo">Description SEO produit</option>
+          <option value="email">Sequence email retargeting (3 emails)</option>
+          <option value="content">Plan de contenu 30 jours (TikTok/IG)</option>
+          <option value="multimarket">Adaptation multi-marches (BE/CH/CA)</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Langue</label>
+        <select id="ct-lang">
+          <option value="fr">Francais</option>
+          <option value="be">Belge</option>
+          <option value="ch">Suisse</option>
+        </select>
+      </div>
+    </div>
+    <button class="btn bd" onclick="generateContent()" style="margin-top:.35rem">Generer le contenu</button>
+  </div>
+  <div id="ct-loading" style="display:none" class="loading"><div class="spin"></div><span id="ct-msg">Generation...</span></div>
+  <div id="ct-result"></div>
+</div>
+
+<div class="panel" id="tab-rapport">
+  <div style="margin-top:.5rem;margin-bottom:.65rem;display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+    <button class="btn bd" onclick="printReport()">Imprimer / Exporter PDF</button>
+    <button class="btn bg" onclick="buildReport()">Actualiser le rapport</button>
+    <span style="font-size:11px;color:var(--mut)" id="rpt-date"></span>
+  </div>
+  <div id="rapport-content"></div>
+</div>
+
 <div class="mbg" id="imp-modal" style="display:none" onclick="if(event.target===this)closeImport()">
   <div class="modal">
-    <h2>⬆ Importer des produits</h2>
-    <p style="font-size:12px;color:var(--mut);margin-bottom:.85rem">Flux XML WooCommerce (Google Shopping) ou CSV (colonnes: nom, categorie, prix).</p>
-    <div class="fdrop" id="fdrop" onclick="document.getElementById('finput').click()"
+    <h2>Importer des produits</h2>
+    <p style="font-size:12px;color:var(--mut);margin-bottom:.8rem">Flux XML WooCommerce (Google Shopping) ou CSV (colonnes: nom, categorie, prix).</p>
+    <div class="fdrop" id="fdrop"
+      onclick="document.getElementById('finput').click()"
       ondragover="event.preventDefault();this.classList.add('drag')"
       ondragleave="this.classList.remove('drag')"
       ondrop="handleDrop(event)">
       <input type="file" id="finput" accept=".xml,.csv,.txt" onchange="handleFile(event)">
-      <div style="font-size:22px;margin-bottom:.4rem">📂</div>
-      <div style="font-weight:500;margin-bottom:.2rem">Glisse ton fichier ici</div>
-      <div style="font-size:11px;color:var(--mut)">ou clique pour parcourir · XML et CSV acceptés</div>
+      <div style="font-size:20px;margin-bottom:.35rem">&#128193;</div>
+      <div style="font-weight:500;margin-bottom:.15rem">Glisse ton fichier ici</div>
+      <div style="font-size:11px;color:var(--mut)">ou clique pour parcourir</div>
     </div>
-    <div id="imp-preview" style="display:none;margin-top:.65rem">
+    <div id="imp-preview" style="display:none;margin-top:.6rem">
       <div class="prog"><div class="progb" id="imp-prog" style="width:0%"></div></div>
-      <div id="imp-msg" style="font-size:12px;color:var(--mut);margin-top:.35rem"></div>
+      <div id="imp-msg" style="font-size:12px;color:var(--mut);margin-top:.3rem"></div>
     </div>
     <div class="mbts">
       <button class="btn" onclick="closeImport()">Annuler</button>
-      <button class="btn bg" id="imp-confirm" style="display:none" onclick="confirmImport()">✅ Importer</button>
+      <button class="btn bg" id="imp-confirm" style="display:none" onclick="confirmImport()">Importer</button>
     </div>
   </div>
 </div>
-
 <script>
+
 "use strict";
 
 // ============================================================
-// CONFIG FOURNISSEURS AI
+// PROVIDERS
 // ============================================================
 var PROVIDERS = {
-  groq:      { name:"Groq (Llama 3.3 70B)", prefix:"gsk_",   link:"https://console.groq.com/keys",          ph:"gsk_..." },
-  gemini:    { name:"Google Gemini Flash",   prefix:"AIza",   link:"https://aistudio.google.com/app/apikey", ph:"AIza..." },
-  anthropic: { name:"Anthropic Claude",      prefix:"sk-ant", link:"https://console.anthropic.com/settings/keys", ph:"sk-ant-..." }
+  groq:      {name:"Groq (Llama 3.3 70B)", prefix:"gsk_",   link:"https://console.groq.com/keys",          ph:"gsk_..."},
+  gemini:    {name:"Google Gemini Flash",   prefix:"AIza",   link:"https://aistudio.google.com/app/apikey", ph:"AIza..."},
+  anthropic: {name:"Anthropic Claude",      prefix:"sk-ant", link:"https://console.anthropic.com/settings/keys", ph:"sk-ant-..."}
 };
-
 var curProvider = localStorage.getItem("ai_provider") || "groq";
 var apiKey      = localStorage.getItem("api_key_" + curProvider) || "";
 
-function getProvInfo() {
-  return PROVIDERS[curProvider] || PROVIDERS["groq"];
-}
-
+function getProv() { return PROVIDERS[curProvider] || PROVIDERS.groq; }
 function changeProvider() {
-  var sel = document.getElementById("prov-sel");
-  if (!sel) return;
-  curProvider = sel.value;
+  var s = document.getElementById("prov-sel"); if (!s) return;
+  curProvider = s.value;
   localStorage.setItem("ai_provider", curProvider);
   apiKey = localStorage.getItem("api_key_" + curProvider) || "";
   updateApiBar();
 }
-
 function saveKey(v) {
   apiKey = (v || "").trim();
   localStorage.setItem("api_key_" + curProvider, apiKey);
   updateApiBar();
 }
-
 function toggleKeyVis() {
-  var inp = document.getElementById("api-inp");
-  if (!inp) return;
-  inp.type = inp.type === "password" ? "text" : "password";
+  var i = document.getElementById("api-inp"); if (!i) return;
+  i.type = i.type === "password" ? "text" : "password";
 }
-
 function updateApiBar() {
-  var bar    = document.getElementById("apibar");
-  var status = document.getElementById("api-status");
-  var inp    = document.getElementById("api-inp");
-  var sel    = document.getElementById("prov-sel");
-  var link   = document.getElementById("key-link");
-  if (!bar || !status) return;
-
-  var info  = getProvInfo();
-  var valid = apiKey.length > 0 && apiKey.indexOf(info.prefix) === 0;
-
+  var bar = document.getElementById("apibar");
+  var st  = document.getElementById("apist");
+  var inp = document.getElementById("api-inp");
+  var sel = document.getElementById("prov-sel");
+  var lnk = document.getElementById("key-link");
+  if (!bar) return;
+  var p = getProv();
+  var ok = apiKey.length > 0 && apiKey.indexOf(p.prefix) === 0;
   if (sel) sel.value = curProvider;
-  if (inp) { inp.value = apiKey; inp.placeholder = info.ph; }
-  if (link) link.href = info.link;
-
-  bar.className = valid ? "apibar ok" : "apibar";
-  status.textContent = valid
-    ? "✅ Clé " + info.name + " valide — Générateur prêt. Clé sauvegardée localement."
-    : "🔑 Entre ta clé " + info.name + " (gratuite) et clique Obtenir clé gratuite.";
+  if (inp) { inp.value = apiKey; inp.placeholder = p.ph; }
+  if (lnk) lnk.href = p.link;
+  bar.className = ok ? "apibar ok" : "apibar";
+  if (st) st.textContent = ok
+    ? "Cle " + p.name + " active. Generateur pret."
+    : "Entre ta cle " + p.name + " (gratuite) ci-dessus.";
 }
 
 // ============================================================
-// DONNÉES PRODUITS
-// Format: [id, nom, cat, prix, mkt, concurrent, prixConc, adv(win/par/loss), ads(high/med/low)]
+// SEASONAL DATA  [Jan..Dec, index 0..11]
+// ============================================================
+var SEASONAL = {
+  "Velo electrique": [3,4,6,8,9,9,8,7,7,5,3,2],
+  "Trottinette":     [3,4,6,8,9,9,8,7,6,4,3,2],
+  "Tondeuse":        [2,3,6,9,10,8,6,5,4,3,2,1],
+  "Robot tondeuse":  [2,3,6,9,10,8,5,4,3,3,2,1],
+  "Barbecue":        [1,2,5,8,10,10,9,8,5,3,2,2],
+  "PC et Mac":       [6,5,6,5,5,6,5,7,8,7,10,8],
+  "TV":              [5,6,5,4,4,4,5,5,6,7,10,9],
+  "Machine a cafe":  [7,8,6,5,4,3,3,3,5,6,9,10],
+  "Aspirateur":      [7,8,7,6,5,4,3,4,6,7,10,9],
+  "Electromenager":  [6,5,5,5,5,5,5,6,6,7,10,8],
+  "Chauffage":       [9,8,5,3,2,1,1,2,4,8,10,10]
+};
+var MONTH_NAMES = ["Jan","Fev","Mar","Avr","Mai","Jun","Jul","Aou","Sep","Oct","Nov","Dec"];
+var NOW_MONTH   = new Date().getMonth();
+
+// ============================================================
+// CATEGORY COLORS
 // ============================================================
 var CAT_COLORS = {
   "Velo electrique": ["#E1F5EE","#085041"],
@@ -310,6 +503,10 @@ var CAT_COLORS = {
   "Chauffage":       ["#FCEBEB","#501313"]
 };
 
+// ============================================================
+// PRODUCTS DATA
+// [id, nom, cat, prix, mkt, concurrent, prixConc, adv, ads]
+// ============================================================
 var PRODUCTS = [
 [1,"Touroll B1 26in 250W 15.6Ah","Velo electrique",499.99,9,"Amazon/Cdiscount","~549EUR","win","med"],
 [2,"HITWAY BK6 20in pliable Bleu","Velo electrique",629.99,8,"Amazon/Fnac","~639EUR","win","high"],
@@ -320,29 +517,29 @@ var PRODUCTS = [
 [7,"COLORWAY BK7S 26in Bleu","Velo electrique",689.99,6,"Amazon","~699EUR","win","med"],
 [8,"HITWAY BK7S 26in Noir VTT","Velo electrique",789.99,7,"Amazon","~799EUR","win","high"],
 [9,"HITWAY BK37 pliable 26in Noir","Velo electrique",879.99,6,"Amazon","~899EUR","win","med"],
-[10,"JASION Roamer ST 26in Blanc 500W","Velo electrique",819.99,6,"Amazon/Cdiscount","~849EUR","win","med"],
+[10,"JASION Roamer ST 26in Blanc","Velo electrique",819.99,6,"Amazon/Cdiscount","~849EUR","win","med"],
 [11,"ENGWE L20 Fat bike 20in Vert","Velo electrique",999.99,8,"Amazon","~1049EUR","win","med"],
-[12,"MOMA BIKES 28in PRO 48V 13Ah","Velo electrique",1399.99,5,"Amazon/Fnac","~1399EUR","par","low"],
+[12,"MOMA BIKES 28in PRO 48V","Velo electrique",1399.99,5,"Amazon/Fnac","~1399EUR","par","low"],
 [13,"iScooter iX3 800W 40KM","Trottinette",398.99,8,"Amazon/Cdiscount","~429EUR","win","med"],
 [14,"KuKirin G2 MAX 1000W 48V 20Ah","Trottinette",579.99,7,"Amazon","~599EUR","win","med"],
-[15,"Urbanglide ECROSS PRO 10in 50KM","Trottinette",619.99,7,"Cdiscount/Amazon","~629EUR","win","med"],
+[15,"Urbanglide ECROSS PRO 10in","Trottinette",619.99,7,"Cdiscount/Amazon","~629EUR","win","med"],
 [16,"KuKirin G2 Master 2x1000W","Trottinette",779,6,"Amazon","~799EUR","win","low"],
 [17,"Husqvarna Aspire R4 400m2","Robot tondeuse",749,9,"Leroy Merlin/Darty","~799EUR","win","high"],
 [18,"Husqvarna AM305 600m2","Robot tondeuse",1049,8,"Leroy Merlin","1199EUR","win","high"],
 [19,"Husqvarna AM310 Mark II 1000m2","Robot tondeuse",1499,7,"Boulanger/LM","~1499EUR","par","high"],
 [20,"Husqvarna AM405X 600m2 GPS","Robot tondeuse",1699,6,"Amazon/LM","~1699EUR","par","med"],
 [21,"Husqvarna AM435X AWD 3500m2","Robot tondeuse",3899,4,"Husqvarna.com","~3899EUR","par","low"],
-[22,"Scheppach MP132-40 40cm 131cc","Tondeuse",99.99,9,"Cdiscount/Amazon/Fnac","119.99EUR","win","high"],
-[23,"Scheppach MS161-46 46cm 150cc","Tondeuse",289,8,"Cdiscount","~295EUR","win","high"],
-[24,"Scheppach MS173-51 51cm 173cc","Tondeuse",299,8,"Cdiscount/Amazon","~309EUR","win","high"],
-[25,"Husqvarna LB246E 46cm elec","Tondeuse",699,7,"LM/Amazon","~729EUR","win","high"],
-[26,"Husqvarna LC353VE 53cm tractee","Tondeuse",899,7,"LM/Amazon","~929EUR","win","high"],
+[22,"Scheppach MP132-40 40cm","Tondeuse",99.99,9,"Cdiscount/Amazon/Fnac","119.99EUR","win","high"],
+[23,"Scheppach MS161-46 46cm","Tondeuse",289,8,"Cdiscount","~295EUR","win","high"],
+[24,"Scheppach MS173-51 51cm","Tondeuse",299,8,"Cdiscount/Amazon","~309EUR","win","high"],
+[25,"Husqvarna LB246E 46cm","Tondeuse",699,7,"LM/Amazon","~729EUR","win","high"],
+[26,"Husqvarna LC353VE 53cm","Tondeuse",899,7,"LM/Amazon","~929EUR","win","high"],
 [27,"AS Motor AS420 Proclip 42cm","Tondeuse",1299,4,"Specialistes","~1399EUR","win","low"],
-[28,"Alpina AT3 98A 98cm 4500m2","Tondeuse",1690,6,"Cdiscount","~1749EUR","win","med"],
+[28,"Alpina AT3 98A 98cm","Tondeuse",1690,6,"Cdiscount","~1749EUR","win","med"],
 [29,"Barbecue Andaloucia gaz 3 feux","Barbecue",200.99,9,"Cdiscount/Amazon","~219EUR","win","high"],
 [30,"Smoker americain charbon Serge","Barbecue",199,9,"Amazon/Cdiscount","~210EUR","win","high"],
 [31,"Barbecue Treville gaz 4+1 feux","Barbecue",229.99,8,"Amazon/Cdiscount","~239EUR","win","high"],
-[32,"Brasero Spring II 4 feux mixte","Barbecue",339.99,8,"Cdiscount","~349EUR","win","high"],
+[32,"Brasero Spring II 4 feux","Barbecue",339.99,8,"Cdiscount","~349EUR","win","high"],
 [33,"Cooking Box Duke 4+1 feux","Barbecue",351.49,7,"Fnac/Cdiscount","~359EUR","win","med"],
 [34,"Bingo 4 LED 4+1 bruleurs","Barbecue",359.99,7,"Amazon","~369EUR","win","med"],
 [35,"Pit Boss Navigator pellets+gaz","Barbecue",799,6,"Amazon","~829EUR","win","med"],
@@ -350,56 +547,72 @@ var PRODUCTS = [
 [37,"HP Victus 16 RTX4060 sans Win","PC et Mac",829.99,9,"Boulanger/Fnac","~829-849EUR","par","high"],
 [38,"HP 15 Ryzen5 Win11 + souris","PC et Mac",479.99,8,"Cdiscount/Amazon","~499EUR","win","high"],
 [39,"HP 17 Ryzen5 Win11 FHD","PC et Mac",589.99,7,"Cdiscount/Amazon","~599EUR","win","med"],
-[40,"HP 17 i3 Win11 8Go 512Go","PC et Mac",430.99,7,"Cdiscount/Amazon","~439EUR","win","med"],
-[41,"MacBook Air M2 13in Gris 8Go","PC et Mac",1080,9,"Fnac/Darty","1099EUR","win","high"],
-[42,"MacBook Air M2 13in Minuit 8Go","PC et Mac",999,9,"Fnac","999EUR","par","high"],
-[43,"MacBook Air M1 13in Or 8Go","PC et Mac",849.99,8,"Fnac/Amazon","~849EUR","par","high"],
+[40,"HP 17 i3 Win11 8Go","PC et Mac",430.99,7,"Cdiscount/Amazon","~439EUR","win","med"],
+[41,"MacBook Air M2 13in Gris","PC et Mac",1080,9,"Fnac/Darty","1099EUR","win","high"],
+[42,"MacBook Air M2 13in Minuit","PC et Mac",999,9,"Fnac","999EUR","par","high"],
+[43,"MacBook Air M1 13in Or","PC et Mac",849.99,8,"Fnac/Amazon","~849EUR","par","high"],
 [44,"MacBook Air M3 13in Minuit","PC et Mac",1529,8,"Fnac","~1529EUR","par","high"],
-[45,"iPad Pro 11in 256Go Noir 2024","PC et Mac",1194.99,7,"Fnac/Amazon","~1199EUR","par","high"],
+[45,"iPad Pro 11in 256Go 2024","PC et Mac",1194.99,7,"Fnac/Amazon","~1199EUR","par","high"],
 [46,"Smart Tech 50in QLED 144Hz","TV",349.90,9,"Amazon","~359EUR","win","high"],
 [47,"Smart Tech 55in LED WebOS","TV",349.90,9,"Amazon","~359EUR","win","high"],
 [48,"TCL 55in 4K HDR FireTV","TV",379.99,8,"Amazon/Boulanger","~389EUR","win","high"],
 [49,"Smart Tech 65in LED VIDAA","TV",479.90,8,"Amazon","~489EUR","win","high"],
-[50,"Samsung 65in QLED Q60D Gaming","TV",689.99,7,"Boulanger/Fnac","~699EUR","win","high"],
-[51,"Samsung 70in LED DU7105 WiFi","TV",599.99,7,"Boulanger/Fnac","~619EUR","win","high"],
+[50,"Samsung 65in QLED Q60D","TV",689.99,7,"Boulanger/Fnac","~699EUR","win","high"],
+[51,"Samsung 70in LED DU7105","TV",599.99,7,"Boulanger/Fnac","~619EUR","win","high"],
 [52,"Philips Senseo Select Bleu","Machine a cafe",219.99,8,"Darty/Fnac","~229EUR","win","high"],
 [53,"Philips EP1220 broyeur Noir","Machine a cafe",259.99,9,"Darty/Fnac","~269EUR","win","high"],
 [54,"Philips EP2220 broyeur LatteGo","Machine a cafe",289.99,9,"Darty/Fnac","~299EUR","win","high"],
 [55,"DeLonghi Autentica broyeur","Machine a cafe",319.99,8,"Darty/Fnac","~329EUR","win","high"],
-[56,"DeLonghi Magnifica Start Blanc","Machine a cafe",399.99,9,"Darty/Fnac","~409EUR","win","high"],
-[57,"DeLonghi Dinamica ECAM Silver","Machine a cafe",469.99,8,"Darty/Fnac","~479EUR","win","high"],
-[58,"Philips 3200 LatteGo 5 reglages","Machine a cafe",579.99,8,"Darty/Fnac","~589EUR","win","high"],
-[59,"Dyson V8 Origin 40min 115AW","Aspirateur",269.99,9,"Darty/Fnac/Cdiscount","~299EUR","win","high"],
+[56,"DeLonghi Magnifica Start","Machine a cafe",399.99,9,"Darty/Fnac","~409EUR","win","high"],
+[57,"DeLonghi Dinamica ECAM","Machine a cafe",469.99,8,"Darty/Fnac","~479EUR","win","high"],
+[58,"Philips 3200 LatteGo","Machine a cafe",579.99,8,"Darty/Fnac","~589EUR","win","high"],
+[59,"Dyson V8 Origin 40min","Aspirateur",269.99,9,"Darty/Fnac/Cdiscount","~299EUR","win","high"],
 [60,"Roborock Dyad Pro laveur","Aspirateur",299,9,"Amazon","~319EUR","win","high"],
-[61,"Tineco S5 Combo laveur + main","Aspirateur",289,8,"Amazon/Fnac","~299EUR","win","high"],
-[62,"Tineco S5 laveur grand reservoir","Aspirateur",389,8,"Amazon/Fnac","~399EUR","win","high"],
-[63,"Dyson V12 Origin 60min 120AW","Aspirateur",399,9,"Darty/Fnac","~399-449EUR","par","high"],
-[64,"Gedtech lave-linge 7kg 1200tr","Electromenager",239.99,9,"Cdiscount","~249EUR","win","high"],
-[65,"CE CELL7 7kg Induction Silver","Electromenager",279.99,8,"Cdiscount","~289EUR","win","high"],
-[66,"CE CELL8 8kg Induction Silver","Electromenager",299.99,8,"Cdiscount","~309EUR","win","high"],
+[61,"Tineco S5 Combo laveur","Aspirateur",289,8,"Amazon/Fnac","~299EUR","win","high"],
+[62,"Tineco S5 laveur reservoir","Aspirateur",389,8,"Amazon/Fnac","~399EUR","win","high"],
+[63,"Dyson V12 Origin 60min","Aspirateur",399,9,"Darty/Fnac","~399-449EUR","par","high"],
+[64,"Gedtech lave-linge 7kg","Electromenager",239.99,9,"Cdiscount","~249EUR","win","high"],
+[65,"CE CELL7 7kg Induction","Electromenager",279.99,8,"Cdiscount","~289EUR","win","high"],
+[66,"CE CELL8 8kg Induction","Electromenager",299.99,8,"Cdiscount","~309EUR","win","high"],
 [67,"CE CELL10 10kg 1400tr","Electromenager",299.99,8,"Cdiscount","~309EUR","win","high"],
-[68,"CHiQ 8kg 1400tr IA Vapeur","Electromenager",329.99,8,"Amazon/Cdiscount","~339EUR","win","med"],
+[68,"CHiQ 8kg IA Vapeur","Electromenager",329.99,8,"Amazon/Cdiscount","~339EUR","win","med"],
 [69,"Candy 10kg Induction Vapeur","Electromenager",349.99,7,"Cdiscount/Amazon","~359EUR","win","med"],
 [70,"Bosch 9kg 1400tr Induction","Electromenager",429.99,7,"Darty/Fnac","~449EUR","win","high"],
 [71,"Haier congelateur coffre 97L","Electromenager",189.99,8,"Cdiscount/Amazon","~199EUR","win","med"],
 [72,"Haier congelateur coffre 196L","Electromenager",229.99,8,"Cdiscount/Amazon","~239EUR","win","med"],
-[73,"CE frigo combine 251L No Frost","Electromenager",299.99,8,"Cdiscount","~309EUR","win","high"],
+[73,"CE frigo combine 251L","Electromenager",299.99,8,"Cdiscount","~309EUR","win","high"],
 [74,"Rosieres four pyrolyse 75L","Electromenager",299.99,7,"Cdiscount","~309EUR","win","med"],
-[75,"Radiateur soufflant ceramique 2kW","Chauffage",83.90,8,"Amazon/Cdiscount","~89EUR","win","med"],
+[75,"Radiateur soufflant ceramique","Chauffage",83.90,8,"Amazon/Cdiscount","~89EUR","win","med"],
 [76,"Voltman MANAO inertie 1500W","Chauffage",102.80,7,"Cdiscount","~109EUR","win","med"],
-[77,"Voltman connecte Wifi fonte 1500W","Chauffage",155.47,8,"Amazon/Cdiscount","~169EUR","win","high"]
+[77,"Voltman connecte Wifi fonte","Chauffage",155.47,8,"Amazon/Cdiscount","~169EUR","win","high"]
 ];
 
 // ============================================================
-// SCORING
+// STATE
 // ============================================================
-var userScores  = {};
-var selIds      = new Set();
-var activeTab   = "Tous";
-var activeNets  = new Set(["meta","google","tiktok","pinterest"]);
-var genAds      = {};
+var userScores = {};
+var margins    = {};
+var campaigns  = [];
+var selIds     = new Set();
+var activeTab  = "Tous";
+var activeNets = new Set(["meta","google","tiktok","pinterest"]);
+var genAds     = {};
 var pendingImport = [];
 
+// Load persisted data
+(function() {
+  try { userScores = JSON.parse(localStorage.getItem("userScores") || "{}"); } catch(e) { userScores = {}; }
+  try { margins    = JSON.parse(localStorage.getItem("margins")    || "{}"); } catch(e) { margins = {}; }
+  try { campaigns  = JSON.parse(localStorage.getItem("campaigns")  || "[]"); } catch(e) { campaigns = []; }
+})();
+
+function persist(key, data) {
+  try { localStorage.setItem(key, JSON.stringify(data)); } catch(e) {}
+}
+
+// ============================================================
+// SCORING FUNCTIONS
+// ============================================================
 function calcScore(r) {
   var d   = userScores[r[0]] || {};
   var ctr = parseInt(d.ctr) || 0;
@@ -416,28 +629,29 @@ function calcScore(r) {
 function calcPrio(r) {
   var ab = r[7] === "win" ? 15 : r[7] === "par" ? 5 : 0;
   var db = r[8] === "high" ? 10 : r[8] === "med" ? 5 : 0;
+  var sm = (SEASONAL[r[2]] || [])[NOW_MONTH] || 5;
   var s  = calcScore(r);
-  return s !== null ? s + ab + db : r[4] * 10 + ab + db;
+  return s !== null ? s + ab + db + sm : r[4] * 10 + ab + db + sm;
 }
 
 function statusOf(s) {
-  if (s === null)  return ["—",          "#f7f6f3","#7a7870"];
-  if (s >= 75)     return ["🚀 Lancer ads","#e8f4ee","#085041"];
-  if (s >= 55)     return ["📈 Prometteur","#fef3e2","#7a4a00"];
-  return                  ["🔍 Observer", "#fef2f2","#7a1a1a"];
+  if (s === null)  return ["--",           "#f7f6f3","#7a7870"];
+  if (s >= 75)     return ["Lancer ads",   "#e8f4ee","#085041"];
+  if (s >= 55)     return ["Prometteur",   "#fef3e2","#7a4a00"];
+  return                  ["Observer",     "#fef2f2","#7a1a1a"];
 }
 function advStyle(a) {
-  if (a === "win") return ["✅ Avantageux",      "#e8f4ee","#085041"];
-  if (a === "par") return ["🟡 Parité",           "#fef3e2","#7a4a00"];
-  return                  ["⚠️ Moins cher ailleu","#fef2f2","#7a1a1a"];
+  if (a === "win") return ["Avantageux",   "#e8f4ee","#085041"];
+  if (a === "par") return ["Parite",       "#fef3e2","#7a4a00"];
+  return                  ["Moins cher",   "#fef2f2","#7a1a1a"];
 }
-function adsEmoji(a) { return a==="high" ? "🔥 Forte" : a==="med" ? "🟡 Moyenne" : "🔵 Faible"; }
-function mktStars(n) { return "★".repeat(n) + "☆".repeat(10 - n); }
+function adsEmoji(a) { return a==="high" ? "Forte" : a==="med" ? "Moyenne" : "Faible"; }
+function mktStars(n) { return "\u2605".repeat(n) + "\u2606".repeat(10 - n); }
 function mktColor(n) { return n >= 8 ? "#085041" : n >= 6 ? "#7a4a00" : "#7a1a1a"; }
-function fp(p)       { return p.toLocaleString("fr-FR",{style:"currency",currency:"EUR"}); }
+function fp(p)       { return parseFloat(p).toLocaleString("fr-FR", {style:"currency", currency:"EUR"}); }
 
 // ============================================================
-// RENDER TABLE
+// PRODUCTS TAB - RENDER
 // ============================================================
 function sortBy(col) {
   document.getElementById("srt").value = col;
@@ -446,13 +660,13 @@ function sortBy(col) {
 
 function renderCatTabs() {
   var cats = ["Tous"].concat(Object.keys(CAT_COLORS));
-  var cnt = {};
+  var cnt  = {};
   PRODUCTS.forEach(function(r){ cnt[r[2]] = (cnt[r[2]] || 0) + 1; });
-  var html = cats.map(function(c){
-    var label = c !== "Tous" ? c + " (" + (cnt[c] || 0) + ")" : "Tous (" + PRODUCTS.length + ")";
-    return "<button class='stab" + (c === activeTab ? " on" : "") + "' onclick=\"setTab('" + c + "')\">" + label + "</button>";
+  var h = cats.map(function(c){
+    var lbl = c !== "Tous" ? c + " (" + (cnt[c] || 0) + ")" : "Tous (" + PRODUCTS.length + ")";
+    return "<button class='stab" + (c === activeTab ? " on" : "") + "' onclick=\"setTab('" + c + "')\">" + lbl + "</button>";
   }).join("");
-  document.getElementById("cat-tabs").innerHTML = html;
+  document.getElementById("cat-tabs").innerHTML = h;
 }
 
 function setTab(t) { activeTab = t; renderCatTabs(); render(); }
@@ -462,32 +676,28 @@ function render() {
   var srt  = document.getElementById("srt").value;
   var fadv = document.getElementById("fadv").value;
   var fads = document.getElementById("fads").value;
-
   var data = PRODUCTS.filter(function(r){
     return (activeTab === "Tous" || r[2] === activeTab)
       && (!q    || r[1].toLowerCase().indexOf(q) >= 0 || r[5].toLowerCase().indexOf(q) >= 0)
       && (!fadv || r[7] === fadv)
       && (!fads || r[8] === fads);
   });
-
-  var sortFn = {
-    price:    function(a,b){ return a[3]-b[3]; },
-    score:    function(a,b){ return (calcScore(b)||0)-(calcScore(a)||0); },
-    mkt:      function(a,b){ return b[4]-a[4]; },
-    name:     function(a,b){ return a[1].localeCompare(b[1]); },
+  var fns = {
+    price: function(a,b){ return a[3]-b[3]; },
+    score: function(a,b){ return (calcScore(b)||0)-(calcScore(a)||0); },
+    mkt:   function(a,b){ return b[4]-a[4]; },
+    name:  function(a,b){ return a[1].localeCompare(b[1]); },
     priority: function(a,b){ return calcPrio(b)-calcPrio(a); }
   };
-  data.sort(sortFn[srt] || sortFn.priority);
-
+  data.sort(fns[srt] || fns.priority);
   var rows = data.map(function(r){
-    var id  = r[0], cat = r[2], price = r[3], mkt = r[4];
-    var cc  = CAT_COLORS[cat] || ["#f0efe9","#2a2a20"];
-    var s   = calcScore(r);
-    var st  = statusOf(s);
-    var adv = advStyle(r[7]);
-    var sc  = s !== null
+    var id=r[0], cat=r[2], price=r[3], mkt=r[4];
+    var cc = CAT_COLORS[cat] || ["#f0efe9","#2a2a20"];
+    var s  = calcScore(r);
+    var st = statusOf(s), adv = advStyle(r[7]);
+    var sc = s !== null
       ? "<span class='" + (s>=75?"sh":s>=55?"sm":"sl") + "'>" + s + "</span>"
-      : "<span style='color:var(--mut)'>—</span>";
+      : "<span style='color:var(--mut)'>--</span>";
     var d = userScores[id] || {};
     return "<tr class='" + (selIds.has(id) ? "sel" : "") + "'>"
       + "<td><input type='checkbox' " + (selIds.has(id) ? "checked" : "") + " onchange='toggleSel(" + id + ",this.checked)'></td>"
@@ -495,14 +705,14 @@ function render() {
       + "<td><span class='bdg' style='background:" + cc[0] + ";color:" + cc[1] + "'>" + cat + "</span></td>"
       + "<td style='white-space:nowrap;color:var(--mut)'>" + fp(price) + "</td>"
       + "<td><span class='stars' style='color:" + mktColor(mkt) + "'>" + mktStars(mkt) + "</span><small style='color:var(--mut)'> " + mkt + "/10</small></td>"
-      + "<td style='font-size:11px;max-width:130px'><div style='overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--mut)'>" + r[5] + "</div><div style='color:#085041;font-size:10px'>" + r[6] + "</div></td>"
+      + "<td style='font-size:11px;max-width:125px'><div style='overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--mut)'>" + r[5] + "</div><div style='color:#085041;font-size:10px'>" + r[6] + "</div></td>"
       + "<td><span class='bdg' style='background:" + adv[1] + ";color:" + adv[2] + "'>" + adv[0] + "</span></td>"
       + "<td style='font-size:11px'>" + adsEmoji(r[8]) + "</td>"
-      + "<td><input class='inp' type='number' id='c" + id + "' min='0' max='5' value='" + (d.ctr||"") + "' placeholder='—' oninput='sv(" + id + ")'></td>"
-      + "<td><input class='inp' type='number' id='p" + id + "' min='0' max='5' value='" + (d.pan||"") + "' placeholder='—' oninput='sv(" + id + ")'></td>"
-      + "<td><input class='inp' type='number' id='v" + id + "' min='0' max='5' value='" + (d.ven||"") + "' placeholder='—' oninput='sv(" + id + ")'></td>"
-      + "<td><input class='inp' type='number' id='s" + id + "' min='0' max='5' value='" + (d.soc||"") + "' placeholder='—' oninput='sv(" + id + ")'></td>"
-      + "<td id='sc" + id + "'>" + sc + "</td>"
+      + "<td><input class='inp' type='number' id='c"+id+"' min='0' max='5' value='" + (d.ctr||"") + "' placeholder='--' oninput='sv("+id+")'></td>"
+      + "<td><input class='inp' type='number' id='p"+id+"' min='0' max='5' value='" + (d.pan||"") + "' placeholder='--' oninput='sv("+id+")'></td>"
+      + "<td><input class='inp' type='number' id='v"+id+"' min='0' max='5' value='" + (d.ven||"") + "' placeholder='--' oninput='sv("+id+")'></td>"
+      + "<td><input class='inp' type='number' id='s"+id+"' min='0' max='5' value='" + (d.soc||"") + "' placeholder='--' oninput='sv("+id+")'></td>"
+      + "<td id='sc"+id+"'>" + sc + "</td>"
       + "<td><span class='bdg' style='background:" + st[1] + ";color:" + st[2] + ";font-size:10px'>" + st[0] + "</span></td>"
       + "</tr>";
   });
@@ -511,34 +721,37 @@ function render() {
 }
 
 function sv(id) {
-  userScores[id] = {
+  var d = {
     ctr: (document.getElementById("c"+id)||{}).value || "",
     pan: (document.getElementById("p"+id)||{}).value || "",
     ven: (document.getElementById("v"+id)||{}).value || "",
     soc: (document.getElementById("s"+id)||{}).value || ""
   };
+  userScores[id] = d;
+  persist("userScores", userScores);
   var row = null;
-  for (var i = 0; i < PRODUCTS.length; i++) { if (PRODUCTS[i][0] === id) { row = PRODUCTS[i]; break; } }
+  for (var i = 0; i < PRODUCTS.length; i++) if (PRODUCTS[i][0] === id) { row = PRODUCTS[i]; break; }
   var s  = calcScore(row);
   var el = document.getElementById("sc" + id);
   if (el) el.innerHTML = s !== null
     ? "<span class='" + (s>=75?"sh":s>=55?"sm":"sl") + "'>" + s + "</span>"
-    : "<span style='color:var(--mut)'>—</span>";
+    : "<span style='color:var(--mut)'>--</span>";
   updateStats();
 }
 
 function updateStats() {
   var wins=0, sc=0, rd=0, sum=0;
   PRODUCTS.forEach(function(r){
-    if (r[7] === "win") wins++;
+    if (r[7]==="win") wins++;
     var s = calcScore(r);
     if (s !== null) { sc++; sum += s; if (s >= 65) rd++; }
   });
-  document.getElementById("s-total").textContent  = PRODUCTS.length;
-  document.getElementById("s-win").textContent    = wins;
-  document.getElementById("s-scored").textContent = sc;
-  document.getElementById("s-ready").textContent  = rd;
-  document.getElementById("s-avg").textContent    = sc ? Math.round(sum/sc) + "pts" : "—";
+  var setV = function(id, v) { var el = document.getElementById(id); if (el) el.textContent = v; };
+  setV("s-total",  PRODUCTS.length);
+  setV("s-win",    wins);
+  setV("s-scored", sc);
+  setV("s-ready",  rd);
+  setV("s-avg",    sc ? Math.round(sum/sc) + "pts" : "--");
 }
 
 function toggleAll(v) {
@@ -549,7 +762,6 @@ function toggleAll(v) {
   render(); updateSelPanel();
 }
 function toggleSel(id, v) { v ? selIds.add(id) : selIds.delete(id); updateSelPanel(); render(); }
-
 function updateSelPanel() {
   var names = Array.from(selIds).map(function(id){
     for (var i=0;i<PRODUCTS.length;i++) if(PRODUCTS[i][0]===id) return PRODUCTS[i];
@@ -558,30 +770,33 @@ function updateSelPanel() {
   var info = document.getElementById("sel-info");
   var tags = document.getElementById("sel-tags");
   if (info) info.textContent = names.length
-    ? names.length + " produit(s) sélectionné(s) — prêts pour la génération."
-    : "Sélectionne des produits dans Produits & Scoring, puis génère les ads ici.";
+    ? names.length + " produit(s) selectionne(s) - prets pour la generation."
+    : "Selectionne des produits dans Produits, puis genere les ads ici.";
   if (tags) tags.innerHTML = names.map(function(r){
-    return "<div class='sel-tag'><span style='max-width:155px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap'>" + r[1] + "</span>"
-      + "<span class='rm' onclick='toggleSel(" + r[0] + ",false)'>×</span></div>";
+    return "<div class='sel-tag'><span style='max-width:150px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap'>" + r[1] + "</span>"
+      + "<span class='rm' onclick='toggleSel(" + r[0] + ",false)'>x</span></div>";
   }).join("");
 }
 
 // ============================================================
-// TAB NAVIGATION
+// NAVIGATION
 // ============================================================
+var TAB_IDS = ["scoring","ads","marge","saisonnal","perf","contenu","rapport"];
 function showMain(t) {
   document.querySelectorAll(".mtab").forEach(function(b, i){
-    b.classList.toggle("on", ["products","ads"][i] === t);
+    b.classList.toggle("on", TAB_IDS[i] === t);
   });
   document.querySelectorAll(".panel").forEach(function(p){ p.classList.remove("on"); });
-  document.getElementById("tab-" + t).classList.add("on");
-  updateSelPanel();
+  var el = document.getElementById("tab-" + t);
+  if (el) el.classList.add("on");
+  if (t === "ads")      updateSelPanel();
+  if (t === "marge")    renderMarg();
+  if (t === "saisonnal")renderSeasonal();
+  if (t === "perf")     renderCampaigns();
+  if (t === "rapport")  buildReport();
+  if (t === "contenu")  populateCtProducts();
 }
-
-function sendToAds() {
-  showMain("ads");
-}
-
+function sendToAds() { showMain("ads"); }
 function toggleNet(btn) {
   var net = btn.dataset.net;
   if (activeNets.has(net)) { if (activeNets.size > 1) { activeNets.delete(net); btn.classList.remove("on"); } }
@@ -589,272 +804,669 @@ function toggleNet(btn) {
 }
 
 // ============================================================
-// AD GENERATION
+// AI CALL (unified)
+// ============================================================
+async function callAI(prompt, maxTokens) {
+  if (!maxTokens) maxTokens = 1800;
+  var p = getProv();
+  if (!apiKey || apiKey.indexOf(p.prefix) !== 0) {
+    throw new Error("Cle API invalide. Entre ta cle " + p.name + " (commence par " + p.prefix + ").");
+  }
+  var resp, raw, j;
+  try {
+    if (curProvider === "groq") {
+      resp = await fetch("https://api.groq.com/openai/v1/chat/completions", {
+        method: "POST",
+        headers: {"Content-Type": "application/json", "Authorization": "Bearer " + apiKey},
+        body: JSON.stringify({model:"llama-3.3-70b-versatile", max_tokens:maxTokens, temperature:0.7, messages:[{role:"user",content:prompt}]})
+      });
+      if (!resp.ok) {
+        raw = await resp.text();
+        throw new Error(resp.status === 401 ? "Cle Groq invalide. Verifie sur console.groq.com"
+          : resp.status === 429 ? "Limite Groq atteinte. Attends 30 secondes puis reessaie."
+          : "Groq erreur " + resp.status + ": " + raw.slice(0,150));
+      }
+      j = await resp.json();
+      raw = j.choices && j.choices[0] && j.choices[0].message ? j.choices[0].message.content : "";
+    } else if (curProvider === "gemini") {
+      resp = await fetch("https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=" + apiKey, {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({contents:[{parts:[{text:prompt}]}], generationConfig:{maxOutputTokens:maxTokens, temperature:0.7}})
+      });
+      if (!resp.ok) {
+        raw = await resp.text();
+        throw new Error(resp.status === 400 ? "Cle Gemini invalide. Verifie sur aistudio.google.com"
+          : resp.status === 429 ? "Limite Gemini atteinte. Attends 1 minute."
+          : "Gemini erreur " + resp.status + ": " + raw.slice(0,150));
+      }
+      j = await resp.json();
+      raw = j.candidates && j.candidates[0] && j.candidates[0].content && j.candidates[0].content.parts
+        ? j.candidates[0].content.parts[0].text : "";
+    } else {
+      resp = await fetch("https://api.anthropic.com/v1/messages", {
+        method: "POST",
+        headers: {"Content-Type":"application/json","x-api-key":apiKey,"anthropic-version":"2023-06-01","anthropic-dangerous-direct-browser-access":"true"},
+        body: JSON.stringify({model:"claude-3-5-haiku-20241022", max_tokens:maxTokens, messages:[{role:"user",content:prompt}]})
+      });
+      if (!resp.ok) {
+        raw = await resp.text();
+        throw new Error(resp.status === 401 ? "Cle Anthropic invalide."
+          : resp.status === 429 ? "Limite Anthropic atteinte."
+          : "Anthropic erreur " + resp.status + ": " + raw.slice(0,150));
+      }
+      j = await resp.json();
+      raw = j.content && j.content[0] ? j.content[0].text : "";
+    }
+  } catch(err) {
+    if (err.message && err.message.indexOf("fetch") === -1 && err.message.indexOf("API") === -1) {
+      throw err;
+    }
+    if (err.name === "TypeError") {
+      throw new Error("Connexion bloquee. Causes: ad blocker actif, pas de reseau, ou CORS. Erreur: " + err.message);
+    }
+    throw err;
+  }
+  return raw || "";
+}
+
+async function testConnection() {
+  var btn = document.getElementById("test-btn");
+  var res = document.getElementById("test-result");
+  if (!btn || !res) return;
+  btn.textContent = "Test en cours...";
+  btn.disabled = true;
+  res.textContent = "";
+  try {
+    var testPrompt = "Reponds uniquement: OK";
+    var r = await callAI(testPrompt, 20);
+    btn.textContent = "Tester la connexion";
+    btn.disabled = false;
+    res.textContent = "Connexion OK! Reponse: " + r.slice(0,50);
+    res.style.color = "var(--grn)";
+  } catch(e) {
+    btn.textContent = "Tester la connexion";
+    btn.disabled = false;
+    res.textContent = e.message;
+    res.style.color = "var(--red)";
+  }
+}
+
+function safeJSON(raw) {
+  raw = raw.replace(/```json|```/g,"").trim();
+  var s = raw.indexOf("{"), e = raw.lastIndexOf("}");
+  if (s >= 0 && e > s) raw = raw.slice(s, e+1);
+  return JSON.parse(raw);
+}
+
+// ============================================================
+// ADS GENERATION
 // ============================================================
 async function generateAds() {
   var sel = Array.from(selIds);
-  if (!sel.length) { alert("Sélectionne au moins un produit dans l onglet Produits."); return; }
-  var info = getProvInfo();
-  if (!apiKey || apiKey.indexOf(info.prefix) !== 0) {
-    alert("Clé API invalide. Entre ta clé " + info.name + " dans la barre en haut de la page.");
-    return;
-  }
-  var products = sel.map(function(id){
-    for(var i=0;i<PRODUCTS.length;i++) if(PRODUCTS[i][0]===id) return PRODUCTS[i];
-    return null;
-  }).filter(Boolean);
-  var nets = Array.from(activeNets);
-
+  if (!sel.length) { alert("Selectionne au moins un produit."); return; }
+  var prods = sel.map(function(id){ for(var i=0;i<PRODUCTS.length;i++) if(PRODUCTS[i][0]===id) return PRODUCTS[i]; return null; }).filter(Boolean);
+  var nets  = Array.from(activeNets);
+  var lang  = (document.getElementById("ads-lang")||{}).value || "fr";
+  var tone  = (document.getElementById("ads-tone")||{}).value || "persuasif";
   document.getElementById("ads-empty").style.display = "none";
   document.getElementById("ads-loading").style.display = "flex";
   document.getElementById("ads-results").innerHTML = "";
-
   var results = [];
-  for (var i = 0; i < products.length; i++) {
-    var r = products[i];
-    document.getElementById("load-msg").textContent = "Génération pour " + r[1] + " (" + (i+1) + "/" + products.length + ")...";
+  for (var i = 0; i < prods.length; i++) {
+    var r = prods[i];
+    document.getElementById("load-msg").textContent = "Generation pour " + r[1] + " (" + (i+1) + "/" + prods.length + ")...";
     try {
-      var data = await callAI(r, nets);
-      results.push({product: r, data: data});
-      genAds[r[0]] = {product: r, data: data, nets: nets};
+      var data = await genAdsForProduct(r, nets, lang, tone);
+      results.push({product:r, data:data});
+      genAds[r[0]] = {product:r, data:data, nets:nets};
     } catch(e) {
-      results.push({product: r, error: e.message});
+      results.push({product:r, error:e.message});
     }
   }
   document.getElementById("ads-loading").style.display = "none";
   renderAdsResults(results, nets);
 }
 
-async function callAI(r, nets) {
-  var netNames = {meta:"Meta (Facebook+Instagram)", google:"Google Shopping", tiktok:"TikTok Ads", pinterest:"Pinterest Ads"};
-  var jsonSchema = [];
-  if (nets.indexOf("meta") >= 0) jsonSchema.push('"meta":{"strategie":"...","budget_jour":"X-YEUR/jour","audience":"...","format":"...","ads":[{"var":"A","accroche":"...","texte":"...","cta":"..."},{"var":"B","accroche":"...","texte":"...","cta":"..."},{"var":"C","accroche":"...","texte":"...","cta":"..."}],"conseils":["...","...","..."]}');
-  if (nets.indexOf("google") >= 0) jsonSchema.push('"google":{"strategie":"...","titre":"...","description":"...","mots_cles":["...","...","...","...","..."],"encheres":"...","conseils":["...","...","..."]}');
-  if (nets.indexOf("tiktok") >= 0) jsonSchema.push('"tiktok":{"strategie":"...","budget_jour":"X-YEUR/jour","accroche":"...","script":"...","hashtags":["#...","#...","#...","#...","#..."],"musique":"...","conseils":["...","...","..."]}');
-  if (nets.indexOf("pinterest") >= 0) jsonSchema.push('"pinterest":{"strategie":"...","budget_jour":"X-YEUR/jour","titre":"...","description":"...","tableaux":["...","...","..."],"mots_cles":["...","...","...","..."],"conseils":["...","...","..."]}');
-
-  var prompt = "Expert publicité e-commerce France. Génère ads pour:\n"
-    + "Produit: " + r[1] + "\nCategorie: " + r[2] + "\nPrix: " + r[3] + "EUR\n"
-    + "Concurrent: " + r[5] + " (" + r[6] + ")\n"
+async function genAdsForProduct(r, nets, lang, tone) {
+  var nm = {meta:"Meta (Facebook+Instagram)", google:"Google Shopping", tiktok:"TikTok Ads", pinterest:"Pinterest Ads"};
+  var schema = [];
+  if (nets.indexOf("meta") >= 0) schema.push('"meta":{"strategie":"...","budget_jour":"X-YEUR","audience":"...","format":"...","ads":[{"var":"A","accroche":"...","texte":"...","cta":"..."},{"var":"B","accroche":"...","texte":"...","cta":"..."},{"var":"C","accroche":"...","texte":"...","cta":"..."}],"conseils":["...","...","..."]}');
+  if (nets.indexOf("google") >= 0) schema.push('"google":{"strategie":"...","titre":"...","description":"...","mots_cles":["...","...","...","...","..."],"encheres":"...","conseils":["...","...","..."]}');
+  if (nets.indexOf("tiktok") >= 0) schema.push('"tiktok":{"strategie":"...","budget_jour":"X-YEUR","accroche":"...","script":"...","hashtags":["#...","#...","#...","#...","#..."],"musique":"...","conseils":["...","...","..."]}');
+  if (nets.indexOf("pinterest") >= 0) schema.push('"pinterest":{"strategie":"...","budget_jour":"X-YEUR","titre":"...","description":"...","tableaux":["...","...","..."],"mots_cles":["...","...","..."],"conseils":["...","...","..."]}');
+  var langName = {fr:"francais",be:"francais belge",ch:"francais suisse",ca:"francais canadien"};
+  var prompt = "Expert e-commerce France. Genere des publicites " + tone + " en " + (langName[lang]||"francais") + " pour:\n"
+    + "Produit: " + r[1] + "\nCategorie: " + r[2] + "\nPrix: " + r[3] + " EUR\n"
+    + "Concurrent: " + r[5] + " (prix: " + r[6] + ")\n"
     + "Avantage prix: " + (r[7]==="win"?"Prix plus bas que concurrent":"Prix similaire") + "\n"
-    + "Intensite pub marche: " + r[8] + "\nPotentiel: " + r[4] + "/10\n"
-    + "Reseaux: " + nets.map(function(n){ return netNames[n]; }).join(", ") + "\n\n"
-    + "Reponds UNIQUEMENT en JSON valide, sans markdown, sans explication:\n{" + jsonSchema.join(",") + "}";
-
-  var resp, rawText, parsed;
-
-  if (curProvider === "groq") {
-    resp = await fetch("https://api.groq.com/openai/v1/chat/completions", {
-      method: "POST",
-      headers: {"Content-Type":"application/json","Authorization":"Bearer " + apiKey},
-      body: JSON.stringify({model:"llama-3.3-70b-versatile", max_tokens:2000, temperature:0.7, messages:[{role:"user",content:prompt}]})
-    });
-    if (!resp.ok) { rawText = await resp.text(); throw new Error("Groq erreur " + resp.status + ": " + rawText.slice(0,200)); }
-    var j1 = await resp.json();
-    rawText = (j1.choices && j1.choices[0] && j1.choices[0].message) ? j1.choices[0].message.content : "{}";
-
-  } else if (curProvider === "gemini") {
-    resp = await fetch("https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=" + apiKey, {
-      method: "POST",
-      headers: {"Content-Type":"application/json"},
-      body: JSON.stringify({contents:[{parts:[{text:prompt}]}], generationConfig:{maxOutputTokens:2000,temperature:0.7}})
-    });
-    if (!resp.ok) { rawText = await resp.text(); throw new Error("Gemini erreur " + resp.status + ": " + rawText.slice(0,200)); }
-    var j2 = await resp.json();
-    rawText = (j2.candidates && j2.candidates[0] && j2.candidates[0].content && j2.candidates[0].content.parts)
-      ? j2.candidates[0].content.parts[0].text : "{}";
-
-  } else {
-    resp = await fetch("https://api.anthropic.com/v1/messages", {
-      method: "POST",
-      headers: {"Content-Type":"application/json","x-api-key":apiKey,"anthropic-version":"2023-06-01","anthropic-dangerous-direct-browser-access":"true"},
-      body: JSON.stringify({model:"claude-3-5-haiku-20241022", max_tokens:2000, messages:[{role:"user",content:prompt}]})
-    });
-    if (!resp.ok) { rawText = await resp.text(); throw new Error("Anthropic erreur " + resp.status + ": " + rawText.slice(0,200)); }
-    var j3 = await resp.json();
-    rawText = (j3.content && j3.content[0]) ? j3.content[0].text : "{}";
-  }
-
-  rawText = rawText.replace(/```json|```/g,"").trim();
-  var start = rawText.indexOf("{");
-  var end   = rawText.lastIndexOf("}");
-  if (start >= 0 && end > start) rawText = rawText.slice(start, end+1);
-  try { parsed = JSON.parse(rawText); }
-  catch(e) { throw new Error("JSON invalide: " + rawText.slice(0,100)); }
-  return parsed;
+    + "Intensite concurrence pub: " + r[8] + "\nPotentiel marche: " + r[4] + "/10\n"
+    + "Reseaux: " + nets.map(function(n){return nm[n];}).join(", ") + "\n\n"
+    + "Reponds UNIQUEMENT en JSON valide sans markdown:\n{" + schema.join(",") + "}";
+  var raw = await callAI(prompt, 2000);
+  return safeJSON(raw);
 }
 
 function renderAdsResults(results, nets) {
-  var NC = {
-    meta:      ["#1877f2","#e8f0fb","Meta FB+IG"],
-    google:    ["#ea4335","#fff0ef","Google Shopping"],
-    tiktok:    ["#010101","#f0f0f0","TikTok"],
-    pinterest: ["#e60023","#fff0f0","Pinterest"]
-  };
-  var html = "";
+  var NC = {meta:["#1877f2","#e8f0fb","Meta FB+IG"], google:["#ea4335","#fff0ef","Google"], tiktok:["#010101","#f0f0f0","TikTok"], pinterest:["#e60023","#fff0f0","Pinterest"]};
+  var h = "";
   results.forEach(function(item){
-    if (item.error) {
-      html += "<div class='alert ao' style='margin-bottom:.65rem'>Erreur pour " + item.product[1] + ": " + item.error + "</div>";
-      return;
-    }
-    html += "<div style='margin-bottom:1.5rem'>"
-      + "<div style='display:flex;align-items:center;gap:8px;margin-bottom:.55rem'>"
-      + "<b style='font-size:13px'>" + item.product[1] + "</b>"
-      + "<span style='font-size:11px;color:var(--mut)'>" + fp(item.product[3]) + " · " + item.product[2] + "</span>"
-      + (item.product[7]==="win" ? "<span class='bdg' style='background:#e8f4ee;color:#085041'>✅ Prix avantageux</span>" : "")
+    if (item.error) { h += "<div class='al ao' style='margin-bottom:.6rem'>Erreur " + item.product[1] + ": " + item.error + "</div>"; return; }
+    h += "<div style='margin-bottom:1.4rem'>"
+      + "<div style='display:flex;align-items:center;gap:8px;margin-bottom:.5rem'><b>" + item.product[1] + "</b>"
+      + "<span style='font-size:11px;color:var(--mut)'>" + fp(item.product[3]) + "</span>"
+      + (item.product[7]==="win"?"<span class='bdg' style='background:#e8f4ee;color:#085041'>Avantageux</span>":"")
       + "</div><div class='adgrid'>";
-
     nets.forEach(function(net){
-      var d = item.data[net];
-      if (!d) return;
+      var d = item.data[net]; if (!d) return;
       var c = NC[net] || ["#333","#f0f0f0",net];
-      html += "<div class='adcard'>"
-        + "<div class='adcard-hd'><span class='nlabel' style='background:" + c[1] + ";color:" + c[0] + "'>" + c[2] + "</span>"
-        + "<button class='btn bsm' onclick='copyCard(this)'>📋 Copier</button></div>";
-      if (d.strategie)   html += sec("Stratégie",      d.strategie);
-      if (d.budget_jour) html += sec("Budget/jour",    "<b>" + d.budget_jour + "</b>");
-      if (d.audience)    html += sec("Audience",       d.audience);
-      if (d.format)      html += sec("Format",         d.format);
+      h += "<div class='adcard'><div class='adcard-hd'>"
+        + "<span class='nlabel' style='background:" + c[1] + ";color:" + c[0] + "'>" + c[2] + "</span>"
+        + "<button class='btn bsm' onclick='copyCard(this)'>Copier</button></div>";
+      if (d.strategie)   h += sec("Strategie", d.strategie);
+      if (d.budget_jour) h += sec("Budget/jour", "<b>" + d.budget_jour + "</b>");
+      if (d.audience)    h += sec("Audience", d.audience);
+      if (d.format)      h += sec("Format", d.format);
       if (d.ads && d.ads.length) d.ads.forEach(function(a){
-        html += "<div class='adsec'><div class='varbx'>"
-          + "<div class='stl'>Variation " + (a.var||"") + "</div>"
+        h += "<div class='adsec'><div class='varbx'><div class='stl'>Variation " + (a.var||"") + "</div>"
           + "<div class='sct'><b>" + (a.accroche||"") + "</b></div>"
           + "<div class='sct' style='margin-top:3px'>" + (a.texte||"") + "</div>"
-          + "<div style='margin-top:2px;font-size:11px;color:#085041'>CTA: " + (a.cta||"") + "</div>"
-          + "</div></div>";
+          + "<div style='margin-top:2px;font-size:11px;color:#085041'>CTA: " + (a.cta||"") + "</div></div></div>";
       });
-      if (d.titre)       html += sec("Titre", d.titre);
-      if (d.description) html += sec("Description", d.description);
-      if (d.mots_cles)   html += tagSec("Mots-clés", d.mots_cles);
-      if (d.encheres)    html += sec("Enchères", d.encheres);
-      if (d.accroche)    html += sec("Accroche 3sec", "<b>" + d.accroche + "</b>");
-      if (d.script)      html += "<div class='adsec'><div class='stl'>Script</div><div class='sct' style='white-space:pre-wrap;font-size:11.5px'>" + d.script + "</div></div>";
-      if (d.musique)     html += sec("Style musical", d.musique);
-      if (d.hashtags)    html += tagSec("Hashtags", d.hashtags, "#085041");
-      if (d.tableaux)    html += tagSec("Tableaux Pinterest", d.tableaux);
-      if (d.mots_cles_seo) html += tagSec("Mots-clés SEO", d.mots_cles_seo);
-      if (d.conseils)    html += "<div class='adsec'><div class='stl'>💡 Conseils</div><ul style='padding-left:1rem;font-size:11.5px;color:var(--mut)'>"
-        + d.conseils.map(function(c){ return "<li style='margin-bottom:3px'>" + c + "</li>"; }).join("") + "</ul></div>";
-      html += "</div>";
+      if (d.titre)       h += sec("Titre", d.titre);
+      if (d.description) h += sec("Description", d.description);
+      if (d.mots_cles)   h += tagSec("Mots-cles", d.mots_cles);
+      if (d.encheres)    h += sec("Encheres", d.encheres);
+      if (d.accroche)    h += sec("Accroche 3sec", "<b>" + d.accroche + "</b>");
+      if (d.script)      h += "<div class='adsec'><div class='stl'>Script</div><div class='sct' style='white-space:pre-wrap;font-size:11.5px'>" + d.script + "</div></div>";
+      if (d.musique)     h += sec("Style musical", d.musique);
+      if (d.hashtags)    h += tagSec("Hashtags", d.hashtags, "#085041");
+      if (d.tableaux)    h += tagSec("Tableaux", d.tableaux);
+      if (d.conseils)    h += "<div class='adsec'><div class='stl'>Conseils</div><ul style='padding-left:1rem;font-size:11.5px;color:var(--mut)'>" + d.conseils.map(function(c){ return "<li style='margin-bottom:2px'>" + c + "</li>"; }).join("") + "</ul></div>";
+      h += "</div>";
     });
-    html += "</div></div>";
+    h += "</div></div>";
   });
-  document.getElementById("ads-results").innerHTML = html;
+  document.getElementById("ads-results").innerHTML = h;
 }
 
-function sec(title, content) {
-  return "<div class='adsec'><div class='stl'>" + title + "</div><div class='sct'>" + content + "</div></div>";
+function sec(t, c) { return "<div class='adsec'><div class='stl'>" + t + "</div><div class='sct'>" + c + "</div></div>"; }
+function tagSec(t, arr, col) {
+  return "<div class='adsec'><div class='stl'>" + t + "</div><div class='tags'>"
+    + arr.map(function(x){ return "<span class='tag'" + (col?" style='color:"+col+"'":"") + ">" + x + "</span>"; }).join("") + "</div></div>";
 }
-function tagSec(title, arr, color) {
-  return "<div class='adsec'><div class='stl'>" + title + "</div><div class='tags'>"
-    + arr.map(function(t){ return "<span class='tag'" + (color?" style='color:"+color+"'":"") + ">" + t + "</span>"; }).join("")
-    + "</div></div>";
-}
-
 function copyCard(btn) {
   var card = btn.closest(".adcard");
-  var text = Array.from(card.querySelectorAll(".stl,.sct,.tag")).map(function(e){ return e.textContent.trim(); }).join("\n");
-  if (navigator.clipboard) navigator.clipboard.writeText(text).then(function(){ btn.textContent="✅ Copié!"; setTimeout(function(){ btn.textContent="📋 Copier"; },1500); });
+  var txt  = Array.from(card.querySelectorAll(".stl,.sct,.tag")).map(function(e){ return e.textContent.trim(); }).join("\n");
+  if (navigator.clipboard) navigator.clipboard.writeText(txt).then(function(){ btn.textContent="OK!"; setTimeout(function(){ btn.textContent="Copier"; }, 1500); });
 }
 function clearAds() { genAds={}; document.getElementById("ads-results").innerHTML=""; document.getElementById("ads-empty").style.display="block"; }
 
-function exportAds() {
-  if (!Object.keys(genAds).length) { alert("Génère d abord des ads."); return; }
-  var rows = [["Produit","Categorie","Prix","Reseau","Contenu"]];
-  Object.values(genAds).forEach(function(item){
-    item.nets.forEach(function(net){
-      var d = item.data[net]; if(!d) return;
-      rows.push(['"'+item.product[1]+'"', item.product[2], item.product[3], net, '"'+JSON.stringify(d).replace(/"/g,'""')+'"']);
+// ============================================================
+// AUTO-SCORE (AI)
+// ============================================================
+async function autoScore() {
+  var unseq = PRODUCTS.filter(function(r){ return !calcScore(r); }).slice(0,10);
+  if (!unseq.length) { alert("Tous les produits ont deja un score manuel!"); return; }
+  var ok = confirm("L IA va estimer les scores organiques pour " + unseq.length + " produits non scores. Continuer?");
+  if (!ok) return;
+  var prompt = "Tu es expert e-commerce France. Pour chaque produit, estime les metriques organiques (echelle 1-5):\n"
+    + "CTR fiche produit, Ajout panier, Ventes organiques, Engagement social.\n"
+    + "Criteres: popularite marque, prix attractif, categorie tendance, saison actuelle (mois " + (NOW_MONTH+1) + ").\n\n"
+    + "Produits:\n" + unseq.map(function(r, i){ return (i+1) + ". " + r[1] + " (" + r[3] + " EUR, " + r[2] + ", " + (r[7]==="win"?"prix avantageux":"prix normal") + ")"; }).join("\n")
+    + "\n\nReponds UNIQUEMENT en JSON: {\"scores\":[{\"id\":ID,\"ctr\":N,\"pan\":N,\"ven\":N,\"soc\":N},...]}";
+  try {
+    var raw  = await callAI(prompt, 1200);
+    var data = safeJSON(raw);
+    if (data.scores && data.scores.length) {
+      data.scores.forEach(function(s, i){
+        var id = unseq[i] ? unseq[i][0] : s.id;
+        userScores[id] = {ctr:String(s.ctr||1),pan:String(s.pan||1),ven:String(s.ven||1),soc:String(s.soc||1)};
+      });
+      persist("userScores", userScores);
+      render();
+      alert("Scores estimes par l IA pour " + data.scores.length + " produits. Tu peux les ajuster manuellement.");
+    }
+  } catch(e) { alert("Erreur: " + e.message); }
+}
+
+// ============================================================
+// MARGE & ROI TAB
+// ============================================================
+function saveMarg(id, field, val) {
+  if (!margins[id]) margins[id] = {};
+  margins[id][field] = parseFloat(val) || 0;
+  persist("margins", margins);
+  renderMarg();
+  renderAlloc();
+}
+
+function margColor(pct) {
+  if (!pct) return "#888780";
+  if (pct > 35) return "#1D9E75";
+  if (pct > 20) return "#BA7517";
+  return "#E24B4A";
+}
+
+function renderMarg() {
+  var roasDef = parseFloat((document.getElementById("roas-default")||{}).value) || 3;
+  var sorted = PRODUCTS.slice().sort(function(a,b){ return calcPrio(b)-calcPrio(a); });
+  var h = sorted.map(function(r){
+    var id   = r[0];
+    var m    = margins[id] || {};
+    var cost = m.cost || 0;
+    var roas = m.roas || roasDef;
+    var gross = cost > 0 ? r[3] - cost : null;
+    var pct   = gross !== null ? Math.round((gross / r[3]) * 100) : null;
+    var cpa   = gross !== null ? Math.round(gross) : null;
+    var bpd   = gross !== null && roas > 0 ? (gross / roas).toFixed(2) : null;
+    var mc    = margColor(pct);
+    return "<tr>"
+      + "<td><div class='pn' title='" + r[1] + "'>" + r[1] + "</div></td>"
+      + "<td style='white-space:nowrap'>" + fp(r[3]) + "</td>"
+      + "<td><input class='inp-lg' type='number' min='0' step='0.01' placeholder='?' value='" + (cost||"") + "' oninput='saveMarg(" + id + ",\"cost\",this.value)'></td>"
+      + "<td style='font-weight:600;color:" + mc + "'>" + (gross !== null ? fp(gross) : "--") + "</td>"
+      + "<td style='font-weight:600;color:" + mc + "'>" + (pct !== null ? pct + "%" : "--") + "</td>"
+      + "<td><input class='inp-lg' type='number' min='1' step='0.1' value='" + roas + "' oninput='saveMarg(" + id + ",\"roas\",this.value)'></td>"
+      + "<td style='color:" + mc + ";font-weight:600'>" + (cpa !== null ? fp(cpa) : "--") + "</td>"
+      + "<td style='color:" + mc + ";font-weight:600'>" + (bpd !== null ? bpd + " EUR" : "--") + "</td>"
+      + "<td><span class='bdg' style='background:" + mc + "20;color:" + mc + "'>"
+        + (pct===null?"A renseigner":pct>35?"Excellente":pct>20?"Correcte":"Faible") + "</span></td>"
+      + "</tr>";
+  }).join("");
+  var body = document.getElementById("marge-body");
+  if (body) body.innerHTML = h;
+  renderAlloc();
+}
+
+function renderAlloc() {
+  var budget   = parseFloat((document.getElementById("budget-total")||{}).value) || 0;
+  var roasDef  = parseFloat((document.getElementById("roas-default")||{}).value) || 3;
+  if (!budget) { var el=document.getElementById("alloc-result"); if(el)el.textContent="Entre ton budget pour voir la repartition."; return; }
+  var candidates = PRODUCTS.filter(function(r){ return r[7]==="win" || r[8]==="high"; });
+  var scored  = candidates.map(function(r){
+    var m    = margins[r[0]] || {};
+    var cost = m.cost || 0;
+    var gross = cost > 0 ? r[3] - cost : r[3] * 0.25;
+    var pct  = gross / r[3];
+    var sm   = (SEASONAL[r[2]] || [])[NOW_MONTH] || 5;
+    var sc   = calcScore(r) || 0;
+    var w    = r[4] * 0.25 + sm * 0.25 + pct * 10 * 0.25 + sc * 0.25;
+    return {r:r, w:w, gross:gross};
+  });
+  scored.sort(function(a,b){return b.w-a.w;});
+  var top = scored.slice(0,8);
+  var wsum = top.reduce(function(s,x){return s+x.w;},0);
+  if (!wsum) { var el=document.getElementById("alloc-result"); if(el)el.textContent="Aucun produit avec prix avantageux."; return; }
+  var h = "<div style='font-size:11px;font-weight:600;color:var(--mut);margin-bottom:.4rem;text-transform:uppercase;letter-spacing:.3px'>Repartition du budget " + Math.round(budget) + " EUR/mois</div>";
+  top.forEach(function(x){
+    var alloc = Math.round((x.w / wsum) * budget);
+    if (!alloc) return;
+    var meta   = Math.round(alloc * 0.5);
+    var google = Math.round(alloc * 0.35);
+    var tiktok = alloc - meta - google;
+    var pct2 = Math.round((x.w / wsum) * 100);
+    h += "<div style='display:flex;align-items:center;gap:8px;margin-bottom:.35rem'>"
+      + "<div style='flex:1;min-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:12px'>" + x.r[1] + "</div>"
+      + "<div style='background:var(--bg);border-radius:5px;height:14px;flex:2;overflow:hidden'>"
+        + "<div style='height:100%;background:#1D9E75;width:" + pct2 + "%'></div></div>"
+      + "<div style='font-size:12px;font-weight:600;min-width:80px;text-align:right'>" + alloc + " EUR"
+        + "<span style='font-size:10px;color:var(--mut);font-weight:400'> (Meta " + meta + " G " + google + " TT " + tiktok + ")</span></div>"
+      + "</div>";
+  });
+  var el = document.getElementById("alloc-result");
+  if (el) el.innerHTML = h;
+}
+
+// ============================================================
+// SEASONAL TAB
+// ============================================================
+function renderSeasonal() {
+  var cats  = Object.keys(SEASONAL);
+  var ncols = 14;
+  var cellW = "calc((100% - 140px) / 12)";
+  var gridStyle = "grid-template-columns: 140px repeat(12, " + cellW + ");";
+  var h = "<div class='heat-grid' style='" + gridStyle + "'>";
+  h += "<div class='heat-hdr'></div>";
+  MONTH_NAMES.forEach(function(m, mi){
+    h += "<div class='heat-hdr' style='" + (mi===NOW_MONTH?"font-weight:700;color:var(--txt)":"") + "'>" + m + "</div>";
+  });
+  cats.forEach(function(cat){
+    var cc   = CAT_COLORS[cat] || ["#e5e3dc","#2a2a20"];
+    var vals = SEASONAL[cat];
+    h += "<div class='heat-lbl' style='border-top:0.5px solid var(--bord)'>" + cat + "</div>";
+    vals.forEach(function(v, mi){
+      var alpha  = Math.round((v / 10) * 100);
+      var bg     = "rgba(" + hexToRgb(cc[0]) + "," + (alpha/100).toFixed(2) + ")";
+      var border = mi === NOW_MONTH ? "border:2px solid " + cc[1] + ";" : "border:0.5px solid var(--bord);";
+      var c      = v >= 7 ? cc[1] : "var(--mut)";
+      h += "<div class='heat-cell' style='background:" + bg + ";" + border + "color:" + c + ";border-radius:4px'>" + v + "</div>";
     });
   });
-  dl(rows.map(function(r){return r.join(",");}).join("\n"), "ads_generees.csv");
+  h += "</div>";
+  var el = document.getElementById("seasonal-grid");
+  if (el) el.innerHTML = h;
+  renderSeasonalReco();
 }
 
-function exportScoring() {
-  var h = "ID,Produit,Categorie,Prix,Potentiel,Concurrent,Prix concurrent,Avantage,Ads intensite,CTR,Panier,Ventes,Social,Score,Statut,Priorite";
-  var rows = PRODUCTS.map(function(r){
-    var s=calcScore(r), d=userScores[r[0]]||{}, st=statusOf(s);
-    return [r[0],'"'+r[1]+'"',r[2],r[3],r[4],'"'+r[5]+'"',r[6],r[7],r[8],d.ctr||"",d.pan||"",d.ven||"",d.soc||"",s||"",st[0],Math.round(calcPrio(r))].join(",");
+function hexToRgb(hex) {
+  var r = parseInt(hex.slice(1,3),16);
+  var g = parseInt(hex.slice(3,5),16);
+  var b = parseInt(hex.slice(5,7),16);
+  return r + "," + g + "," + b;
+}
+
+function renderSeasonalReco() {
+  var nm1 = NOW_MONTH;
+  var nm2 = (NOW_MONTH + 1) % 12;
+  var nm3 = (NOW_MONTH + 2) % 12;
+  var cats = Object.keys(SEASONAL);
+  var sorted = cats.map(function(c){
+    return {cat:c, now:SEASONAL[c][nm1], next:SEASONAL[c][nm2], in2:SEASONAL[c][nm3]};
+  }).sort(function(a,b){ return b.now-a.now; });
+  var h = sorted.map(function(x){
+    var emoji = x.now >= 8 ? "Forte" : x.now >= 5 ? "Moderee" : "Faible";
+    var trend = x.next > x.now ? "&#8593; En hausse" : x.next < x.now ? "&#8595; En baisse" : "Stable";
+    return "<b>" + x.cat + "</b> &mdash; Demande actuelle: <b>" + x.now + "/10</b> (" + emoji + ") &mdash; "
+      + MONTH_NAMES[nm2] + ": " + x.next + "/10 " + trend + "<br>";
+  }).join("");
+  var el = document.getElementById("seasonal-reco");
+  if (el) el.innerHTML = h;
+}
+
+// ============================================================
+// PERFORMANCE TRACKER
+// ============================================================
+function addCampaign() {
+  var product = (document.getElementById("c-product")||{}).value || "";
+  var network = (document.getElementById("c-network")||{}).value || "Meta";
+  var spend   = parseFloat((document.getElementById("c-spend")||{}).value)   || 0;
+  var clicks  = parseInt((document.getElementById("c-clicks")||{}).value)    || 0;
+  var orders  = parseInt((document.getElementById("c-orders")||{}).value)    || 0;
+  var revenue = parseFloat((document.getElementById("c-revenue")||{}).value) || 0;
+  var note    = (document.getElementById("c-note")||{}).value  || "";
+  var date    = (document.getElementById("c-date")||{}).value  || new Date().toISOString().slice(0,10);
+  if (!product || !spend) { alert("Remplis au moins le produit et le budget depense."); return; }
+  campaigns.push({id:Date.now(), product:product, network:network, date:date, spend:spend, clicks:clicks, orders:orders, revenue:revenue, note:note});
+  persist("campaigns", campaigns);
+  renderCampaigns();
+  ["c-product","c-spend","c-clicks","c-orders","c-revenue","c-note"].forEach(function(id){
+    var el = document.getElementById(id); if(el) el.value = "";
   });
-  dl([h].concat(rows).join("\n"), "scoring_" + new Date().toISOString().slice(0,10) + ".csv");
 }
 
-function dl(content, filename) {
-  var a = document.createElement("a");
-  a.href = URL.createObjectURL(new Blob([content],{type:"text/csv;charset=utf-8;"}));
-  a.download = filename; a.click();
+function delCampaign(id) {
+  campaigns = campaigns.filter(function(c){ return c.id !== id; });
+  persist("campaigns", campaigns);
+  renderCampaigns();
+}
+
+function renderCampaigns() {
+  if (!campaigns.length) {
+    var el = document.getElementById("perf-body"); if(el) el.innerHTML = "<tr><td colspan='13' style='text-align:center;color:var(--mut);padding:1rem'>Aucune campagne enregistree.</td></tr>";
+    var tot = document.getElementById("perf-totals"); if(tot) tot.textContent = "Aucune campagne enregistree.";
+    return;
+  }
+  var totSpend=0, totRev=0, totOrd=0, totClicks=0;
+  var h = campaigns.slice().reverse().map(function(c){
+    var roas  = c.spend > 0 ? (c.revenue / c.spend) : 0;
+    var cpa   = c.orders > 0 ? (c.spend / c.orders) : 0;
+    var ctr   = c.clicks > 0 && c.spend > 0 ? ((c.clicks / (c.spend * 100)) * 100) : 0;
+    var ok    = roas >= 2;
+    var sc    = ok ? "#085041" : "#7a1a1a";
+    var sbg   = ok ? "#e8f4ee" : "#fef2f2";
+    totSpend += c.spend; totRev += c.revenue; totOrd += c.orders; totClicks += c.clicks;
+    return "<tr>"
+      + "<td><div class='pn' title='" + c.product + "'>" + c.product + "</div></td>"
+      + "<td>" + c.network + "</td>"
+      + "<td style='font-size:11px;color:var(--mut)'>" + c.date + "</td>"
+      + "<td>" + fp(c.spend) + "</td>"
+      + "<td>" + c.clicks + "</td>"
+      + "<td>" + c.orders + "</td>"
+      + "<td>" + fp(c.revenue) + "</td>"
+      + "<td style='font-weight:600;color:" + sc + "'>" + roas.toFixed(2) + "x</td>"
+      + "<td style='color:" + sc + "'>" + (cpa ? fp(cpa) : "--") + "</td>"
+      + "<td style='color:var(--mut)'>" + ctr.toFixed(1) + "%</td>"
+      + "<td><span class='bdg' style='background:" + sbg + ";color:" + sc + "'>" + (ok?"Rentable":"A optimiser") + "</span></td>"
+      + "<td style='font-size:11px;color:var(--mut);max-width:100px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap'>" + c.note + "</td>"
+      + "<td><button class='btn bsm' onclick='delCampaign(" + c.id + ")' style='color:#7a1a1a'>x</button></td>"
+      + "</tr>";
+  }).join("");
+  var body = document.getElementById("perf-body"); if(body) body.innerHTML = h;
+  var roasTotal = totSpend > 0 ? (totRev / totSpend) : 0;
+  var tot = document.getElementById("perf-totals");
+  if (tot) tot.innerHTML = "<b>Budget total depense:</b> " + fp(totSpend) + "<br>"
+    + "<b>CA genere:</b> " + fp(totRev) + "<br>"
+    + "<b>ROAS global:</b> <span style='font-weight:700;color:" + (roasTotal>=2?"#085041":"#7a1a1a") + "'>" + roasTotal.toFixed(2) + "x</span><br>"
+    + "<b>Commandes totales:</b> " + totOrd + "<br>"
+    + "<b>Clics totaux:</b> " + totClicks;
+}
+
+function calcAB() {
+  var get = function(id){ return parseInt((document.getElementById(id)||{}).value)||0; };
+  var ai=get("ab-a-imp"), ac=get("ab-a-clk"), ao=get("ab-a-ord");
+  var bi=get("ab-b-imp"), bc=get("ab-b-clk"), bo=get("ab-b-ord");
+  if (!ai || !bi) { document.getElementById("ab-result").textContent = "Remplis les donnees des deux variations."; return; }
+  var ctrA = ai>0 ? (ac/ai*100).toFixed(2) : 0;
+  var ctrB = bi>0 ? (bc/bi*100).toFixed(2) : 0;
+  var crA  = ac>0 ? (ao/ac*100).toFixed(2) : 0;
+  var crB  = bc>0 ? (bo/bc*100).toFixed(2) : 0;
+  var winCTR = parseFloat(ctrB) > parseFloat(ctrA) ? "B" : "A";
+  var winCR  = parseFloat(crB)  > parseFloat(crA)  ? "B" : "A";
+  var lift   = ctrA > 0 ? Math.round(((ctrB-ctrA)/ctrA)*100) : 0;
+  var col    = winCTR === "B" ? "#085041" : "#7a4a00";
+  document.getElementById("ab-result").innerHTML = "<div style='display:flex;gap:16px;flex-wrap:wrap;font-size:12px'>"
+    + "<div><b>Variation A</b><br>CTR: " + ctrA + "% | Conv: " + crA + "%</div>"
+    + "<div><b>Variation B</b><br>CTR: " + ctrB + "% | Conv: " + crB + "%</div>"
+    + "<div style='font-weight:600;color:" + col + "'>Gagnant CTR: Variation " + winCTR + " (" + (lift>=0?"+":"") + lift + "%)<br>Gagnant Conversions: Variation " + winCR + "</div>"
+    + "</div>";
 }
 
 // ============================================================
-// IMPORT
+// CONTENU AI TAB
 // ============================================================
-function openImport()  { document.getElementById("imp-modal").style.display="flex"; }
+function populateCtProducts() {
+  var sel = document.getElementById("ct-product");
+  if (!sel) return;
+  sel.innerHTML = PRODUCTS.slice().sort(function(a,b){ return calcPrio(b)-calcPrio(a); }).map(function(r){
+    return "<option value='" + r[0] + "'>" + r[1] + " (" + fp(r[3]) + ")</option>";
+  }).join("");
+}
+
+async function generateContent() {
+  var selEl  = document.getElementById("ct-product");
+  var typeEl = document.getElementById("ct-type");
+  var langEl = document.getElementById("ct-lang");
+  if (!selEl || !typeEl) return;
+  var pid  = parseInt(selEl.value);
+  var type = typeEl.value;
+  var lang = langEl ? langEl.value : "fr";
+  var r    = null;
+  for (var i=0;i<PRODUCTS.length;i++) if(PRODUCTS[i][0]===pid){r=PRODUCTS[i];break;}
+  if (!r) return;
+  var loadEl = document.getElementById("ct-loading");
+  var resEl  = document.getElementById("ct-result");
+  if (loadEl) loadEl.style.display = "flex";
+  if (resEl)  resEl.innerHTML = "";
+  var msgEl  = document.getElementById("ct-msg");
+  var typeNames = {seo:"Description SEO",email:"Sequence email",content:"Plan de contenu",multimarket:"Adaptation multi-marches"};
+  if (msgEl) msgEl.textContent = "Generation " + (typeNames[type]||type) + "...";
+  try {
+    var prompt = buildContentPrompt(r, type, lang);
+    var raw    = await callAI(prompt, 2000);
+    if (loadEl) loadEl.style.display = "none";
+    if (resEl)  resEl.innerHTML = renderContent(raw, type, r);
+  } catch(e) {
+    if (loadEl) loadEl.style.display = "none";
+    if (resEl)  resEl.innerHTML = "<div class='al ao'>Erreur: " + e.message + "</div>";
+  }
+}
+
+function buildContentPrompt(r, type, lang) {
+  var langNames = {fr:"francais",be:"francais belge",ch:"francais suisse"};
+  var ln = langNames[lang] || "francais";
+  var base = "Produit: " + r[1] + "\nCategorie: " + r[2] + "\nPrix: " + r[3] + " EUR\nAvantage: " + (r[7]==="win"?"Prix plus bas que concurrent":"Prix similaire");
+  if (type === "seo") return "Expert SEO e-commerce. Ecris une description produit optimisee pour Google en " + ln + ".\n" + base + "\n\nGenere:\n1. Titre SEO (60 chars max)\n2. Meta description (155 chars max)\n3. Description longue (300 mots) avec mots-cles naturels\n4. 5 points forts bullet\n5. FAQ (3 questions/reponses)\n\nEcris directement le contenu, pas de JSON.";
+  if (type === "email") return "Expert email marketing e-commerce. Ecris une sequence de 3 emails de retargeting en " + ln + " pour des visiteurs qui n ont pas achete.\n" + base + "\nEmail 1 (J+1): rappel produit\nEmail 2 (J+3): objection + benefices\nEmail 3 (J+7): urgence + offre\n\nPour chaque email: Objet | Preheader | Corps (150 mots max). Format clair, pas de JSON.";
+  if (type === "content") return "Expert content marketing. Cree un plan de contenu organique de 30 jours TikTok/Instagram en " + ln + " pour ce produit.\n" + base + "\n\nStructure: une idee par jour avec: Jour N | Format (Reel/Story/Post/TikTok) | Accroche | Angle. Semaine 1: education produit. Semaine 2: preuves sociales. Semaine 3: comparaisons. Semaine 4: offre et CTA.";
+  if (type === "multimarket") return "Expert marketing international. Adapte le message marketing de ce produit pour 3 marches francophones.\n" + base + "\n\nPour chaque marche (France, Belgique, Suisse):\n- Argument principal adapte\n- Nuance culturelle\n- Prix ou angle specifique\n- 1 accroche publicitaire adaptee\n\nFormat clair, pas de JSON.";
+  return "Cree du contenu marketing pour: " + r[1];
+}
+
+function renderContent(raw, type, r) {
+  var icons = {seo:"SEO", email:"Email", content:"Contenu 30j", multimarket:"Multi-marches"};
+  return "<div class='card-section'>"
+    + "<div style='display:flex;justify-content:space-between;align-items:center;margin-bottom:.6rem'>"
+    + "<h3>" + (icons[type]||type) + " - " + r[1] + "</h3>"
+    + "<button class='btn bsm' onclick='copyText(\"ct-content-text\")'>Copier tout</button>"
+    + "</div>"
+    + "<div id='ct-content-text' style='font-size:12.5px;line-height:1.7;white-space:pre-wrap;color:var(--txt)'>" + raw + "</div>"
+    + "</div>";
+}
+function copyText(id) {
+  var el = document.getElementById(id); if(!el) return;
+  if (navigator.clipboard) navigator.clipboard.writeText(el.textContent).then(function(){ alert("Copie!"); });
+}
+
+// ============================================================
+// RAPPORT TAB
+// ============================================================
+function buildReport() {
+  var now = new Date().toLocaleDateString("fr-FR", {day:"numeric",month:"long",year:"numeric"});
+  var el  = document.getElementById("rpt-date"); if(el) el.textContent = "Genere le " + now;
+  var top10 = PRODUCTS.slice().sort(function(a,b){ return calcPrio(b)-calcPrio(a); }).slice(0,10);
+  var scored = PRODUCTS.filter(function(r){ return calcScore(r) !== null; });
+  var wins   = PRODUCTS.filter(function(r){ return r[7]==="win"; }).length;
+  var readyAds = PRODUCTS.filter(function(r){ var s=calcScore(r); return s!==null && s>=65; }).length;
+  var totSpend=0, totRev=0;
+  campaigns.forEach(function(c){ totSpend+=c.spend; totRev+=c.revenue; });
+  var roasGlobal = totSpend>0 ? (totRev/totSpend).toFixed(2) : "--";
+  var curSeason  = Object.keys(SEASONAL).map(function(cat){
+    return {cat:cat, score:(SEASONAL[cat]||[])[NOW_MONTH]||0};
+  }).sort(function(a,b){return b.score-a.score;}).slice(0,3);
+  var h = "";
+  h += "<div class='rpt-block'><h3>Resume executif &mdash; " + now + "</h3>"
+    + "<div style='display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px;margin-top:.5rem'>"
+    + rptStat("Produits en catalogue", PRODUCTS.length)
+    + rptStat("Prix avantageux", wins + "/" + PRODUCTS.length)
+    + rptStat("Produits scores", scored.length)
+    + rptStat("Prets pour ads", readyAds)
+    + rptStat("Campagnes suivies", campaigns.length)
+    + rptStat("ROAS global", roasGlobal + "x")
+    + "</div></div>";
+  h += "<div class='rpt-block'><h3>Top 10 produits a lancer en ads maintenant</h3>"
+    + "<table style='min-width:0;width:100%'><thead><tr>"
+    + "<th>#</th><th>Produit</th><th>Prix</th><th>Avantage</th><th>Intensite ads</th><th>Priorite</th></tr></thead><tbody>"
+    + top10.map(function(r,i){
+      var adv = advStyle(r[7]);
+      return "<tr><td style='font-weight:600'>" + (i+1) + "</td>"
+        + "<td><div class='pn' title='" + r[1] + "'>" + r[1] + "</div></td>"
+        + "<td style='white-space:nowrap'>" + fp(r[3]) + "</td>"
+        + "<td><span class='bdg' style='background:" + adv[1] + ";color:" + adv[2] + "'>" + adv[0] + "</span></td>"
+        + "<td>" + adsEmoji(r[8]) + "</td>"
+        + "<td style='font-weight:600'>" + Math.round(calcPrio(r)) + "</td></tr>";
+    }).join("") + "</tbody></table></div>";
+  h += "<div class='rpt-block'><h3>Categories a privilegier ce mois-ci (" + MONTH_NAMES[NOW_MONTH] + ")</h3>"
+    + curSeason.map(function(x){
+      return "<div style='display:flex;align-items:center;gap:8px;margin-bottom:.4rem;font-size:12px'>"
+        + "<div style='flex:1'>" + x.cat + "</div>"
+        + "<div style='background:var(--bg);border-radius:4px;height:10px;flex:2;overflow:hidden'><div style='height:100%;background:#1D9E75;width:" + (x.score*10) + "%'></div></div>"
+        + "<div style='font-weight:600;min-width:30px'>" + x.score + "/10</div>"
+        + "</div>";
+    }).join("") + "</div>";
+  h += "<div class='rpt-block'><h3>Recommandations budget</h3>"
+    + "<div id='rpt-alloc' style='font-size:12px;line-height:1.9'></div></div>";
+  var rc = document.getElementById("rapport-content");
+  if (rc) rc.innerHTML = h;
+  var budget = parseFloat((document.getElementById("budget-total")||{}).value) || 500;
+  var roasDef = parseFloat((document.getElementById("roas-default")||{}).value) || 3;
+  var top8 = top10.slice(0,8);
+  var wsum = top8.reduce(function(s,r){ return s + calcPrio(r); }, 0);
+  var allocH = "<b>Avec un budget de " + Math.round(budget) + " EUR/mois (ROAS cible " + roasDef + "x) :</b><br><br>";
+  top8.forEach(function(r){
+    var alloc = Math.round((calcPrio(r)/wsum)*budget);
+    if (!alloc) return;
+    allocH += "<b>" + r[1] + "</b>: " + alloc + " EUR/mois "
+      + "(Meta " + Math.round(alloc*.5) + " - Google " + Math.round(alloc*.35) + " - TikTok " + Math.round(alloc*.15) + ")<br>";
+  });
+  var ralEl = document.getElementById("rpt-alloc");
+  if (ralEl) ralEl.innerHTML = allocH;
+}
+
+function rptStat(label, value) {
+  return "<div style='background:var(--bg);border-radius:var(--r);padding:.6rem .8rem'>"
+    + "<div style='font-size:10px;color:var(--mut);text-transform:uppercase;letter-spacing:.3px'>" + label + "</div>"
+    + "<div style='font-size:18px;font-weight:600;margin-top:2px'>" + value + "</div></div>";
+}
+
+function printReport() { buildReport(); window.print(); }
+
+// ============================================================
+// IMPORT / EXPORT
+// ============================================================
+function openImport()  { document.getElementById("imp-modal").style.display = "flex"; }
 function closeImport() {
-  document.getElementById("imp-modal").style.display="none";
-  pendingImport=[];
-  document.getElementById("imp-preview").style.display="none";
-  document.getElementById("imp-confirm").style.display="none";
-  document.getElementById("finput").value="";
+  document.getElementById("imp-modal").style.display = "none";
+  pendingImport = [];
+  document.getElementById("imp-preview").style.display = "none";
+  document.getElementById("imp-confirm").style.display = "none";
+  document.getElementById("finput").value = "";
 }
 function handleDrop(e)  { e.preventDefault(); document.getElementById("fdrop").classList.remove("drag"); procFile(e.dataTransfer.files[0]); }
 function handleFile(e)  { procFile(e.target.files[0]); }
 
 function procFile(file) {
   if (!file) return;
-  document.getElementById("imp-preview").style.display="block";
-  document.getElementById("imp-prog").style.width="30%";
-  document.getElementById("imp-msg").textContent="Lecture...";
+  document.getElementById("imp-preview").style.display = "block";
+  document.getElementById("imp-prog").style.width = "30%";
+  document.getElementById("imp-msg").textContent = "Lecture...";
   var reader = new FileReader();
-  reader.onload = function(e){
-    var text = e.target.result;
-    document.getElementById("imp-prog").style.width="60%";
+  reader.onload = function(ev){
+    var txt = ev.target.result;
+    document.getElementById("imp-prog").style.width = "60%";
     try {
-      var isXML = file.name.endsWith(".xml") || text.trim().startsWith("<");
-      pendingImport = isXML ? parseXML(text) : parseCSV(text);
-      document.getElementById("imp-prog").style.width="100%";
-      document.getElementById("imp-msg").textContent="✅ " + pendingImport.length + " produit(s) trouvé(s). Clique Importer.";
-      document.getElementById("imp-confirm").style.display="inline-flex";
-    } catch(err) { document.getElementById("imp-msg").textContent="Erreur: " + err.message; }
+      var isXML = file.name.endsWith(".xml") || txt.trim().startsWith("<");
+      pendingImport = isXML ? parseXML(txt) : parseCSVData(txt);
+      document.getElementById("imp-prog").style.width = "100%";
+      document.getElementById("imp-msg").textContent = pendingImport.length + " produit(s) detectes. Clique Importer.";
+      document.getElementById("imp-confirm").style.display = "inline-flex";
+    } catch(e2) { document.getElementById("imp-msg").textContent = "Erreur: " + e2.message; }
   };
   reader.readAsText(file);
 }
 
-function parseXML(text) {
+function parseXML(txt) {
   var parser = new DOMParser();
-  var doc = parser.parseFromString(text,"text/xml");
-  var items = doc.querySelectorAll("item");
-  var maxId = Math.max.apply(null, [0].concat(PRODUCTS.map(function(r){return r[0];})));
-  var nid = maxId + 1;
+  var doc    = parser.parseFromString(txt, "text/xml");
+  var items  = doc.querySelectorAll("item");
+  var maxId  = Math.max.apply(null, [0].concat(PRODUCTS.map(function(r){return r[0];})));
+  var nid    = maxId + 1;
   return Array.from(items).map(function(item){
-    function g(tag) {
-      var el = item.getElementsByTagNameNS("http://base.google.com/ns/1.0", tag.replace("g:",""))[0]
-             || item.getElementsByTagName(tag)[0];
-      return el ? el.textContent.trim() : "";
-    }
+    function g(tag){ var el = item.getElementsByTagNameNS("http://base.google.com/ns/1.0", tag.replace("g:",""))[0] || item.getElementsByTagName(tag)[0]; return el ? el.textContent.trim() : ""; }
     var title = g("g:title") || g("title");
     var price = parseFloat((g("g:price")||g("price")).replace(/[^\d.]/g,"")) || 0;
     var type  = g("g:product_type") || g("product_type") || "";
     var cat   = guessCat(type, title);
     if (!title || !price) return null;
-    return [nid++, title, cat, price, 5, "A identifier", "—", "par", "med"];
+    return [nid++, title, cat, price, 5, "A identifier", "--", "par", "med"];
   }).filter(Boolean);
 }
 
-function parseCSV(text) {
-  var lines = text.trim().split("\n").filter(function(l){return l.trim();});
+function parseCSVData(txt) {
+  var lines = txt.trim().split("\n").filter(function(l){ return l.trim(); });
   var maxId = Math.max.apply(null, [0].concat(PRODUCTS.map(function(r){return r[0];})));
   var nid   = maxId + 1;
   var hdr   = lines[0].toLowerCase().split(/[,;]/);
-  var ni = hdr.findIndex(function(h){return h.indexOf("nom")>=0||h.indexOf("name")>=0||h.indexOf("titre")>=0;});
-  var pi = hdr.findIndex(function(h){return h.indexOf("prix")>=0||h.indexOf("price")>=0;});
-  var ci = hdr.findIndex(function(h){return h.indexOf("cat")>=0||h.indexOf("type")>=0;});
+  var ni = hdr.findIndex(function(h){ return h.indexOf("nom")>=0||h.indexOf("name")>=0||h.indexOf("titre")>=0; });
+  var pi = hdr.findIndex(function(h){ return h.indexOf("prix")>=0||h.indexOf("price")>=0; });
+  var ci = hdr.findIndex(function(h){ return h.indexOf("cat")>=0||h.indexOf("type")>=0; });
   return lines.slice(1).map(function(line){
     var cols  = line.split(/[,;]/);
     var name  = (cols[ni]||"").replace(/^"|"$/g,"").trim();
     var price = parseFloat((cols[pi]||"").replace(/[^\d.]/g,"")) || 0;
     var catR  = (cols[ci]||"").replace(/^"|"$/g,"").trim();
     if (!name || !price) return null;
-    return [nid++, name, guessCat(catR, name), price, 5, "A identifier", "—", "par", "med"];
+    return [nid++, name, guessCat(catR, name), price, 5, "A identifier", "--", "par", "med"];
   }).filter(Boolean);
 }
 
@@ -862,7 +1474,7 @@ function guessCat(t, n) {
   var s = (t + " " + n).toLowerCase();
   if (s.indexOf("velo")>=0||s.indexOf("vae")>=0||s.indexOf("e-bike")>=0) return "Velo electrique";
   if (s.indexOf("trottinette")>=0)                                         return "Trottinette";
-  if (s.indexOf("robot")>=0&&s.indexOf("tond")>=0)                        return "Robot tondeuse";
+  if (s.indexOf("robot")>=0 && s.indexOf("tond")>=0)                      return "Robot tondeuse";
   if (s.indexOf("tond")>=0)                                                return "Tondeuse";
   if (s.indexOf("barbecue")>=0||s.indexOf("grill")>=0)                    return "Barbecue";
   if (s.indexOf("macbook")>=0||s.indexOf("imac")>=0||s.indexOf("ipad")>=0)return "PC et Mac";
@@ -879,18 +1491,51 @@ function confirmImport() {
   if (!pendingImport.length) return;
   PRODUCTS = PRODUCTS.concat(pendingImport);
   closeImport();
-  renderCatTabs();
-  render();
-  alert(pendingImport.length + " produit(s) importé(s) avec succès.");
+  renderCatTabs(); render(); renderMarg(); populateCtProducts();
+  alert(pendingImport.length + " produit(s) importe(s).");
   pendingImport = [];
 }
 
+function exportScoring() {
+  var h = "ID,Produit,Categorie,Prix,Potentiel,Concurrent,Prix_concurrent,Avantage,Ads_intensite,CTR,Panier,Ventes,Social,Score,Statut,Priorite";
+  var rows = PRODUCTS.map(function(r){
+    var s = calcScore(r), d = userScores[r[0]] || {}, st = statusOf(s);
+    return [r[0],"\""+r[1]+"\"",r[2],r[3],r[4],"\""+r[5]+"\"",r[6],r[7],r[8],d.ctr||"",d.pan||"",d.ven||"",d.soc||"",s||"",st[0],Math.round(calcPrio(r))].join(",");
+  });
+  dl([h].concat(rows).join("\n"), "scoring_" + new Date().toISOString().slice(0,10) + ".csv");
+}
+
+function exportAds() {
+  if (!Object.keys(genAds).length) { alert("Genere d abord des ads."); return; }
+  var rows = [["Produit","Categorie","Prix","Reseau","Contenu"]];
+  Object.values(genAds).forEach(function(item){
+    item.nets.forEach(function(net){
+      var d = item.data[net]; if(!d) return;
+      rows.push(["\""+item.product[1]+"\"", item.product[2], item.product[3], net, "\""+JSON.stringify(d).replace(/"/g,"\"\"")+"\""]); 
+    });
+  });
+  dl(rows.map(function(r){return r.join(",");}).join("\n"), "ads_generees.csv");
+}
+
+function dl(content, filename) {
+  var a = document.createElement("a");
+  a.href = URL.createObjectURL(new Blob([content],{type:"text/csv;charset=utf-8;"}));
+  a.download = filename; a.click();
+}
+
 // ============================================================
-// INIT — toujours en dernier
+// INIT -- EN DERNIER
 // ============================================================
 updateApiBar();
 renderCatTabs();
 render();
+renderSeasonal();
+renderMarg();
+renderCampaigns();
+populateCtProducts();
+buildReport();
+document.getElementById("c-date").value = new Date().toISOString().slice(0,10);
+
 </script>
 </body>
 </html>
