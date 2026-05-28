@@ -135,6 +135,7 @@ tr.sel td{background:#f0f8f3}
   <button class="mtab" onclick="showMain('dashboard')">&#128202; Dashboard</button>
   <button class="mtab" onclick="showMain('checklist')">&#9989; Checklist</button>
   <button class="mtab" onclick="showMain('geo')">&#127758; Geo-ciblage</button>
+  <button class="mtab" onclick="showMain('spy')">&#128373; Espion Ads</button>
 </div>
 
 <div class="panel on" id="tab-scoring">
@@ -446,6 +447,54 @@ tr.sel td{background:#f0f8f3}
   <div id="geo-loading" style="display:none" class="loading"><div class="spin"></div><span id="geo-msg">Analyse en cours...</span></div>
   <div id="geo-result"></div>
   <div id="geo-empty" class="ads-empty" style="margin-top:.5rem">Selectionne un produit et clique Analyser les zones.</div>
+</div>
+
+
+<!-- TAB SPY ADS CONCURRENTS -->
+<div class="panel" id="tab-spy">
+  <div class="al ai" style="margin-top:.5rem;margin-bottom:.65rem">
+    L IA analyse les formats et strategies publicitaires qui convertissent le mieux chez tes concurrents pour chaque produit, et te genere une strategie pour les battre.
+  </div>
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:9px;margin-bottom:.65rem">
+    <div class="card-section" style="padding:.7rem .9rem">
+      <div style="font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.3px;color:var(--mut);margin-bottom:.35rem">Produit a analyser</div>
+      <select id="spy-product" style="width:100%;margin-bottom:.5rem"></select>
+      <div style="font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.3px;color:var(--mut);margin-bottom:.35rem">Niveau d analyse</div>
+      <select id="spy-depth" style="width:100%">
+        <option value="quick">Rapide - Formats et hooks cles</option>
+        <option value="deep" selected>Complet - Strategie + contre-attaque</option>
+        <option value="ultra">Ultra - Plan media buying complet</option>
+      </select>
+    </div>
+    <div class="card-section" style="padding:.7rem .9rem">
+      <div style="font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.3px;color:var(--mut);margin-bottom:.35rem">Pub concurrente observee (optionnel)</div>
+      <textarea id="spy-observed" placeholder="Colle ici une pub concurrente que tu as vue (texte, accroche, format...). Ex: J ai vu une pub Scheppach sur Instagram avec un avant/apres pelouse..." style="width:100%;height:80px;padding:6px 8px;border:1px solid var(--bord2);border-radius:7px;font-size:12px;font-family:inherit;resize:vertical;background:var(--sur);color:var(--txt)"></textarea>
+    </div>
+    <div class="card-section" style="padding:.7rem .9rem">
+      <div style="font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.3px;color:var(--mut);margin-bottom:.35rem">Canaux a espionner</div>
+      <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:.5rem">
+        <label style="display:flex;align-items:center;gap:5px;font-size:12px;cursor:pointer"><input type="checkbox" id="spy-meta" checked> Meta (FB+IG)</label>
+        <label style="display:flex;align-items:center;gap:5px;font-size:12px;cursor:pointer"><input type="checkbox" id="spy-google" checked> Google</label>
+        <label style="display:flex;align-items:center;gap:5px;font-size:12px;cursor:pointer"><input type="checkbox" id="spy-tiktok" checked> TikTok</label>
+        <label style="display:flex;align-items:center;gap:5px;font-size:12px;cursor:pointer"><input type="checkbox" id="spy-youtube"> YouTube</label>
+      </div>
+      <div style="font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.3px;color:var(--mut);margin-bottom:.35rem">Ton objectif</div>
+      <select id="spy-goal" style="width:100%">
+        <option value="convert">Maximiser les conversions</option>
+        <option value="awareness">Notoriete et trafic</option>
+        <option value="price">Souligner mon avantage prix</option>
+        <option value="trust">Construire la confiance</option>
+      </select>
+    </div>
+  </div>
+  <div style="display:flex;gap:7px;margin-bottom:.65rem;flex-wrap:wrap">
+    <button class="btn bd" onclick="runSpyAnalysis()">Analyser les pubs concurrentes</button>
+    <button class="btn bg" onclick="exportSpyCSV()">Exporter CSV</button>
+    <button class="btn" onclick="clearSpy()">Effacer</button>
+  </div>
+  <div id="spy-loading" style="display:none" class="loading"><div class="spin"></div><span id="spy-msg">Analyse en cours...</span></div>
+  <div id="spy-result"></div>
+  <div id="spy-empty" class="ads-empty" style="margin-top:.5rem">Selectionne un produit et clique Analyser.</div>
 </div>
 
 <div class="mbg" id="imp-modal" style="display:none" onclick="if(event.target===this)closeImport()">
@@ -836,7 +885,7 @@ function updateSelPanel() {
 // ============================================================
 // NAVIGATION
 // ============================================================
-var TAB_IDS = ["scoring","ads","marge","saisonnal","perf","contenu","rapport","dashboard","checklist","geo"];
+var TAB_IDS = ["scoring","ads","marge","saisonnal","perf","contenu","rapport","dashboard","checklist","geo","spy"];
 function showMain(t) {
   document.querySelectorAll(".mtab").forEach(function(b, i){
     b.classList.toggle("on", TAB_IDS[i] === t);
@@ -853,6 +902,7 @@ function showMain(t) {
   if (t === "dashboard") renderDashboard();
   if (t === "checklist") renderChecklist();
   if (t === "geo")       populateGeoProducts();
+  if (t === "spy")       populateSpyProducts();
 }
 function sendToAds() { showMain("ads"); }
 function toggleNet(btn) {
@@ -1908,6 +1958,334 @@ function exportGeoCSV(dataStr, productName) {
   dl(rows.map(function(r){return r.join(",");}).join("\n"),"geo_"+productName.replace(/\s/g,"_").slice(0,25)+".csv");
 }
 
+
+// ============================================================
+// SPY ADS CONCURRENTS
+// ============================================================
+var lastSpyData = null;
+
+function populateSpyProducts() {
+  var sel = document.getElementById("spy-product");
+  if (!sel) return;
+  sel.innerHTML = PRODUCTS.slice().sort(function(a,b){
+    return calcPrio(b) - calcPrio(a);
+  }).map(function(r){
+    return "<option value='" + r[0] + "'>" + r[1] + " (" + fp(r[3]) + ")</option>";
+  }).join("");
+}
+
+async function runSpyAnalysis() {
+  var sel = document.getElementById("spy-product");
+  if (!sel) return;
+  var pid      = parseInt(sel.value);
+  var depth    = (document.getElementById("spy-depth")||{}).value || "deep";
+  var observed = (document.getElementById("spy-observed")||{}).value || "";
+  var goal     = (document.getElementById("spy-goal")||{}).value || "convert";
+  var chMeta   = document.getElementById("spy-meta") && document.getElementById("spy-meta").checked;
+  var chGoogle = document.getElementById("spy-google") && document.getElementById("spy-google").checked;
+  var chTiktok = document.getElementById("spy-tiktok") && document.getElementById("spy-tiktok").checked;
+  var chYt     = document.getElementById("spy-youtube") && document.getElementById("spy-youtube").checked;
+  var channels = [];
+  if (chMeta)   channels.push("Meta (Facebook + Instagram)");
+  if (chGoogle) channels.push("Google Shopping + Search");
+  if (chTiktok) channels.push("TikTok");
+  if (chYt)     channels.push("YouTube");
+  if (!channels.length) { alert("Selectionne au moins un canal."); return; }
+  var row = null;
+  for (var i = 0; i < PRODUCTS.length; i++) if (PRODUCTS[i][0] === pid) { row = PRODUCTS[i]; break; }
+  if (!row) return;
+  var loadEl = document.getElementById("spy-loading");
+  var resEl  = document.getElementById("spy-result");
+  var empEl  = document.getElementById("spy-empty");
+  var msgEl  = document.getElementById("spy-msg");
+  if (loadEl) loadEl.style.display = "flex";
+  if (resEl)  resEl.innerHTML = "";
+  if (empEl)  empEl.style.display = "none";
+  if (msgEl)  msgEl.textContent = "Analyse des pubs concurrentes pour " + row[1] + "...";
+  var goalLabel = {
+    convert:  "maximiser les conversions directes",
+    awareness:"generer de la notoriete et du trafic qualifie",
+    price:    "mettre en avant mon avantage tarifaire face aux concurrents",
+    trust:    "construire la confiance et reduire le risque achat"
+  };
+  var depthLabel = {
+    quick: "analyse rapide des formats et hooks cles",
+    deep:  "analyse complete avec strategie de contre-attaque",
+    ultra: "plan media buying complet pret a executer"
+  };
+  var schema = '{'
+    + '"concurrent_principal":{"nom":"string","forces":["f1","f2","f3"],"faiblesses":["f1","f2","f3"],"budget_estime":"string","formats_utilises":["string"]},'
+    + '"formats_qui_convertissent":['
+    +   '{"rang":1,"format":"string","canal":"string","pourquoi_ca_marche":"string","hook_type":"string","exemple_accroche":"string","taux_engagement_estime":"string","budget_min":"string"}'
+    + '],'
+    + '"patterns_detectes":['
+    +   '{"pattern":"string","frequence":"Tres frequent|Frequent|Rare","efficacite":"Haute|Moyenne|Faible","explication":"string"}'
+    + '],'
+    + '"failles_exploitables":["f1","f2","f3"],'
+    + '"strategie_contre_attaque":{'
+    +   '"titre":"string","positionnement":"string","message_cle":"string",'
+    +   '"actions":['
+    +     '{"priorite":1,"action":"string","canal":"string","budget_jour":"string","kpi_cible":"string","delai":"string"}'
+    +   '],'
+    +   '"angle_differentiation":"string",'
+    +   '"hooks_gagnants":["hook1","hook2","hook3"]'
+    + '},'
+    + '"ads_a_tester":['
+    +   '{"canal":"string","format":"string","accroche":"string","texte_principal":"string","cta":"string","angle":"string"}'
+    + '],'
+    + '"outils_spy":["outil1","outil2","outil3"],'
+    + '"conseil_urgent":"string"'
+    + '}';
+  var prompt = "Expert media buying et competitive intelligence e-commerce France.\n\n"
+    + "Produit: " + row[1] + "\n"
+    + "Categorie: " + row[2] + "\n"
+    + "Prix: " + row[3] + " EUR\n"
+    + "Concurrent principal: " + row[5] + " (prix: " + row[6] + ")\n"
+    + "Avantage prix: " + (row[7] === "win" ? "Mon prix EST plus bas que le concurrent" : "Prix similaire au concurrent") + "\n"
+    + "Canaux a analyser: " + channels.join(", ") + "\n"
+    + "Mon objectif: " + (goalLabel[goal] || goal) + "\n"
+    + "Niveau d analyse: " + (depthLabel[depth] || depth) + "\n"
+    + (observed ? "\nPub concurrente observee par l utilisateur:\n" + observed + "\n" : "")
+    + "\nAnalyse approfondie:\n"
+    + "1. Quels formats publicitaires les concurrents utilisent le plus pour CE type de produit et POURQUOI ils convertissent\n"
+    + "2. Les patterns/recettes creatives qui reviennent (avant/apres, demo produit, temoignage, prix choc, urgence...)\n"
+    + "3. Les failles et angles inexploites par les concurrents\n"
+    + "4. Une strategie de contre-attaque complete et actionnable\n"
+    + "5. Des exemples d accroches concretes prets a utiliser\n"
+    + "6. Les outils gratuits pour espionner les pubs concurrentes\n\n"
+    + "Base-toi sur ta connaissance des meilleures pratiques publicitaires pour la categorie " + row[2] + " en France.\n"
+    + "Reponds UNIQUEMENT en JSON valide sans markdown ni explication:\n" + schema;
+  try {
+    var raw  = await callAI(prompt, 2000);
+    var data = safeJSON(raw);
+    lastSpyData = {data: data, product: row};
+    if (loadEl) loadEl.style.display = "none";
+    if (resEl)  resEl.innerHTML = renderSpyResult(data, row, channels);
+  } catch(e) {
+    if (loadEl) loadEl.style.display = "none";
+    if (resEl)  resEl.innerHTML = "<div class='al ao'>Erreur: " + e.message + "</div>";
+    if (empEl)  empEl.style.display = "block";
+  }
+}
+
+function renderSpyResult(data, row, channels) {
+  var netC = {
+    "Meta":    "#1877f2", "Meta (Facebook + Instagram)": "#1877f2",
+    "Google":  "#ea4335", "Google Shopping + Search":    "#ea4335",
+    "TikTok":  "#010101",
+    "YouTube": "#ff0000",
+    "Pinterest":"#e60023"
+  };
+  var effC = {Haute:["#e8f4ee","#085041"], Moyenne:["#fef3e2","#7a4a00"], Faible:["#fef2f2","#7a1a1a"]};
+  var freqC = {"Tres frequent":["#e8f4ee","#085041"], Frequent:["#fef3e2","#7a4a00"], Rare:["#f1efe8","#2c2c2a"]};
+  var h = "";
+
+  // Header + urgent advice
+  h += "<div style='display:flex;align-items:center;gap:10px;margin-bottom:.6rem'>"
+    + "<b style='font-size:13px'>" + row[1] + "</b>"
+    + "<span style='font-size:11px;color:var(--mut)'>" + fp(row[3]) + " - " + row[2] + "</span>"
+    + (row[7]==="win" ? "<span class='bdg' style='background:#e8f4ee;color:#085041'>Prix avantageux</span>" : "")
+    + "</div>";
+
+  if (data.conseil_urgent) {
+    h += "<div class='al ag' style='margin-bottom:.65rem;font-size:12.5px'>"
+      + "<b>Conseil urgent :</b> " + data.conseil_urgent + "</div>";
+  }
+
+  // Section 1: Concurrent principal
+  if (data.concurrent_principal) {
+    var cp = data.concurrent_principal;
+    h += "<div class='card-section' style='margin-bottom:.75rem'>"
+      + "<h3 style='margin-bottom:.55rem'>Concurrent principal : " + (cp.nom||row[5]) + "</h3>"
+      + "<div style='display:grid;grid-template-columns:1fr 1fr;gap:10px;font-size:12px'>"
+      + "<div><div style='font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.3px;color:#085041;margin-bottom:.3rem'>Forces observees</div>"
+        + (cp.forces||[]).map(function(f){ return "<div style='display:flex;gap:5px;margin-bottom:3px'><span style='color:#1D9E75;flex-shrink:0'>+</span>" + f + "</div>"; }).join("") + "</div>"
+      + "<div><div style='font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.3px;color:#7a1a1a;margin-bottom:.3rem'>Faiblesses a exploiter</div>"
+        + (cp.faiblesses||[]).map(function(f){ return "<div style='display:flex;gap:5px;margin-bottom:3px'><span style='color:#E24B4A;flex-shrink:0'>-</span>" + f + "</div>"; }).join("") + "</div>"
+      + "</div>"
+      + (cp.budget_estime ? "<div style='font-size:11px;color:var(--mut);margin-top:.4rem'>Budget pub estime : <b style='color:var(--txt)'>" + cp.budget_estime + "</b></div>" : "")
+      + (cp.formats_utilises && cp.formats_utilises.length ? "<div style='display:flex;flex-wrap:wrap;gap:4px;margin-top:.4rem'>"
+          + cp.formats_utilises.map(function(f){ return "<span class='tag'>" + f + "</span>"; }).join("") + "</div>" : "")
+      + "</div>";
+  }
+
+  // Section 2: Formats qui convertissent
+  if (data.formats_qui_convertissent && data.formats_qui_convertissent.length) {
+    h += "<div style='margin-bottom:.75rem'>"
+      + "<div style='font-size:12px;font-weight:500;margin-bottom:.45rem;color:var(--txt)'>Formats qui convertissent le mieux</div>"
+      + "<div style='display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:8px'>";
+    data.formats_qui_convertissent.slice(0,6).forEach(function(f, i) {
+      var rankColor = i===0?"#1D9E75":i===1?"#378ADD":i===2?"#BA7517":"var(--mut)";
+      var cn = netC[f.canal] || "#888";
+      h += "<div class='card-section'>"
+        + "<div style='display:flex;align-items:center;justify-content:space-between;margin-bottom:.4rem'>"
+          + "<div style='display:flex;align-items:center;gap:7px'>"
+            + "<span style='font-size:16px;font-weight:700;color:" + rankColor + "'>#" + f.rang + "</span>"
+            + "<div><div style='font-size:12.5px;font-weight:500'>" + f.format + "</div>"
+              + "<span style='font-size:10px;font-weight:600;padding:2px 6px;border-radius:4px;background:" + cn + "22;color:" + cn + "'>" + f.canal + "</span>"
+            + "</div>"
+          + "</div>"
+          + (f.taux_engagement_estime ? "<span class='bdg' style='background:#e8f4ee;color:#085041'>" + f.taux_engagement_estime + "</span>" : "")
+        + "</div>"
+        + (f.pourquoi_ca_marche ? "<div style='font-size:11.5px;color:var(--txt);margin-bottom:.35rem'>" + f.pourquoi_ca_marche + "</div>" : "")
+        + (f.hook_type ? "<div style='font-size:11px;color:var(--mut)'>Type de hook : <b style='color:var(--txt)'>" + f.hook_type + "</b></div>" : "")
+        + (f.exemple_accroche ? "<div style='margin-top:.35rem;padding:.35rem .5rem;background:var(--bg);border-radius:5px;font-size:11.5px;font-style:italic;color:var(--txt);border-left:2px solid " + rankColor + "'>" + f.exemple_accroche + "</div>" : "")
+        + (f.budget_min ? "<div style='font-size:11px;color:var(--mut);margin-top:.3rem'>Budget min : " + f.budget_min + "</div>" : "")
+        + "</div>";
+    });
+    h += "</div></div>";
+  }
+
+  // Section 3: Patterns detectes
+  if (data.patterns_detectes && data.patterns_detectes.length) {
+    h += "<div class='card-section' style='margin-bottom:.75rem'>"
+      + "<h3 style='margin-bottom:.5rem'>Patterns creatifs detectes chez les concurrents</h3>"
+      + "<div style='display:flex;flex-direction:column;gap:6px'>";
+    data.patterns_detectes.forEach(function(p) {
+      var fc = freqC[p.frequence] || freqC["Frequent"];
+      var ec = effC[p.efficacite]  || effC["Moyenne"];
+      h += "<div style='display:flex;align-items:flex-start;gap:10px;padding:.4rem .6rem;background:var(--bg);border-radius:7px'>"
+        + "<span class='bdg' style='background:" + fc[0] + ";color:" + fc[1] + ";flex-shrink:0'>" + (p.frequence||"") + "</span>"
+        + "<span class='bdg' style='background:" + ec[0] + ";color:" + ec[1] + ";flex-shrink:0'>" + (p.efficacite||"") + "</span>"
+        + "<div>"
+          + "<div style='font-size:12px;font-weight:500;color:var(--txt)'>" + (p.pattern||"") + "</div>"
+          + (p.explication ? "<div style='font-size:11px;color:var(--mut);margin-top:1px'>" + p.explication + "</div>" : "")
+        + "</div>"
+        + "</div>";
+    });
+    h += "</div></div>";
+  }
+
+  // Section 4: Failles exploitables
+  if (data.failles_exploitables && data.failles_exploitables.length) {
+    h += "<div class='al ao' style='margin-bottom:.75rem;font-size:12px'>"
+      + "<b>Failles exploitables (angles ignores par les concurrents) :</b><br>"
+      + data.failles_exploitables.map(function(f, i){ return "<div style='margin-top:3px'>" + (i+1) + ". " + f + "</div>"; }).join("")
+      + "</div>";
+  }
+
+  // Section 5: Strategie de contre-attaque
+  if (data.strategie_contre_attaque) {
+    var sc = data.strategie_contre_attaque;
+    h += "<div class='card-section' style='margin-bottom:.75rem;border-left:3px solid #1D9E75;border-radius:0 var(--r) var(--r) 0'>"
+      + "<h3 style='color:#085041;margin-bottom:.55rem'>Strategie de contre-attaque : " + (sc.titre||"") + "</h3>"
+      + (sc.positionnement ? "<div style='font-size:12px;margin-bottom:.35rem'><b>Positionnement :</b> " + sc.positionnement + "</div>" : "")
+      + (sc.message_cle ? "<div style='font-size:12px;margin-bottom:.35rem'><b>Message cle :</b> " + sc.message_cle + "</div>" : "")
+      + (sc.angle_differentiation ? "<div style='font-size:12px;margin-bottom:.5rem'><b>Angle de differentiation :</b> " + sc.angle_differentiation + "</div>" : "");
+    if (sc.actions && sc.actions.length) {
+      h += "<div style='font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.3px;color:var(--mut);margin-bottom:.35rem'>Plan d action</div>"
+        + "<div style='display:flex;flex-direction:column;gap:5px'>";
+      sc.actions.forEach(function(a) {
+        var nc = netC[a.canal] || "#888";
+        h += "<div style='display:flex;align-items:flex-start;gap:8px;padding:.4rem .6rem;background:var(--bg);border-radius:7px'>"
+          + "<span style='font-size:13px;font-weight:700;color:#1D9E75;flex-shrink:0;min-width:18px'>" + a.priorite + "</span>"
+          + "<div style='flex:1'>"
+            + "<div style='font-size:12px;font-weight:500'>" + (a.action||"") + "</div>"
+            + "<div style='display:flex;gap:6px;flex-wrap:wrap;margin-top:3px'>"
+              + (a.canal ? "<span style='font-size:10px;padding:1px 6px;border-radius:4px;background:" + nc + "22;color:" + nc + "'>" + a.canal + "</span>" : "")
+              + (a.budget_jour ? "<span class='tag'>" + a.budget_jour + "/jour</span>" : "")
+              + (a.kpi_cible ? "<span class='tag'>KPI: " + a.kpi_cible + "</span>" : "")
+              + (a.delai ? "<span class='tag'>Delai: " + a.delai + "</span>" : "")
+            + "</div>"
+          + "</div>"
+          + "</div>";
+      });
+      h += "</div>";
+    }
+    if (sc.hooks_gagnants && sc.hooks_gagnants.length) {
+      h += "<div style='margin-top:.5rem'>"
+        + "<div style='font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.3px;color:var(--mut);margin-bottom:.3rem'>Hooks gagnants a tester</div>"
+        + sc.hooks_gagnants.map(function(hk){ return "<div style='padding:.3rem .6rem;background:var(--bg);border-radius:5px;font-size:11.5px;font-style:italic;margin-bottom:3px;border-left:2px solid #1D9E75'>" + hk + "</div>"; }).join("")
+        + "</div>";
+    }
+    h += "</div>";
+  }
+
+  // Section 6: Ads prets a tester
+  if (data.ads_a_tester && data.ads_a_tester.length) {
+    h += "<div style='margin-bottom:.75rem'>"
+      + "<div style='font-size:12px;font-weight:500;margin-bottom:.45rem'>Ads prets a lancer (basees sur les patterns gagnants)</div>"
+      + "<div style='display:grid;grid-template-columns:repeat(auto-fill,minmax(255px,1fr));gap:8px'>";
+    data.ads_a_tester.forEach(function(ad, i) {
+      var nc = netC[ad.canal] || "#888";
+      h += "<div class='card-section'>"
+        + "<div style='display:flex;align-items:center;justify-content:space-between;margin-bottom:.4rem'>"
+          + "<span style='font-size:10px;font-weight:600;padding:2px 7px;border-radius:4px;background:" + nc + "22;color:" + nc + "'>" + (ad.canal||"") + "</span>"
+          + "<span class='tag'>" + (ad.format||"") + "</span>"
+        + "</div>"
+        + (ad.accroche ? "<div style='font-size:12px;font-weight:500;color:var(--txt);margin-bottom:.3rem'>" + ad.accroche + "</div>" : "")
+        + (ad.texte_principal ? "<div style='font-size:11.5px;color:var(--mut);margin-bottom:.3rem'>" + ad.texte_principal + "</div>" : "")
+        + (ad.cta ? "<div style='font-size:11px;color:#085041;font-weight:500'>CTA : " + ad.cta + "</div>" : "")
+        + (ad.angle ? "<div style='font-size:11px;color:var(--mut);margin-top:.3rem;font-style:italic'>Angle : " + ad.angle + "</div>" : "")
+        + "<button class='btn bsm bg' style='margin-top:.4rem;width:100%' onclick='copyAdText(this, " + JSON.stringify(JSON.stringify(ad)) + ")'>Copier cette ad</button>"
+        + "</div>";
+    });
+    h += "</div></div>";
+  }
+
+  // Section 7: Outils spy
+  if (data.outils_spy && data.outils_spy.length) {
+    h += "<div class='card-section' style='margin-bottom:.65rem'>"
+      + "<h3 style='margin-bottom:.4rem'>Outils pour espionner tes concurrents</h3>"
+      + "<div style='display:flex;flex-wrap:wrap;gap:6px'>"
+      + data.outils_spy.map(function(o){ return "<span class='tag' style='font-size:12px'>" + o + "</span>"; }).join("")
+      + "</div>"
+      + "<div style='margin-top:.5rem;font-size:11.5px;color:var(--mut)'>"
+        + "Astuce : Utilise la <b>Bibliotheque de pubs Meta</b> (facebook.com/ads/library) pour voir TOUTES les pubs actives de n importe quel concurrent."
+      + "</div>"
+      + "</div>";
+  }
+
+  h += "<div style='margin-top:.65rem;display:flex;gap:7px;flex-wrap:wrap'>"
+    + "<button class='btn bg' onclick='exportSpyCSV()'>Exporter tout en CSV</button>"
+    + "</div>";
+  return h;
+}
+
+function copyAdText(btn, adStr) {
+  var ad;
+  try { ad = JSON.parse(adStr); } catch(e) { return; }
+  var txt = (ad.canal||"") + " - " + (ad.format||"") + "\n"
+    + "Accroche: " + (ad.accroche||"") + "\n"
+    + "Texte: " + (ad.texte_principal||"") + "\n"
+    + "CTA: " + (ad.cta||"") + "\n"
+    + "Angle: " + (ad.angle||"");
+  if (navigator.clipboard) navigator.clipboard.writeText(txt).then(function(){
+    btn.textContent = "Copie!"; setTimeout(function(){ btn.textContent = "Copier cette ad"; }, 1500);
+  });
+}
+
+function clearSpy() {
+  lastSpyData = null;
+  var r = document.getElementById("spy-result");   if(r) r.innerHTML = "";
+  var e = document.getElementById("spy-empty");    if(e) e.style.display = "block";
+  var o = document.getElementById("spy-observed"); if(o) o.value = "";
+}
+
+function exportSpyCSV() {
+  if (!lastSpyData) { alert("Lance une analyse d abord."); return; }
+  var d    = lastSpyData.data;
+  var prod = lastSpyData.product;
+  var rows = [["Produit","Section","Element","Detail"]];
+  (d.formats_qui_convertissent||[]).forEach(function(f){
+    rows.push(["\""+prod[1]+"\"","Format gagnant","\""+f.format+" ("+f.canal+")"+"\"","\""+f.pourquoi_ca_marche+"\""]);
+  });
+  (d.patterns_detectes||[]).forEach(function(p){
+    rows.push(["\""+prod[1]+"\"","Pattern detecte","\""+p.pattern+"\"","\""+p.explication+"\""]);
+  });
+  (d.failles_exploitables||[]).forEach(function(f){
+    rows.push(["\""+prod[1]+"\"","Faille exploitable","\""+f+"\"",""]);
+  });
+  var sc = d.strategie_contre_attaque || {};
+  (sc.actions||[]).forEach(function(a){
+    rows.push(["\""+prod[1]+"\"","Action contre-attaque","\""+a.action+"\"","\"Canal: "+a.canal+" | Budget: "+a.budget_jour+"/j | KPI: "+a.kpi_cible+"\""]);
+  });
+  (d.ads_a_tester||[]).forEach(function(a){
+    rows.push(["\""+prod[1]+"\"","Ad a tester","\""+a.canal+" - "+a.format+"\"","\"Accroche: "+a.accroche+" | CTA: "+a.cta+"\""]);
+  });
+  dl(rows.map(function(r){ return r.join(","); }).join("\n"), "spy_ads_" + prod[1].slice(0,20).replace(/\s/g,"_") + ".csv");
+}
+
 // INIT -- EN DERNIER
 // ============================================================
 updateApiBar();
@@ -1919,6 +2297,7 @@ renderCampaigns();
 populateCtProducts();
 populateChecklistProducts();
 populateGeoProducts();
+populateSpyProducts();
 buildReport();
 document.getElementById("c-date").value = new Date().toISOString().slice(0,10);
 
