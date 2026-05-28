@@ -136,6 +136,9 @@ tr.sel td{background:#f0f8f3}
   <button class="mtab" onclick="showMain('checklist')">&#9989; Checklist</button>
   <button class="mtab" onclick="showMain('geo')">&#127758; Geo-ciblage</button>
   <button class="mtab" onclick="showMain('spy')">&#128373; Espion Ads</button>
+  <button class="mtab" onclick="showMain('tendances')">&#128200; Tendances</button>
+  <button class="mtab" onclick="showMain('calculateurs')">&#129518; Calculateurs</button>
+  <button class="mtab" onclick="showMain('guidads')">&#127919; Guide Ads</button>
 </div>
 
 <div class="panel on" id="tab-scoring">
@@ -495,6 +498,182 @@ tr.sel td{background:#f0f8f3}
   <div id="spy-loading" style="display:none" class="loading"><div class="spin"></div><span id="spy-msg">Analyse en cours...</span></div>
   <div id="spy-result"></div>
   <div id="spy-empty" class="ads-empty" style="margin-top:.5rem">Selectionne un produit et clique Analyser.</div>
+</div>
+
+
+<!-- TAB TENDANCES -->
+<div class="panel" id="tab-tendances">
+  <div class="al ai" style="margin-top:.5rem;margin-bottom:.65rem">L IA analyse les tendances de recherche actuelles pour chaque categorie et identifie les produits a pousser maintenant.</div>
+  <div class="ctrls">
+    <select id="tend-cat" style="min-width:200px" onchange="renderTendancesFilter()">
+      <option value="">Toutes les categories</option>
+    </select>
+    <select id="tend-horizon">
+      <option value="now">Maintenant (ce mois)</option>
+      <option value="next">Prochain mois</option>
+      <option value="quarter">Ce trimestre</option>
+    </select>
+    <button class="btn bd" onclick="runTendances()">Analyser les tendances</button>
+    <button class="btn" onclick="clearTendances()">Effacer</button>
+  </div>
+  <div id="tend-loading" style="display:none" class="loading"><div class="spin"></div><span id="tend-msg">Analyse en cours...</span></div>
+  <div id="tend-result"></div>
+  <div id="tend-empty" class="ads-empty" style="margin-top:.5rem">Clique sur Analyser les tendances pour voir les opportunites du moment.</div>
+</div>
+
+<!-- TAB CALCULATEURS -->
+<div class="panel" id="tab-calculateurs">
+  <div class="al ai" style="margin-top:.5rem;margin-bottom:.6rem">Outils de calcul et de simulation pour prendre des decisions basees sur les chiffres, pas sur l instinct.</div>
+  <div class="subtabs" id="calc-subtabs">
+    <button class="stab on" onclick="showCalc(this,'breakeven')">Break-even Ads</button>
+    <button class="stab" onclick="showCalc(this,'pricing')">Pricing Psychologique</button>
+    <button class="stab" onclick="showCalc(this,'montecarlo')">Simulation Monte Carlo</button>
+    <button class="stab" onclick="showCalc(this,'keywords')">Mots-cles Negatifs</button>
+    <button class="stab" onclick="showCalc(this,'timing')">Meilleure Heure</button>
+  </div>
+
+  <!-- BREAK-EVEN -->
+  <div id="calc-breakeven">
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:10px">
+      <div class="card-section">
+        <h3>Parametres du produit</h3>
+        <div class="form-row" style="margin-top:.5rem">
+          <div class="form-group"><label>Produit</label><select id="be-product" style="width:220px" onchange="calcBreakeven()"></select></div>
+        </div>
+        <div class="form-row">
+          <div class="form-group"><label>Prix de vente (EUR)</label><input type="number" id="be-price" min="0" step="0.01" oninput="calcBreakeven()" style="width:120px"></div>
+          <div class="form-group"><label>Cout produit HT (EUR)</label><input type="number" id="be-cost" min="0" step="0.01" placeholder="?" oninput="calcBreakeven()" style="width:120px"></div>
+        </div>
+        <div class="form-row">
+          <div class="form-group"><label>Budget ads/jour (EUR)</label><input type="number" id="be-budget" value="20" min="0" step="1" oninput="calcBreakeven()" style="width:120px"></div>
+          <div class="form-group"><label>CPC estime (EUR)</label><input type="number" id="be-cpc" value="0.80" min="0" step="0.01" oninput="calcBreakeven()" style="width:120px"></div>
+          <div class="form-group"><label>Taux de conv. (%)</label><input type="number" id="be-cvr" value="2" min="0.1" max="100" step="0.1" oninput="calcBreakeven()" style="width:100px"></div>
+        </div>
+        <div class="form-row">
+          <div class="form-group"><label>Frais de port (EUR)</label><input type="number" id="be-ship" value="0" min="0" step="0.01" oninput="calcBreakeven()" style="width:110px"></div>
+          <div class="form-group"><label>Frais de retour (%)</label><input type="number" id="be-returns" value="5" min="0" max="100" step="1" oninput="calcBreakeven()" style="width:110px"></div>
+        </div>
+      </div>
+      <div class="card-section" id="be-result-card">
+        <h3>Resultats Break-even</h3>
+        <div id="be-result" style="font-size:12px;line-height:2;margin-top:.5rem;color:var(--mut)">Remplis les parametres a gauche.</div>
+      </div>
+    </div>
+    <div class="card-section" style="margin-top:.75rem" id="be-chart-card">
+      <h3>Courbe de rentabilite</h3>
+      <div style="position:relative;height:200px"><canvas id="chart-breakeven"></canvas></div>
+    </div>
+  </div>
+
+  <!-- PRICING PSYCHOLOGIQUE -->
+  <div id="calc-pricing" style="display:none">
+    <div class="ctrls" style="margin-bottom:.65rem">
+      <select id="pp-product" style="min-width:240px" onchange="loadPPProduct()"></select>
+      <button class="btn bd" onclick="runPricingAI()">Analyser avec l IA</button>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:10px;margin-bottom:.65rem">
+      <div class="card-section">
+        <h3>Strategies de prix a tester</h3>
+        <div id="pp-strategies" style="font-size:12px;color:var(--mut);margin-top:.4rem">Selectionne un produit.</div>
+      </div>
+      <div class="card-section">
+        <h3>Comparaison visuelle</h3>
+        <div style="position:relative;height:160px"><canvas id="chart-pricing"></canvas></div>
+      </div>
+    </div>
+    <div id="pp-ai-result"></div>
+  </div>
+
+  <!-- MONTE CARLO -->
+  <div id="calc-montecarlo" style="display:none">
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:10px">
+      <div class="card-section">
+        <h3>Parametres de simulation</h3>
+        <div class="form-row" style="margin-top:.5rem">
+          <div class="form-group"><label>Produit</label><select id="mc-product" style="width:220px"></select></div>
+        </div>
+        <div class="form-row">
+          <div class="form-group"><label>Budget total (EUR)</label><input type="number" id="mc-budget" value="500" min="0" style="width:120px"></div>
+          <div class="form-group"><label>Duree (jours)</label><input type="number" id="mc-days" value="30" min="1" max="365" style="width:100px"></div>
+        </div>
+        <div class="form-row">
+          <div class="form-group"><label>CPC min (EUR)</label><input type="number" id="mc-cpc-min" value="0.5" min="0" step="0.01" style="width:100px"></div>
+          <div class="form-group"><label>CPC max (EUR)</label><input type="number" id="mc-cpc-max" value="1.5" min="0" step="0.01" style="width:100px"></div>
+        </div>
+        <div class="form-row">
+          <div class="form-group"><label>Taux conv. min (%)</label><input type="number" id="mc-cvr-min" value="1" min="0.1" step="0.1" style="width:110px"></div>
+          <div class="form-group"><label>Taux conv. max (%)</label><input type="number" id="mc-cvr-max" value="4" min="0.1" step="0.1" style="width:110px"></div>
+        </div>
+        <button class="btn bd" onclick="runMonteCarlo()" style="margin-top:.35rem">Lancer 1000 simulations</button>
+      </div>
+      <div class="card-section" id="mc-result-card">
+        <h3>Resultats (1000 simulations)</h3>
+        <div id="mc-result" style="font-size:12px;line-height:2;margin-top:.5rem;color:var(--mut)">Configure les parametres et lance la simulation.</div>
+      </div>
+    </div>
+    <div class="card-section" style="margin-top:.75rem">
+      <h3>Distribution des resultats</h3>
+      <div style="position:relative;height:200px"><canvas id="chart-montecarlo"></canvas></div>
+    </div>
+  </div>
+
+  <!-- MOTS-CLES NEGATIFS -->
+  <div id="calc-keywords" style="display:none">
+    <div class="ctrls" style="margin-bottom:.65rem">
+      <select id="kw-product" style="min-width:240px"></select>
+      <select id="kw-network">
+        <option value="google">Google Ads</option>
+        <option value="meta">Meta Ads</option>
+        <option value="both">Les deux</option>
+      </select>
+      <button class="btn bd" onclick="runKeywords()">Generer les mots-cles negatifs</button>
+    </div>
+    <div id="kw-loading" style="display:none" class="loading"><div class="spin"></div>Generation...</div>
+    <div id="kw-result"></div>
+    <div id="kw-empty" class="ads-empty">Selectionne un produit et clique Generer.</div>
+  </div>
+
+  <!-- MEILLEURE HEURE -->
+  <div id="calc-timing" style="display:none">
+    <div class="ctrls" style="margin-bottom:.65rem">
+      <select id="tm-product" style="min-width:240px"></select>
+      <select id="tm-network">
+        <option value="meta">Meta (Facebook + Instagram)</option>
+        <option value="google">Google Shopping</option>
+        <option value="tiktok">TikTok</option>
+        <option value="all">Tous les reseaux</option>
+      </select>
+      <button class="btn bd" onclick="runTiming()">Analyser les meilleurs creneaux</button>
+    </div>
+    <div id="tm-loading" style="display:none" class="loading"><div class="spin"></div>Analyse...</div>
+    <div id="tm-result"></div>
+    <div id="tm-empty" class="ads-empty">Selectionne un produit et clique Analyser.</div>
+  </div>
+</div>
+
+<!-- TAB GUIDE ADS PERSONNALISE -->
+<div class="panel" id="tab-guidads">
+  <div class="al ai" style="margin-top:.5rem;margin-bottom:.65rem">L IA cree un guide publicitaire sur mesure pour chaque produit : strategie complete, budget, reseaux, creatifs, et plan de lancement etape par etape.</div>
+  <div class="ctrls">
+    <select id="guide-product" style="min-width:250px"></select>
+    <select id="guide-level">
+      <option value="debutant">Debutant (premier lancement)</option>
+      <option value="intermediaire" selected>Intermediaire (quelques campagnes)</option>
+      <option value="avance">Avance (optimisation et scaling)</option>
+    </select>
+    <select id="guide-budget">
+      <option value="100">Budget : 100 EUR/mois</option>
+      <option value="300">Budget : 300 EUR/mois</option>
+      <option value="500" selected>Budget : 500 EUR/mois</option>
+      <option value="1000">Budget : 1000 EUR/mois</option>
+      <option value="2000">Budget : 2000+ EUR/mois</option>
+    </select>
+    <button class="btn bd" onclick="runGuideAds()">Generer mon guide</button>
+    <button class="btn bg" onclick="exportGuideAds()">Exporter PDF/texte</button>
+  </div>
+  <div id="guide-loading" style="display:none" class="loading"><div class="spin"></div><span id="guide-msg">Creation du guide personnalise...</span></div>
+  <div id="guide-result"></div>
+  <div id="guide-empty" class="ads-empty" style="margin-top:.5rem">Selectionne un produit, ton niveau et ton budget. L IA cree ton guide complet en 15 secondes.</div>
 </div>
 
 <div class="mbg" id="imp-modal" style="display:none" onclick="if(event.target===this)closeImport()">
@@ -885,7 +1064,7 @@ function updateSelPanel() {
 // ============================================================
 // NAVIGATION
 // ============================================================
-var TAB_IDS = ["scoring","ads","marge","saisonnal","perf","contenu","rapport","dashboard","checklist","geo","spy"];
+var TAB_IDS = ["scoring","ads","marge","saisonnal","perf","contenu","rapport","dashboard","checklist","geo","spy","tendances","calculateurs","guidads"];
 function showMain(t) {
   document.querySelectorAll(".mtab").forEach(function(b, i){
     b.classList.toggle("on", TAB_IDS[i] === t);
@@ -902,7 +1081,10 @@ function showMain(t) {
   if (t === "dashboard") renderDashboard();
   if (t === "checklist") renderChecklist();
   if (t === "geo")       populateGeoProducts();
-  if (t === "spy")       populateSpyProducts();
+  if (t === "spy")          populateSpyProducts();
+  if (t === "tendances")    populateTendancesProducts();
+  if (t === "calculateurs") renderCalculateurs();
+  if (t === "guidads")      populateGuidAdsProducts();
 }
 function sendToAds() { showMain("ads"); }
 function toggleNet(btn) {
@@ -2286,6 +2468,715 @@ function exportSpyCSV() {
   dl(rows.map(function(r){ return r.join(","); }).join("\n"), "spy_ads_" + prod[1].slice(0,20).replace(/\s/g,"_") + ".csv");
 }
 
+
+// ============================================================
+// TENDANCES IA
+// ============================================================
+function populateTendancesProducts() {
+  var sel = document.getElementById("tend-cat");
+  if (!sel) return;
+  var cats = Object.keys(CAT_COLORS);
+  sel.innerHTML = "<option value=''>Toutes les categories</option>"
+    + cats.map(function(c){ return "<option value='" + c + "'>" + c + "</option>"; }).join("");
+}
+
+function renderTendancesFilter() {}
+
+function clearTendances() {
+  var r = document.getElementById("tend-result"); if(r) r.innerHTML = "";
+  var e = document.getElementById("tend-empty");  if(e) e.style.display = "block";
+}
+
+async function runTendances() {
+  var cat      = (document.getElementById("tend-cat")||{}).value || "";
+  var horizon  = (document.getElementById("tend-horizon")||{}).value || "now";
+  var loadEl   = document.getElementById("tend-loading");
+  var resEl    = document.getElementById("tend-result");
+  var empEl    = document.getElementById("tend-empty");
+  var msgEl    = document.getElementById("tend-msg");
+  if (loadEl) loadEl.style.display = "flex";
+  if (resEl)  resEl.innerHTML = "";
+  if (empEl)  empEl.style.display = "none";
+  var horizonLabel = {now:"ce mois-ci", next:"le mois prochain", quarter:"ce trimestre"};
+  var catProducts = cat
+    ? PRODUCTS.filter(function(r){ return r[2] === cat; })
+    : PRODUCTS;
+  var cats = cat ? [cat] : Object.keys(CAT_COLORS);
+  var nowM = new Date().getMonth();
+  var seasonScores = {};
+  cats.forEach(function(c){
+    var sc = SEASONAL[c] || [];
+    var score = horizon === "now" ? (sc[nowM]||5)
+      : horizon === "next" ? (sc[(nowM+1)%12]||5)
+      : Math.round(((sc[nowM]||5)+(sc[(nowM+1)%12]||5)+(sc[(nowM+2)%12]||5))/3);
+    seasonScores[c] = score;
+  });
+  var prompt = "Expert e-commerce et marketing digital France. Analyse les tendances de marche pour "
+    + (cat ? "la categorie " + cat : "ces categories: " + cats.join(", "))
+    + " pour " + (horizonLabel[horizon]||"ce mois") + ".\n\n"
+    + "Produits disponibles:\n" + catProducts.slice(0,20).map(function(r,i){
+        return (i+1) + ". " + r[1] + " (" + r[3] + " EUR, " + (r[7]==="win"?"prix avantageux":"prix normal") + ")";
+      }).join("\n") + "\n\n"
+    + "Reponds en JSON valide sans markdown:\n"
+    + '{"tendances_globales":"string","opportunites":['
+    + '{"rang":1,"categorie":"string","score_tendance":8,"direction":"hausse","raison":"string","urgence":"Forte|Moyenne|Faible","produits_a_pousser":[{"nom":"string","raison":"string"}],"canal_prioritaire":"string","action_immediate":"string"}'
+    + '],"tendances_negatives":[{"categorie":"string","raison":"string","conseil":"string"}],"conseil_semaine":"string"}';
+  try {
+    var raw  = await callAI(prompt, 1800);
+    var data = safeJSON(raw);
+    if (loadEl) loadEl.style.display = "none";
+    if (resEl)  resEl.innerHTML = renderTendancesResult(data, horizonLabel[horizon]||"ce mois", seasonScores);
+  } catch(e) {
+    if (loadEl) loadEl.style.display = "none";
+    if (resEl)  resEl.innerHTML = "<div class='al ao'>Erreur: " + e.message + "</div>";
+    if (empEl)  empEl.style.display = "block";
+  }
+}
+
+function renderTendancesResult(data, horizon, seasonScores) {
+  var urgC = {Forte:["#e8f4ee","#085041"], Moyenne:["#fef3e2","#7a4a00"], Faible:["#fef2f2","#7a1a1a"]};
+  var dirC = {hausse:"#1D9E75", baisse:"#E24B4A", stable:"#BA7517"};
+  var h = "";
+  if (data.conseil_semaine) {
+    h += "<div class='al ag' style='margin-bottom:.65rem;font-size:12.5px'><b>Conseil de la semaine :</b> " + data.conseil_semaine + "</div>";
+  }
+  if (data.tendances_globales) {
+    h += "<div style='font-size:12px;color:var(--mut);margin-bottom:.65rem'>" + data.tendances_globales + "</div>";
+  }
+  if (data.opportunites && data.opportunites.length) {
+    h += "<div style='font-size:12px;font-weight:500;margin-bottom:.45rem'>Opportunites pour " + horizon + "</div>"
+      + "<div style='display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:8px;margin-bottom:.75rem'>";
+    data.opportunites.forEach(function(op, i) {
+      var uc  = urgC[op.urgence] || urgC["Moyenne"];
+      var dc  = dirC[op.direction] || "#888";
+      var arr = op.direction === "hausse" ? "+" : op.direction === "baisse" ? "-" : "=";
+      var sScore = seasonScores[op.categorie] || 5;
+      h += "<div class='card-section'>"
+        + "<div style='display:flex;align-items:center;justify-content:space-between;margin-bottom:.4rem'>"
+          + "<div style='display:flex;align-items:center;gap:7px'>"
+            + "<span style='font-size:15px;font-weight:700;color:" + dirC[op.direction||"stable"] + "'>#" + op.rang + " " + arr + "</span>"
+            + "<div style='font-size:12.5px;font-weight:500'>" + op.categorie + "</div>"
+          + "</div>"
+          + "<span class='bdg' style='background:" + uc[0] + ";color:" + uc[1] + "'>Urgence " + (op.urgence||"") + "</span>"
+        + "</div>"
+        + "<div style='display:flex;gap:8px;margin-bottom:.4rem;align-items:center'>"
+          + "<div style='flex:1;height:7px;background:var(--bg);border-radius:4px;overflow:hidden'>"
+            + "<div style='height:100%;background:" + dc + ";width:" + (op.score_tendance||5)*10 + "%;transition:width .4s'></div></div>"
+          + "<span style='font-size:11px;font-weight:600;color:" + dc + "'>" + (op.score_tendance||"?") + "/10</span>"
+          + "<span style='font-size:10px;color:var(--mut)'>Saison: " + sScore + "/10</span>"
+        + "</div>"
+        + (op.raison ? "<div style='font-size:11.5px;color:var(--txt);margin-bottom:.35rem'>" + op.raison + "</div>" : "")
+        + (op.produits_a_pousser && op.produits_a_pousser.length
+            ? "<div style='margin-bottom:.35rem'><div style='font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.3px;color:var(--mut);margin-bottom:.25rem'>Produits a mettre en avant</div>"
+              + op.produits_a_pousser.map(function(p){ return "<div style='display:flex;gap:5px;font-size:11.5px;margin-bottom:2px'><span style='color:#1D9E75;flex-shrink:0'>+</span><div><b>" + p.nom + "</b><span style='color:var(--mut)'> — " + p.raison + "</span></div></div>"; }).join("") + "</div>"
+            : "")
+        + (op.canal_prioritaire ? "<div style='font-size:11px;color:var(--mut)'>Canal prioritaire : <b style='color:var(--txt)'>" + op.canal_prioritaire + "</b></div>" : "")
+        + (op.action_immediate ? "<div style='margin-top:.35rem;padding:.3rem .5rem;background:var(--bg);border-radius:5px;font-size:11.5px;border-left:2px solid #1D9E75;color:var(--txt)'><b>Action :</b> " + op.action_immediate + "</div>" : "")
+        + "</div>";
+    });
+    h += "</div>";
+  }
+  if (data.tendances_negatives && data.tendances_negatives.length) {
+    h += "<div class='card-section'><h3 style='color:#7a1a1a;margin-bottom:.45rem'>Categories en recul - a eviter ou reduire</h3>"
+      + data.tendances_negatives.map(function(t){
+          return "<div style='display:flex;gap:8px;padding:.35rem 0;border-bottom:0.5px solid var(--bord);font-size:12px'>"
+            + "<span style='font-weight:500;min-width:120px;flex-shrink:0'>" + t.categorie + "</span>"
+            + "<span style='color:var(--mut)'>" + t.raison + " — <i>" + t.conseil + "</i></span>"
+            + "</div>";
+        }).join("") + "</div>";
+  }
+  return h;
+}
+
+// ============================================================
+// CALCULATEURS
+// ============================================================
+function showCalc(btn, id) {
+  document.querySelectorAll("#calc-subtabs .stab").forEach(function(b){ b.classList.remove("on"); });
+  btn.classList.add("on");
+  ["breakeven","pricing","montecarlo","keywords","timing"].forEach(function(n){
+    var el = document.getElementById("calc-" + n);
+    if (el) el.style.display = n === id ? "block" : "none";
+  });
+}
+
+function populateCalcSelects() {
+  var selectors = ["be-product","pp-product","mc-product","kw-product","tm-product"];
+  var opts = PRODUCTS.slice().sort(function(a,b){ return calcPrio(b)-calcPrio(a); }).map(function(r){
+    return "<option value='" + r[0] + "'>" + r[1] + " (" + fp(r[3]) + ")</option>";
+  }).join("");
+  selectors.forEach(function(id){
+    var el = document.getElementById(id); if(el) el.innerHTML = opts;
+  });
+  loadBEProduct();
+  loadPPProduct();
+}
+
+function renderCalculateurs() {
+  populateCalcSelects();
+  loadChartJS(function(){});
+}
+
+// --- BREAK-EVEN ---
+function loadBEProduct() {
+  var sel = document.getElementById("be-product"); if(!sel) return;
+  var pid = parseInt(sel.value);
+  var row = null; for(var i=0;i<PRODUCTS.length;i++) if(PRODUCTS[i][0]===pid){row=PRODUCTS[i];break;}
+  if (!row) return;
+  var priceEl = document.getElementById("be-price"); if(priceEl) priceEl.value = row[3];
+  var m = margins[pid] || {};
+  var costEl  = document.getElementById("be-cost");  if(costEl)  costEl.value  = m.cost || "";
+  calcBreakeven();
+}
+
+function calcBreakeven() {
+  var pid    = parseInt((document.getElementById("be-product")||{}).value);
+  var price  = parseFloat((document.getElementById("be-price")||{}).value)   || 0;
+  var cost   = parseFloat((document.getElementById("be-cost")||{}).value)    || 0;
+  var budget = parseFloat((document.getElementById("be-budget")||{}).value)  || 0;
+  var cpc    = parseFloat((document.getElementById("be-cpc")||{}).value)     || 0;
+  var cvr    = parseFloat((document.getElementById("be-cvr")||{}).value)     || 0;
+  var ship   = parseFloat((document.getElementById("be-ship")||{}).value)    || 0;
+  var ret    = parseFloat((document.getElementById("be-returns")||{}).value) || 0;
+  var el     = document.getElementById("be-result"); if(!el) return;
+  if (!price || !budget || !cpc || !cvr) {
+    el.innerHTML = "<span style='color:var(--mut)'>Remplis tous les champs pour calculer.</span>"; return;
+  }
+  var grossMargin   = cost > 0 ? price - cost - ship : null;
+  var netMargin     = grossMargin !== null ? grossMargin * (1 - ret/100) : null;
+  var dailyClicks   = Math.round(budget / cpc);
+  var dailyOrders   = dailyClicks * (cvr / 100);
+  var dailyRevenue  = dailyOrders * price;
+  var dailyCogs     = cost > 0 ? dailyOrders * (cost + ship) * (1 + ret/100) : 0;
+  var dailyProfit   = dailyRevenue - budget - dailyCogs;
+  var breakEvenOrds = netMargin && netMargin > 0 ? Math.ceil(budget / netMargin) : null;
+  var breakEvenDays = breakEvenOrds && dailyOrders > 0 ? Math.ceil(breakEvenOrds / dailyOrders) : null;
+  var roas          = dailyRevenue > 0 && budget > 0 ? (dailyRevenue / budget).toFixed(2) : null;
+  var col = dailyProfit > 0 ? "#1D9E75" : "#E24B4A";
+  el.innerHTML = ""
+    + "<div style='display:grid;grid-template-columns:1fr 1fr;gap:6px;font-size:12px'>"
+    + kpi("Clics/jour",    dailyClicks)
+    + kpi("Commandes/jour",dailyOrders.toFixed(1))
+    + kpi("CA/jour",       fp(dailyRevenue))
+    + kpi("ROAS",          roas ? roas + "x" : "--")
+    + (grossMargin !== null ? kpi("Marge brute/vente", fp(grossMargin)) : "")
+    + (netMargin   !== null ? kpi("Marge nette/vente", fp(netMargin))   : "")
+    + (breakEvenOrds ? kpi("Commandes pour BE", breakEvenOrds) : "")
+    + (breakEvenDays ? kpi("Jours pour BE",     breakEvenDays) : "")
+    + "</div>"
+    + "<div style='margin-top:.5rem;padding:.4rem .65rem;border-radius:7px;background:" + (dailyProfit>=0?"#e8f4ee":"#fef2f2") + ";color:" + col + ";font-weight:600;font-size:13px'>"
+      + "Profit/jour : " + (dailyProfit>=0?"+":"") + fp(dailyProfit)
+      + (dailyProfit >= 0 ? " Campagne rentable!" : " Pas encore rentable.")
+    + "</div>";
+  loadChartJS(function(){ drawBEChart(budget, cpc, cvr, price, cost, ship, ret); });
+}
+
+function kpi(label, value) {
+  return "<div style='background:var(--bg);border-radius:7px;padding:.35rem .55rem'>"
+    + "<div style='font-size:10px;color:var(--mut);text-transform:uppercase;letter-spacing:.3px'>" + label + "</div>"
+    + "<div style='font-size:14px;font-weight:600;margin-top:1px'>" + value + "</div>"
+    + "</div>";
+}
+
+function drawBEChart(budget, cpc, cvr, price, cost, ship, ret) {
+  destroyCh("breakeven");
+  var c = document.getElementById("chart-breakeven"); if(!c) return;
+  var points = [];
+  for (var mult = 0.2; mult <= 3.0; mult += 0.2) {
+    var b = budget * mult;
+    var clicks = b / cpc;
+    var orders = clicks * (cvr/100);
+    var rev    = orders * price;
+    var cogs   = cost > 0 ? orders * (cost + ship) * (1 + ret/100) : 0;
+    points.push({x: Math.round(b), profit: parseFloat((rev - b - cogs).toFixed(2))});
+  }
+  chartInst["breakeven"] = new Chart(c, {
+    type: "line",
+    data: {
+      labels: points.map(function(p){ return p.x + " EUR"; }),
+      datasets: [
+        {label:"Profit (EUR)", data:points.map(function(p){ return p.profit; }),
+          borderColor:"#1D9E75", backgroundColor:"#1D9E7522", fill:true, tension:0.3, pointRadius:3},
+        {label:"Break-even", data:points.map(function(){ return 0; }),
+          borderColor:"#E24B4A", borderDash:[4,4], pointRadius:0}
+      ]
+    },
+    options:{responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{display:true,labels:{font:{size:10}}}},
+      scales:{x:{ticks:{font:{size:10}}}, y:{ticks:{callback:function(v){ return v + " EUR";}}}}}
+  });
+}
+
+// --- PRICING PSYCHOLOGIQUE ---
+function loadPPProduct() {
+  var sel = document.getElementById("pp-product"); if(!sel) return;
+  var pid = parseInt(sel.value);
+  var row = null; for(var i=0;i<PRODUCTS.length;i++) if(PRODUCTS[i][0]===pid){row=PRODUCTS[i];break;}
+  if (!row) return;
+  var base = row[3];
+  var variants = [
+    Math.floor(base) - 0.01,
+    Math.floor(base / 5) * 5 - 0.01,
+    Math.floor(base / 10) * 10 - 0.01,
+    base,
+    Math.ceil(base / 10) * 10 - 0.01
+  ].filter(function(v){ return v > 0; });
+  var el = document.getElementById("pp-strategies"); if(!el) return;
+  el.innerHTML = variants.map(function(v){
+    var isOrig = Math.abs(v - base) < 0.01;
+    var label = v % 10 === 9.99 || v % 10 === 4.99 ? "Prix en 9 (psychologique)" : v % 5 === 4.99 ? "Prix en 5" : isOrig ? "Prix actuel" : "Prix arrondi";
+    return "<div style='display:flex;align-items:center;justify-content:space-between;padding:.3rem .5rem;margin-bottom:4px;background:" + (isOrig?"var(--gnbg)":"var(--bg)") + ";border-radius:6px;font-size:12px'>"
+      + "<span>" + label + "</span><b>" + fp(v) + "</b>"
+      + (isOrig?"<span class='bdg' style='background:#e8f4ee;color:#085041'>Actuel</span>":"<span style='color:var(--mut);font-size:11px'>" + (v<base?"Moins cher":"Plus cher") + "</span>")
+      + "</div>";
+  }).join("");
+  loadChartJS(function(){ drawPricingChart(variants, base); });
+}
+
+function drawPricingChart(variants, base) {
+  destroyCh("pricing");
+  var c = document.getElementById("chart-pricing"); if(!c) return;
+  var convRates = variants.map(function(v){
+    var diff = (v - base) / base;
+    return Math.max(0.5, Math.min(5, 2 - diff * 10));
+  });
+  chartInst["pricing"] = new Chart(c, {
+    type:"bar",
+    data:{
+      labels: variants.map(function(v){ return fp(v); }),
+      datasets:[{label:"Taux conv. estime (%)",data:convRates.map(function(r){ return parseFloat(r.toFixed(2)); }),
+        backgroundColor:variants.map(function(v){ return Math.abs(v-base)<0.01?"#1D9E75cc":"#378ADDcc"; }),
+        borderRadius:5}]
+    },
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},
+      scales:{x:{ticks:{font:{size:10}}},y:{beginAtZero:true,ticks:{callback:function(v){return v+"%";}}}}}
+  });
+}
+
+async function runPricingAI() {
+  var sel = document.getElementById("pp-product"); if(!sel) return;
+  var pid = parseInt(sel.value);
+  var row = null; for(var i=0;i<PRODUCTS.length;i++) if(PRODUCTS[i][0]===pid){row=PRODUCTS[i];break;}
+  if (!row) return;
+  var resEl = document.getElementById("pp-ai-result");
+  if (resEl) resEl.innerHTML = "<div class='loading'><div class='spin'></div> Analyse IA du pricing...</div>";
+  var prompt = "Expert en psychologie du pricing e-commerce France. Analyse le positionnement prix pour:\n"
+    + "Produit: " + row[1] + "\nPrix actuel: " + row[3] + " EUR\n"
+    + "Concurrent: " + row[5] + " (" + row[6] + ")\nCategorie: " + row[2] + "\n\n"
+    + "Reponds en JSON:\n"
+    + '{"analyse":"string","prix_recommande":99.99,"justification":"string",'
+    + '"strategies":[{"nom":"string","prix":99.99,"avantage":"string","risque":"string"}],'
+    + '"test_recommande":"string","conseil_urgent":"string"}';
+  try {
+    var raw  = await callAI(prompt, 800);
+    var data = safeJSON(raw);
+    if (resEl) resEl.innerHTML = "<div class='card-section'>"
+      + (data.conseil_urgent ? "<div class='al ag' style='margin-bottom:.5rem'><b>Conseil urgent :</b> " + data.conseil_urgent + "</div>" : "")
+      + (data.analyse ? "<div style='font-size:12px;color:var(--txt);margin-bottom:.5rem'>" + data.analyse + "</div>" : "")
+      + (data.prix_recommande ? "<div style='font-size:14px;font-weight:600;color:#085041;margin-bottom:.35rem'>Prix recommande : " + fp(data.prix_recommande) + " — " + (data.justification||"") + "</div>" : "")
+      + (data.test_recommande ? "<div class='al ao'>Test recommande : " + data.test_recommande + "</div>" : "")
+      + "</div>";
+  } catch(e) {
+    if (resEl) resEl.innerHTML = "<div class='al ao'>Erreur: " + e.message + "</div>";
+  }
+}
+
+// --- MONTE CARLO ---
+function runMonteCarlo() {
+  var sel     = document.getElementById("mc-product"); if(!sel) return;
+  var pid     = parseInt(sel.value);
+  var row     = null; for(var i=0;i<PRODUCTS.length;i++) if(PRODUCTS[i][0]===pid){row=PRODUCTS[i];break;}
+  var budget  = parseFloat((document.getElementById("mc-budget")||{}).value)  || 500;
+  var days    = parseInt((document.getElementById("mc-days")||{}).value)      || 30;
+  var cpcMin  = parseFloat((document.getElementById("mc-cpc-min")||{}).value) || 0.5;
+  var cpcMax  = parseFloat((document.getElementById("mc-cpc-max")||{}).value) || 1.5;
+  var cvrMin  = parseFloat((document.getElementById("mc-cvr-min")||{}).value) || 1;
+  var cvrMax  = parseFloat((document.getElementById("mc-cvr-max")||{}).value) || 4;
+  var price   = row ? row[3] : 300;
+  var m       = row ? (margins[row[0]] || {}) : {};
+  var cost    = m.cost || price * 0.6;
+  var simulations = 1000;
+  var results = [];
+  for (var s = 0; s < simulations; s++) {
+    var cpc  = cpcMin + Math.random() * (cpcMax - cpcMin);
+    var cvr  = (cvrMin + Math.random() * (cvrMax - cvrMin)) / 100;
+    var budgetPerDay = budget / days;
+    var clicks = budgetPerDay / cpc;
+    var orders = clicks * cvr;
+    var revenue = orders * price * days;
+    var cogs    = orders * cost * days;
+    var profit  = revenue - budget - cogs;
+    var roas    = revenue / budget;
+    results.push({profit: profit, roas: roas, orders: orders * days});
+  }
+  results.sort(function(a,b){ return a.profit - b.profit; });
+  var p10  = results[Math.floor(simulations * 0.10)];
+  var p50  = results[Math.floor(simulations * 0.50)];
+  var p90  = results[Math.floor(simulations * 0.90)];
+  var profitable = results.filter(function(r){ return r.profit > 0; }).length;
+  var pct = Math.round(profitable / simulations * 100);
+  var el  = document.getElementById("mc-result"); if(!el) return;
+  var col = pct >= 70 ? "#1D9E75" : pct >= 40 ? "#BA7517" : "#E24B4A";
+  el.innerHTML = "<div style='display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-bottom:.5rem;font-size:12px'>"
+    + "<div style='background:#fef2f2;padding:.4rem .6rem;border-radius:7px'><div style='font-size:10px;color:#7a1a1a;text-transform:uppercase'>Pire cas (10%)</div><div style='font-weight:600;color:#7a1a1a'>" + fp(p10.profit) + "</div><div style='font-size:11px;color:var(--mut)'>ROAS: " + p10.roas.toFixed(2) + "x</div></div>"
+    + "<div style='background:#e8f0fb;padding:.4rem .6rem;border-radius:7px'><div style='font-size:10px;color:#042C53;text-transform:uppercase'>Cas median (50%)</div><div style='font-weight:600;color:#042C53'>" + fp(p50.profit) + "</div><div style='font-size:11px;color:var(--mut)'>ROAS: " + p50.roas.toFixed(2) + "x</div></div>"
+    + "<div style='background:#e8f4ee;padding:.4rem .6rem;border-radius:7px'><div style='font-size:10px;color:#085041;text-transform:uppercase'>Meilleur cas (90%)</div><div style='font-weight:600;color:#085041'>" + fp(p90.profit) + "</div><div style='font-size:11px;color:var(--mut)'>ROAS: " + p90.roas.toFixed(2) + "x</div></div>"
+    + "</div>"
+    + "<div style='padding:.4rem .65rem;border-radius:7px;background:" + (pct>=70?"#e8f4ee":pct>=40?"#fef3e2":"#fef2f2") + ";color:" + col + ";font-weight:600;font-size:13px;margin-bottom:.35rem'>"
+      + "Probabilite de rentabilite : " + pct + "% des simulations"
+    + "</div>"
+    + "<div style='font-size:11px;color:var(--mut)'>Commandes medianes : " + Math.round(p50.orders) + " | Budget : " + fp(budget) + " sur " + days + " jours</div>";
+  loadChartJS(function(){ drawMCChart(results); });
+}
+
+function drawMCChart(results) {
+  destroyCh("montecarlo");
+  var c = document.getElementById("chart-montecarlo"); if(!c) return;
+  var min   = results[0].profit;
+  var max   = results[results.length-1].profit;
+  var range = max - min;
+  var nbins = 20;
+  var binW  = range / nbins;
+  var bins  = [];
+  for (var i=0;i<nbins;i++) bins.push({label: fp(min + i * binW), count: 0, center: min + (i+0.5)*binW});
+  results.forEach(function(r){
+    var bi = Math.min(nbins-1, Math.floor((r.profit - min) / binW));
+    bins[bi].count++;
+  });
+  chartInst["montecarlo"] = new Chart(c, {
+    type:"bar",
+    data:{
+      labels: bins.map(function(b){ return b.label; }),
+      datasets:[{label:"Nb simulations",data:bins.map(function(b){ return b.count; }),
+        backgroundColor:bins.map(function(b){ return b.center >= 0 ? "#1D9E75cc" : "#E24B4Acc"; }),
+        borderRadius:3}]
+    },
+    options:{responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{display:false}},
+      scales:{x:{ticks:{font:{size:9},maxRotation:40}},y:{beginAtZero:true}}}
+  });
+}
+
+// --- MOTS-CLES NEGATIFS ---
+async function runKeywords() {
+  var sel = document.getElementById("kw-product"); if(!sel) return;
+  var pid = parseInt(sel.value);
+  var row = null; for(var i=0;i<PRODUCTS.length;i++) if(PRODUCTS[i][0]===pid){row=PRODUCTS[i];break;}
+  var net = (document.getElementById("kw-network")||{}).value || "google";
+  var loadEl=document.getElementById("kw-loading"), resEl=document.getElementById("kw-result"), empEl=document.getElementById("kw-empty");
+  if(loadEl)loadEl.style.display="flex"; if(resEl)resEl.innerHTML=""; if(empEl)empEl.style.display="none";
+  var schema = '{"explication":"string","mots_cles_negatifs":{"exact":["mot1","mot2"],"expression":["expr1","expr2"],"large":["large1","large2"]},"categories_a_exclure":["cat1","cat2"],"conseils":["c1","c2","c3"],"exemple_exclusion":"string"}';
+  var prompt = "Expert Google Ads et Meta Ads France. Genere une liste complete de mots-cles negatifs pour eviter les clics non qualifies.\n"
+    + "Produit: " + (row?row[1]:"") + "\nCategorie: " + (row?row[2]:"") + "\nPrix: " + (row?row[3]:"") + " EUR\n"
+    + "Reseau: " + (net==="both"?"Google Ads et Meta Ads":net==="google"?"Google Ads":"Meta Ads") + "\n\n"
+    + "Genere des mots-cles negatifs tres specifiques a CE produit et sa categorie.\n"
+    + "Inclure: termes de recherche d information (pas achat), marques concurrentes non pertinentes, termes geographiques non cibles, DIY/repare soi-meme, termes trop generiques.\n\n"
+    + "Reponds en JSON valide sans markdown:\n" + schema;
+  try {
+    var raw  = await callAI(prompt, 1200);
+    var data = safeJSON(raw);
+    if(loadEl)loadEl.style.display="none";
+    if(resEl) resEl.innerHTML = renderKeywords(data, row, net);
+  } catch(e) {
+    if(loadEl)loadEl.style.display="none";
+    if(resEl) resEl.innerHTML = "<div class='al ao'>Erreur: " + e.message + "</div>";
+    if(empEl) empEl.style.display="block";
+  }
+}
+
+function renderKeywords(data, row, net) {
+  var h = "<div class='card-section'>"
+    + "<h3 style='margin-bottom:.5rem'>Mots-cles negatifs pour " + (row?row[1]:"") + " — " + (net==="both"?"Google + Meta":net) + "</h3>"
+    + (data.explication ? "<div style='font-size:12px;color:var(--mut);margin-bottom:.55rem'>" + data.explication + "</div>" : "");
+  var mk = data.mots_cles_negatifs || {};
+  if (mk.exact && mk.exact.length) {
+    h += "<div style='margin-bottom:.45rem'><div style='font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.3px;color:#7a1a1a;margin-bottom:.25rem'>Correspondance exacte [" + mk.exact.length + "]</div>"
+      + "<div class='tags'>" + mk.exact.map(function(k){ return "<span class='tag' style='color:#7a1a1a;font-family:monospace'>[" + k + "]</span>"; }).join("") + "</div></div>";
+  }
+  if (mk.expression && mk.expression.length) {
+    h += "<div style='margin-bottom:.45rem'><div style='font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.3px;color:#7a4a00;margin-bottom:.25rem'>Expression exacte [" + mk.expression.length + "]</div>"
+      + "<div class='tags'>" + mk.expression.map(function(k){ return "<span class='tag' style='color:#7a4a00;font-family:monospace'>\"" + k + "\"</span>"; }).join("") + "</div></div>";
+  }
+  if (mk.large && mk.large.length) {
+    h += "<div style='margin-bottom:.45rem'><div style='font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.3px;color:var(--mut);margin-bottom:.25rem'>Correspondance large modifiee [" + mk.large.length + "]</div>"
+      + "<div class='tags'>" + mk.large.map(function(k){ return "<span class='tag' style='font-family:monospace'>" + k + "</span>"; }).join("") + "</div></div>";
+  }
+  if (data.categories_a_exclure && data.categories_a_exclure.length) {
+    h += "<div class='al ao' style='margin:.4rem 0'><b>Categories d audience a exclure :</b> " + data.categories_a_exclure.join(", ") + "</div>";
+  }
+  if (data.exemple_exclusion) {
+    h += "<div style='font-size:12px;color:var(--mut);margin:.35rem 0;font-style:italic'>" + data.exemple_exclusion + "</div>";
+  }
+  if (data.conseils && data.conseils.length) {
+    h += "<ul style='padding-left:1rem;font-size:11.5px;color:var(--mut);margin-top:.35rem'>"
+      + data.conseils.map(function(c){ return "<li style='margin-bottom:3px'>" + c + "</li>"; }).join("") + "</ul>";
+  }
+  var allKW = [].concat(mk.exact||[], mk.expression||[], mk.large||[]);
+  h += "<button class='btn bg' style='margin-top:.5rem' onclick='copyKWList(" + JSON.stringify(JSON.stringify(allKW)) + ")'>Copier toute la liste</button>";
+  h += "</div>";
+  return h;
+}
+
+function copyKWList(arrStr) {
+  var arr; try { arr = JSON.parse(arrStr); } catch(e){ return; }
+  var txt = arr.join("\n");
+  if(navigator.clipboard) navigator.clipboard.writeText(txt).then(function(){ alert("Liste copiee (" + arr.length + " mots-cles)!"); });
+}
+
+// --- MEILLEURE HEURE ---
+async function runTiming() {
+  var sel = document.getElementById("tm-product"); if(!sel) return;
+  var pid = parseInt(sel.value);
+  var row = null; for(var i=0;i<PRODUCTS.length;i++) if(PRODUCTS[i][0]===pid){row=PRODUCTS[i];break;}
+  var net = (document.getElementById("tm-network")||{}).value || "meta";
+  var loadEl=document.getElementById("tm-loading"), resEl=document.getElementById("tm-result"), empEl=document.getElementById("tm-empty");
+  if(loadEl)loadEl.style.display="flex"; if(resEl)resEl.innerHTML=""; if(empEl)empEl.style.display="none";
+  var schema = '{"analyse":"string","creneaux_optimaux":['
+    + '{"rang":1,"jour":"string","heure_debut":"08:00","heure_fin":"10:00","score":9,"raison":"string","canal":"string","cpc_relatif":"Plus bas|Normal|Plus eleve"}'
+    + '],"jours_a_eviter":["lundi matin"],"budget_par_creneau":"string","strategie_globale":"string","conseil_pratique":"string"}';
+  var prompt = "Expert media buying France. Analyse les meilleurs creneaux horaires pour diffuser des publicites.\n"
+    + "Produit: " + (row?row[1]:"") + "\nCategorie: " + (row?row[2]:"") + "\nPrix: " + (row?row[3]:"") + " EUR\n"
+    + "Canal: " + net + "\n\n"
+    + "Base-toi sur: comportement d achat de la cible pour cette categorie, pic d activite sur le reseau, CPC historiquement plus bas, intention d achat elevee.\n"
+    + "Genere 6 creneaux optimaux avec jour + heure + score + raison.\n\n"
+    + "Reponds en JSON valide sans markdown:\n" + schema;
+  try {
+    var raw  = await callAI(prompt, 1000);
+    var data = safeJSON(raw);
+    if(loadEl)loadEl.style.display="none";
+    if(resEl) resEl.innerHTML = renderTiming(data, row, net);
+  } catch(e) {
+    if(loadEl)loadEl.style.display="none";
+    if(resEl) resEl.innerHTML = "<div class='al ao'>Erreur: " + e.message + "</div>";
+    if(empEl) empEl.style.display="block";
+  }
+}
+
+function renderTiming(data, row, net) {
+  var cpcC = {"Plus bas":["#e8f4ee","#085041"], Normal:["#f1efe8","#2c2c2a"], "Plus eleve":["#fef2f2","#7a1a1a"]};
+  var h = "";
+  if (data.analyse) h += "<div style='font-size:12px;color:var(--mut);margin-bottom:.6rem'>" + data.analyse + "</div>";
+  if (data.creneaux_optimaux && data.creneaux_optimaux.length) {
+    h += "<div style='display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:8px;margin-bottom:.65rem'>";
+    data.creneaux_optimaux.forEach(function(cr, i) {
+      var rc = i===0?"#1D9E75":i===1?"#378ADD":i===2?"#BA7517":"var(--mut)";
+      var cc = cpcC[cr.cpc_relatif] || cpcC["Normal"];
+      h += "<div class='card-section'>"
+        + "<div style='display:flex;align-items:center;justify-content:space-between;margin-bottom:.4rem'>"
+          + "<div style='display:flex;align-items:center;gap:7px'>"
+            + "<span style='font-size:15px;font-weight:700;color:" + rc + "'>#" + cr.rang + "</span>"
+            + "<div><div style='font-size:12.5px;font-weight:500'>" + (cr.jour||"") + "</div>"
+              + "<div style='font-size:12px;color:var(--txt)'>" + (cr.heure_debut||"") + " - " + (cr.heure_fin||"") + "</div></div>"
+          + "</div>"
+          + "<span class='bdg' style='background:" + cc[0] + ";color:" + cc[1] + "'>CPC " + (cr.cpc_relatif||"") + "</span>"
+        + "</div>"
+        + "<div style='display:flex;align-items:center;gap:6px;margin-bottom:.35rem'>"
+          + "<div style='flex:1;height:6px;background:var(--bg);border-radius:3px;overflow:hidden'>"
+            + "<div style='height:100%;background:" + rc + ";width:" + (cr.score||5)*10 + "%'></div></div>"
+          + "<span style='font-size:11px;font-weight:600;color:" + rc + "'>" + (cr.score||"?") + "/10</span>"
+        + "</div>"
+        + (cr.raison ? "<div style='font-size:11.5px;color:var(--txt);margin-bottom:.25rem'>" + cr.raison + "</div>" : "")
+        + (cr.canal ? "<span class='tag'>" + cr.canal + "</span>" : "")
+        + "</div>";
+    });
+    h += "</div>";
+  }
+  if (data.jours_a_eviter && data.jours_a_eviter.length) {
+    h += "<div class='al ao' style='margin-bottom:.55rem'><b>Periodes a eviter :</b> " + data.jours_a_eviter.join(", ") + "</div>";
+  }
+  if (data.budget_par_creneau) h += "<div class='al ai' style='margin-bottom:.5rem'><b>Repartition budget :</b> " + data.budget_par_creneau + "</div>";
+  if (data.strategie_globale) {
+    h += "<div class='card-section'><h3>Strategie globale</h3><div style='font-size:12px;color:var(--txt);margin-top:.3rem'>" + data.strategie_globale + "</div></div>";
+  }
+  return h;
+}
+
+// ============================================================
+// GUIDE ADS PERSONNALISE
+// ============================================================
+function populateGuidAdsProducts() {
+  var sel = document.getElementById("guide-product"); if(!sel) return;
+  sel.innerHTML = PRODUCTS.slice().sort(function(a,b){ return calcPrio(b)-calcPrio(a); }).map(function(r){
+    return "<option value='" + r[0] + "'>" + r[1] + " (" + fp(r[3]) + ")</option>";
+  }).join("");
+}
+
+var lastGuideData = null;
+
+async function runGuideAds() {
+  var sel     = document.getElementById("guide-product"); if(!sel) return;
+  var pid     = parseInt(sel.value);
+  var level   = (document.getElementById("guide-level")||{}).value   || "intermediaire";
+  var budgetM = (document.getElementById("guide-budget")||{}).value  || "500";
+  var row     = null; for(var i=0;i<PRODUCTS.length;i++) if(PRODUCTS[i][0]===pid){row=PRODUCTS[i];break;}
+  if (!row) return;
+  var m       = margins[pid] || {};
+  var margin  = m.cost ? Math.round(((row[3]-m.cost)/row[3])*100) : null;
+  var sScore  = (SEASONAL[row[2]]||[])[new Date().getMonth()] || 5;
+  var loadEl  = document.getElementById("guide-loading");
+  var resEl   = document.getElementById("guide-result");
+  var empEl   = document.getElementById("guide-empty");
+  var msgEl   = document.getElementById("guide-msg");
+  if(loadEl)loadEl.style.display="flex"; if(resEl)resEl.innerHTML=""; if(empEl)empEl.style.display="none";
+  var lvlLabel = {debutant:"debutant (premier lancement ads)",intermediaire:"intermediaire (quelques campagnes deja faites)",avance:"avance (scaling et optimisation)"};
+  var schema = '{"resume_executif":"string","score_opportunite":8,"verdict":"Excellent|Bon|Moyen|Risque",'
+    + '"phase_1":{"titre":"string","duree":"string","objectif":"string","actions":["a1","a2","a3"],"budget_jour":"string","kpis":["k1","k2"]},'
+    + '"phase_2":{"titre":"string","duree":"string","objectif":"string","actions":["a1","a2","a3"],"budget_jour":"string","kpis":["k1","k2"]},'
+    + '"phase_3":{"titre":"string","duree":"string","objectif":"string","actions":["a1","a2","a3"],"budget_jour":"string","kpis":["k1","k2"]},'
+    + '"reseaux_prioritaires":[{"reseau":"string","part_budget":"30%","raison":"string","format_star":"string","cpc_estime":"string"}],'
+    + '"accroches_gagnantes":["accroche1","accroche2","accroche3"],'
+    + '"erreurs_a_eviter":["erreur1","erreur2","erreur3"],'
+    + '"objectifs_30j":{"commandes":10,"ca":"string","roas":"string","cpa_max":"string"},'
+    + '"budget_repartition":{"meta":"40%","google":"35%","tiktok":"15%","test":"10%"},'
+    + '"conseil_expert":"string"}';
+  var prompt = "Expert media buyer e-commerce France. Cree un guide ads personnalise et complet.\n\n"
+    + "Produit: " + row[1] + "\nCategorie: " + row[2] + "\nPrix de vente: " + row[3] + " EUR\n"
+    + "Concurrent principal: " + row[5] + " (prix: " + row[6] + ")\n"
+    + "Avantage prix: " + (row[7]==="win"?"Mon prix est moins cher":"Prix similaire") + "\n"
+    + "Intensite pub concurrents: " + row[8] + "\nPotentiel marche: " + row[4] + "/10\n"
+    + "Saisonnalite ce mois: " + sScore + "/10\n"
+    + (margin ? "Marge: " + margin + "%\n" : "")
+    + "Niveau de l annonceur: " + (lvlLabel[level]||level) + "\n"
+    + "Budget mensuel: " + budgetM + " EUR/mois\n\n"
+    + "Cree un guide en 3 phases (Test, Optimisation, Scaling) avec actions concretes et chiffres precis.\n"
+    + "Adapte toutes les recommandations au niveau et au budget fournis.\n\n"
+    + "Reponds UNIQUEMENT en JSON valide sans markdown:\n" + schema;
+  if(msgEl) msgEl.textContent = "Creation du guide pour " + row[1] + "...";
+  try {
+    var raw  = await callAI(prompt, 2000);
+    var data = safeJSON(raw);
+    lastGuideData = {data: data, product: row, level: level, budget: budgetM};
+    if(loadEl)loadEl.style.display="none";
+    if(resEl)resEl.innerHTML = renderGuideAds(data, row, level, budgetM);
+  } catch(e) {
+    if(loadEl)loadEl.style.display="none";
+    if(resEl)resEl.innerHTML = "<div class='al ao'>Erreur: " + e.message + "</div>";
+    if(empEl)empEl.style.display="block";
+  }
+}
+
+function renderGuideAds(data, row, level, budgetM) {
+  var verdC = {Excellent:["#e8f4ee","#085041"],Bon:["#e8f0fb","#042C53"],Moyen:["#fef3e2","#7a4a00"],Risque:["#fef2f2","#7a1a1a"]};
+  var vc    = verdC[data.verdict] || verdC["Bon"];
+  var phColors = ["#1D9E75","#378ADD","#BA7517"];
+  var phases = [
+    {key:"phase_1",d:data.phase_1,color:phColors[0]},
+    {key:"phase_2",d:data.phase_2,color:phColors[1]},
+    {key:"phase_3",d:data.phase_3,color:phColors[2]}
+  ];
+  var h = "";
+
+  // Header
+  h += "<div style='display:flex;align-items:center;flex-wrap:wrap;gap:10px;margin-bottom:.65rem'>"
+    + "<div><b style='font-size:14px'>" + row[1] + "</b>"
+      + "<div style='font-size:11px;color:var(--mut)'>" + fp(row[3]) + " — Budget " + budgetM + " EUR/mois — Niveau " + level + "</div></div>"
+    + "<span class='bdg' style='background:" + vc[0] + ";color:" + vc[1] + ";font-size:12px;padding:4px 12px'>Opportunite : " + (data.verdict||"") + "</span>"
+    + (data.score_opportunite ? "<div style='display:flex;align-items:center;gap:6px'>"
+        + "<div style='width:80px;height:8px;background:var(--bg);border-radius:4px;overflow:hidden'><div style='height:100%;background:" + vc[1] + ";width:" + (data.score_opportunite||5)*10 + "%'></div></div>"
+        + "<span style='font-size:12px;font-weight:600;color:" + vc[1] + "'>" + data.score_opportunite + "/10</span></div>" : "")
+    + "</div>";
+
+  if (data.resume_executif) h += "<div class='al ai' style='margin-bottom:.65rem;font-size:12.5px'>" + data.resume_executif + "</div>";
+
+  // Phases
+  h += "<div style='display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:9px;margin-bottom:.75rem'>";
+  phases.forEach(function(ph) {
+    if (!ph.d) return;
+    h += "<div class='card-section' style='border-top:3px solid " + ph.color + ";border-radius:0 0 var(--r) var(--r)'>"
+      + "<div style='font-size:11px;font-weight:600;color:" + ph.color + ";text-transform:uppercase;letter-spacing:.3px;margin-bottom:.3rem'>" + (ph.d.titre||"") + " — " + (ph.d.duree||"") + "</div>"
+      + (ph.d.objectif ? "<div style='font-size:12px;color:var(--txt);margin-bottom:.4rem;font-weight:500'>" + ph.d.objectif + "</div>" : "")
+      + (ph.d.budget_jour ? "<div style='font-size:12px;color:" + ph.color + ";font-weight:600;margin-bottom:.35rem'>Budget : " + ph.d.budget_jour + "/jour</div>" : "")
+      + "<div style='font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.3px;color:var(--mut);margin-bottom:.25rem'>Actions</div>"
+      + (ph.d.actions||[]).map(function(a,i){ return "<div style='display:flex;gap:5px;font-size:11.5px;margin-bottom:3px'><span style='color:" + ph.color + ";flex-shrink:0;font-weight:600'>" + (i+1) + ".</span>" + a + "</div>"; }).join("")
+      + (ph.d.kpis && ph.d.kpis.length ? "<div style='margin-top:.4rem'><div style='font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.3px;color:var(--mut);margin-bottom:.2rem'>KPIs a surveiller</div>"
+          + "<div class='tags'>" + ph.d.kpis.map(function(k){ return "<span class='tag' style='color:" + ph.color + "'>" + k + "</span>"; }).join("") + "</div></div>" : "")
+      + "</div>";
+  });
+  h += "</div>";
+
+  // Reseaux prioritaires
+  if (data.reseaux_prioritaires && data.reseaux_prioritaires.length) {
+    var netC2 = {Meta:"#1877f2","Meta (Facebook + Instagram)":"#1877f2",Google:"#ea4335","Google Shopping":"#ea4335",TikTok:"#010101",Pinterest:"#e60023",YouTube:"#ff0000"};
+    h += "<div class='card-section' style='margin-bottom:.75rem'>"
+      + "<h3 style='margin-bottom:.5rem'>Reseaux et repartition du budget</h3>"
+      + "<div style='display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:7px'>";
+    data.reseaux_prioritaires.forEach(function(r2) {
+      var nc2 = netC2[r2.reseau] || "#888";
+      h += "<div style='padding:.5rem .7rem;background:var(--bg);border-radius:8px;border-left:3px solid " + nc2 + "'>"
+        + "<div style='display:flex;align-items:center;justify-content:space-between;margin-bottom:.3rem'>"
+          + "<span style='font-size:12px;font-weight:600;color:" + nc2 + "'>" + (r2.reseau||"") + "</span>"
+          + "<span style='font-size:13px;font-weight:700;color:var(--txt)'>" + (r2.part_budget||"") + "</span>"
+        + "</div>"
+        + (r2.raison ? "<div style='font-size:11px;color:var(--mut);margin-bottom:.2rem'>" + r2.raison + "</div>" : "")
+        + (r2.format_star ? "<div style='font-size:11px'><b>Format star :</b> " + r2.format_star + "</div>" : "")
+        + (r2.cpc_estime ? "<div style='font-size:11px;color:var(--mut)'>CPC : " + r2.cpc_estime + "</div>" : "")
+        + "</div>";
+    });
+    h += "</div></div>";
+  }
+
+  // 2 colonnes: accroches + erreurs
+  h += "<div style='display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:.75rem'>";
+  if (data.accroches_gagnantes && data.accroches_gagnantes.length) {
+    h += "<div class='card-section'><h3 style='margin-bottom:.4rem'>Accroches gagnantes a tester</h3>"
+      + data.accroches_gagnantes.map(function(a){ return "<div style='padding:.3rem .5rem;background:var(--bg);border-radius:5px;font-size:11.5px;border-left:2px solid #1D9E75;margin-bottom:4px;font-style:italic'>" + a + "</div>"; }).join("")
+      + "</div>";
+  }
+  if (data.erreurs_a_eviter && data.erreurs_a_eviter.length) {
+    h += "<div class='card-section'><h3 style='margin-bottom:.4rem;color:#7a1a1a'>Erreurs critiques a eviter</h3>"
+      + data.erreurs_a_eviter.map(function(e){ return "<div style='display:flex;gap:5px;font-size:11.5px;margin-bottom:4px'><span style='color:#E24B4A;flex-shrink:0'>x</span>" + e + "</div>"; }).join("")
+      + "</div>";
+  }
+  h += "</div>";
+
+  // Objectifs 30 jours
+  if (data.objectifs_30j) {
+    var o = data.objectifs_30j;
+    h += "<div class='card-section' style='margin-bottom:.75rem'>"
+      + "<h3 style='margin-bottom:.5rem'>Objectifs a 30 jours avec " + budgetM + " EUR/mois</h3>"
+      + "<div style='display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:6px'>"
+      + (o.commandes ? kpi("Commandes cibles", o.commandes) : "")
+      + (o.ca        ? kpi("CA cible",          o.ca)        : "")
+      + (o.roas      ? kpi("ROAS cible",         o.roas)      : "")
+      + (o.cpa_max   ? kpi("CPA max",            o.cpa_max)   : "")
+      + "</div></div>";
+  }
+
+  if (data.conseil_expert) {
+    h += "<div class='card-section' style='border-left:3px solid #1D9E75;border-radius:0 var(--r) var(--r) 0;margin-bottom:.65rem'>"
+      + "<h3 style='color:#085041;margin-bottom:.35rem'>Conseil expert</h3>"
+      + "<div style='font-size:12.5px;color:var(--txt);line-height:1.7'>" + data.conseil_expert + "</div></div>";
+  }
+
+  h += "<button class='btn bg' onclick='exportGuideAds()'>Exporter ce guide</button>";
+  return h;
+}
+
+function exportGuideAds() {
+  if (!lastGuideData) { alert("Genere un guide d abord."); return; }
+  var d = lastGuideData.data;
+  var r = lastGuideData.product;
+  var lines = ["GUIDE ADS PERSONNALISE — " + r[1],
+    "Produit: " + r[1] + " | Prix: " + r[3] + " EUR | Budget: " + lastGuideData.budget + " EUR/mois",
+    "Niveau: " + lastGuideData.level + " | Score opportunite: " + (d.score_opportunite||"?") + "/10",
+    "", d.resume_executif || "", ""];
+  ["phase_1","phase_2","phase_3"].forEach(function(key){
+    var ph = d[key]; if(!ph) return;
+    lines.push("=== " + (ph.titre||key).toUpperCase() + " === " + (ph.duree||""));
+    lines.push("Objectif: " + (ph.objectif||""));
+    lines.push("Budget: " + (ph.budget_jour||"") + "/jour");
+    lines.push("Actions:"); (ph.actions||[]).forEach(function(a,i){ lines.push("  " + (i+1) + ". " + a); });
+    lines.push("KPIs: " + (ph.kpis||[]).join(", ")); lines.push("");
+  });
+  if (d.accroches_gagnantes) { lines.push("ACCROCHES GAGNANTES:"); d.accroches_gagnantes.forEach(function(a){ lines.push("  - " + a); }); lines.push(""); }
+  if (d.erreurs_a_eviter) { lines.push("ERREURS A EVITER:"); d.erreurs_a_eviter.forEach(function(e){ lines.push("  x " + e); }); lines.push(""); }
+  if (d.conseil_expert) { lines.push("CONSEIL EXPERT:"); lines.push(d.conseil_expert); }
+  var blob = new Blob([lines.join("\n")], {type:"text/plain;charset=utf-8;"});
+  var a = document.createElement("a"); a.href = URL.createObjectURL(blob);
+  a.download = "guide_ads_" + r[1].slice(0,20).replace(/\s/g,"_") + ".txt"; a.click();
+}
+
+
 // INIT -- EN DERNIER
 // ============================================================
 updateApiBar();
@@ -2298,6 +3189,7 @@ populateCtProducts();
 populateChecklistProducts();
 populateGeoProducts();
 populateSpyProducts();
+populateTendancesProducts();
 buildReport();
 document.getElementById("c-date").value = new Date().toISOString().slice(0,10);
 
