@@ -97,9 +97,70 @@ tr.sel td{background:#f0f8f3}
 .rpt-block{background:var(--sur);border:1px solid var(--bord);border-radius:var(--r);padding:1rem 1.1rem;margin-bottom:.75rem}
 .rpt-block h3{font-size:13px;font-weight:500;margin-bottom:.6rem;padding-bottom:.4rem;border-bottom:1px solid var(--bord)}
 @media print{.apibar,.topbar,.maintabs,.ctrls,.subtabs,.btn,.topr{display:none!important}.panel{display:block!important;padding:0}.rpt-block{break-inside:avoid}}
+
+/* ===== LOGIN & ACCESS CONTROL ===== */
+.login-overlay{position:fixed;inset:0;background:var(--bg);z-index:9999;display:flex;align-items:center;justify-content:center;padding:1rem}
+.login-box{background:var(--sur);border:1px solid var(--bord);border-radius:16px;width:100%;max-width:400px;padding:2rem 2.25rem;text-align:center;box-shadow:0 8px 40px rgba(0,0,0,.12)}
+.login-box .logo{font-size:28px;margin-bottom:.5rem}
+.login-box h2{font-size:16px;font-weight:600;margin-bottom:.25rem}
+.login-box .sub{font-size:12px;color:var(--mut);margin-bottom:1.5rem}
+.login-field{display:flex;flex-direction:column;gap:3px;margin-bottom:.75rem;text-align:left}
+.login-field label{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.4px;color:var(--mut)}
+.login-field input{padding:8px 11px;border:1px solid var(--bord2);border-radius:8px;font-size:13px;font-family:inherit;background:var(--sur);color:var(--txt);outline:none;transition:border-color .15s}
+.login-field input:focus{border-color:var(--txt)}
+.login-btn{width:100%;padding:9px;border-radius:8px;border:none;background:var(--txt);color:#fff;font-size:13px;font-weight:500;cursor:pointer;margin-top:.5rem;font-family:inherit}
+.login-btn:hover{background:#333}
+.login-btn.secondary{background:transparent;color:var(--mut);border:1px solid var(--bord2);margin-top:.4rem}
+.login-btn.secondary:hover{background:var(--bg)}
+.login-err{font-size:12px;color:#7a1a1a;margin-top:.5rem;min-height:18px}
+.login-ok{font-size:12px;color:#085041;margin-top:.5rem}
+.access-badge{display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:20px;font-size:11px;background:var(--gnbg);color:var(--grn);cursor:pointer}
+.access-badge:hover{background:#d4ecdf}
+/* Admin panel */
+.adm-panel{background:var(--sur);border:1px solid var(--bord);border-radius:var(--r);padding:1rem 1.1rem;margin-bottom:.75rem}
+.adm-panel h3{font-size:13px;font-weight:500;margin-bottom:.65rem}
+.user-row{display:flex;align-items:center;gap:8px;padding:.4rem .6rem;background:var(--bg);border-radius:7px;margin-bottom:4px;font-size:12px}
+.user-row .uname{font-weight:500;flex:1}
+.user-row .ucode{font-family:monospace;color:var(--mut);font-size:11px}
+.user-row .ustatus{font-size:10px;padding:2px 7px;border-radius:20px}
+.user-row .uexp{font-size:10px;color:var(--mut)}
+
 </style>
 </head>
 <body>
+
+
+<!-- ===== LOGIN OVERLAY ===== -->
+<div class="login-overlay" id="login-overlay">
+  <div class="login-box" id="login-box-user">
+    <div class="logo">🛍</div>
+    <h2>UrbanElectroStore — Cockpit</h2>
+    <p class="sub">Entre tes identifiants pour acceder a l outil</p>
+    <div class="login-field">
+      <label>Ton prenom ou identifiant</label>
+      <input type="text" id="login-username" placeholder="ex: Pierre" autocomplete="username">
+    </div>
+    <div class="login-field">
+      <label>Code d acces</label>
+      <input type="password" id="login-code" placeholder="Code fourni par l admin" autocomplete="current-password" onkeydown="if(event.key==='Enter')doLogin()">
+    </div>
+    <button class="login-btn" onclick="doLogin()">Acceder a l outil</button>
+    <button class="login-btn secondary" onclick="showAdminLogin()">Admin</button>
+    <div class="login-err" id="login-err"></div>
+  </div>
+  <div class="login-box" id="login-box-admin" style="display:none">
+    <div class="logo">🔐</div>
+    <h2>Connexion Administrateur</h2>
+    <p class="sub">Acces reserve au proprietaire de l outil</p>
+    <div class="login-field">
+      <label>Mot de passe admin</label>
+      <input type="password" id="admin-password" placeholder="Ton mot de passe admin" autocomplete="current-password" onkeydown="if(event.key==='Enter')doAdminLogin()">
+    </div>
+    <button class="login-btn" onclick="doAdminLogin()">Entrer en mode Admin</button>
+    <button class="login-btn secondary" onclick="showUserLogin()">Retour</button>
+    <div class="login-err" id="admin-err"></div>
+  </div>
+</div>
 
 <div class="apibar" id="apibar">
   <span class="apist" id="apist">Choisis un fournisseur et colle ta cle gratuite</span>
@@ -143,6 +204,7 @@ tr.sel td{background:#f0f8f3}
   <button class="mtab" onclick="showMain('guidads')">&#127919; Guide Ads</button>
   <button class="mtab" onclick="showMain('woocommerce')">&#128722; WooCommerce</button>
   <button class="mtab" onclick="showMain('translator')">&#127760; Traducteur</button>
+  <button class="mtab" id="mtab-admin" style="display:none" onclick="showMain('admin')">&#128274; Admin Acces</button>
 </div>
 
 <div class="panel on" id="tab-scoring">
@@ -816,6 +878,92 @@ CTA : Voir l offre" style="width:100%;height:130px;padding:7px 9px;border:1px so
   <div id="tr-empty" class="ads-empty" style="margin-top:.5rem">Selectionne une source, les langues cibles et clique Traduire.</div>
 </div>
 
+
+<!-- TAB ADMIN ACCES -->
+<div class="panel" id="tab-admin">
+  <div class="al ao" style="margin-top:.5rem;margin-bottom:.65rem">
+    <b>Mode administrateur</b> — Gere les acces de tes utilisateurs. Ajoute, configure et revoque les acces a tout moment.
+  </div>
+
+  <!-- Config JSONBin -->
+  <div class="adm-panel">
+    <h3>Configuration JSONBin.io (base de donnees gratuite)</h3>
+    <div style="font-size:12px;color:var(--mut);margin-bottom:.65rem">
+      1. Cree un compte gratuit sur <b>jsonbin.io</b><br>
+      2. Cree un nouveau Bin avec ce contenu : <code style="background:var(--bg);padding:2px 5px;border-radius:4px">{"users":[]}</code><br>
+      3. Copie le Bin ID et ta Master Key ci-dessous
+    </div>
+    <div class="form-row">
+      <div class="form-group" style="flex:2;min-width:220px">
+        <label>JSONBin ID (commence par ...)</label>
+        <input type="text" id="jb-bin-id" placeholder="64a1b2c3..." style="width:100%" oninput="saveJBConfig()">
+      </div>
+      <div class="form-group" style="flex:2;min-width:220px">
+        <label>JSONBin Master Key ($2b$10$...)</label>
+        <input type="password" id="jb-master-key" placeholder="$2b$10$..." style="width:100%" oninput="saveJBConfig()">
+      </div>
+      <div class="form-group">
+        <label>Mot de passe admin (local)</label>
+        <input type="password" id="jb-admin-pwd" placeholder="Ton mot de passe" style="width:130px" oninput="saveJBConfig()">
+      </div>
+    </div>
+    <div style="display:flex;gap:7px;margin-top:.35rem">
+      <button class="btn bd" onclick="testJBConnection()">Tester JSONBin</button>
+      <button class="btn bg" onclick="pushUsersToJB()">Sauvegarder les utilisateurs</button>
+    </div>
+    <div id="jb-test-result" style="font-size:12px;margin-top:.35rem"></div>
+  </div>
+
+  <!-- Ajouter un utilisateur -->
+  <div class="adm-panel">
+    <h3>Ajouter un utilisateur</h3>
+    <div class="form-row" style="margin-top:.35rem">
+      <div class="form-group" style="flex:1;min-width:140px">
+        <label>Prenom / Identifiant</label>
+        <input type="text" id="new-user-name" placeholder="Pierre" style="width:100%">
+      </div>
+      <div class="form-group">
+        <label>Code d acces</label>
+        <div style="display:flex;gap:5px">
+          <input type="text" id="new-user-code" placeholder="ex: PIERRE24" style="width:120px;font-family:monospace;text-transform:uppercase" oninput="this.value=this.value.toUpperCase()">
+          <button class="btn" onclick="generateCode()" title="Generer un code aleatoire">&#127922;</button>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Expiration</label>
+        <input type="date" id="new-user-expiry" style="width:140px">
+      </div>
+      <div class="form-group">
+        <label>Role</label>
+        <select id="new-user-role">
+          <option value="viewer">Lecture seule</option>
+          <option value="editor">Editeur</option>
+          <option value="full">Acces complet</option>
+        </select>
+      </div>
+    </div>
+    <button class="btn bg" onclick="addUser()" style="margin-top:.35rem">+ Ajouter cet utilisateur</button>
+  </div>
+
+  <!-- Liste des utilisateurs -->
+  <div class="adm-panel">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.55rem">
+      <h3 style="margin:0">Utilisateurs (acces actifs et archives)</h3>
+      <div style="display:flex;gap:6px">
+        <button class="btn bsm" onclick="pushUsersToJB()">Sync JSONBin</button>
+        <button class="btn bsm bg" onclick="exportUsersCSV()">Export CSV</button>
+      </div>
+    </div>
+    <div id="users-list">Aucun utilisateur configure.</div>
+  </div>
+
+  <!-- Logs d acces -->
+  <div class="adm-panel">
+    <h3>Journal des acces (dernieres connexions)</h3>
+    <div id="access-logs" style="font-size:12px;color:var(--mut)">Aucun log disponible.</div>
+  </div>
+</div>
+
 <div class="mbg" id="imp-modal" style="display:none" onclick="if(event.target===this)closeImport()">
   <div class="modal">
     <h2>Importer des produits</h2>
@@ -1233,7 +1381,7 @@ function updateSelPanel() {
 // ============================================================
 // NAVIGATION
 // ============================================================
-var TAB_IDS = ["scoring","ads","marge","saisonnal","perf","contenu","rapport","dashboard","checklist","geo","spy","tendances","calculateurs","guidads","woocommerce","translator"];
+var TAB_IDS = ["scoring","ads","marge","saisonnal","perf","contenu","rapport","dashboard","checklist","geo","spy","tendances","calculateurs","guidads","woocommerce","translator","admin"];
 function showMain(t) {
   document.querySelectorAll(".mtab").forEach(function(b, i){
     b.classList.toggle("on", TAB_IDS[i] === t);
@@ -1256,6 +1404,7 @@ function showMain(t) {
   if (t === "guidads")       populateGuidAdsProducts();
   if (t === "woocommerce")   initWooTab();
   if (t === "translator")    initTranslatorTab();
+  if (t === "admin")         renderAdminPanel();
 }
 function sendToAds() { showMain("ads"); }
 function toggleNet(btn) {
@@ -3969,8 +4118,377 @@ function runDeduplication() {
   }
 }
 
+
+// ============================================================
+// ACCESS CONTROL SYSTEM
+// ============================================================
+var ACCESS = {
+  users:     [],
+  logs:      [],
+  jbBinId:   "",
+  jbKey:     "",
+  adminPwd:  "",
+  currentUser: null,
+  isAdmin:   false
+};
+
+// ---- INIT ----
+function initAccessControl() {
+  try {
+    var cfg = JSON.parse(localStorage.getItem("ac_config") || "{}");
+    ACCESS.jbBinId  = cfg.jbBinId  || "";
+    ACCESS.jbKey    = cfg.jbKey    || "";
+    ACCESS.adminPwd = cfg.adminPwd || "";
+    ACCESS.users    = JSON.parse(localStorage.getItem("ac_users") || "[]");
+    ACCESS.logs     = JSON.parse(localStorage.getItem("ac_logs")  || "[]");
+  } catch(e) {}
+
+  // Check for saved session
+  try {
+    var sess = JSON.parse(localStorage.getItem("ac_session") || "null");
+    if (sess && sess.expires && new Date(sess.expires) > new Date()) {
+      ACCESS.currentUser = sess;
+      ACCESS.isAdmin     = sess.isAdmin || false;
+      hideLockScreen();
+      return;
+    }
+  } catch(e) {}
+
+  // No valid session — show login
+  document.getElementById("login-overlay").style.display = "flex";
+}
+
+function hideLockScreen() {
+  var overlay = document.getElementById("login-overlay");
+  if (overlay) overlay.style.display = "none";
+  // Show user badge in topbar
+  showUserBadge();
+  // Show admin tab if admin
+  if (ACCESS.isAdmin) {
+    var admTab = document.getElementById("mtab-admin");
+    if (admTab) admTab.style.display = "";
+  }
+  // Pre-fill new user expiry date
+  var expEl = document.getElementById("new-user-expiry");
+  if (expEl) {
+    var d = new Date(); d.setMonth(d.getMonth() + 1);
+    expEl.value = d.toISOString().slice(0,10);
+  }
+  // Load JB config
+  loadJBConfig();
+}
+
+function showUserBadge() {
+  var u = ACCESS.currentUser;
+  if (!u) return;
+  var topbar = document.querySelector(".topbar h1");
+  if (!topbar) return;
+  var badge = document.createElement("span");
+  badge.className = "access-badge";
+  badge.title     = "Clique pour te deconnecter";
+  badge.onclick   = doLogout;
+  badge.innerHTML = "&#128100; " + u.name + (ACCESS.isAdmin ? " (Admin)" : "") + " &nbsp;&#x2715;";
+  topbar.parentNode.insertBefore(badge, topbar.nextSibling);
+}
+
+// ---- LOGIN ----
+function showAdminLogin() {
+  document.getElementById("login-box-user").style.display  = "none";
+  document.getElementById("login-box-admin").style.display = "";
+  document.getElementById("admin-password").focus();
+}
+function showUserLogin() {
+  document.getElementById("login-box-admin").style.display = "none";
+  document.getElementById("login-box-user").style.display  = "";
+}
+
+async function doLogin() {
+  var name = (document.getElementById("login-username").value || "").trim();
+  var code = (document.getElementById("login-code").value || "").trim().toUpperCase();
+  var err  = document.getElementById("login-err");
+  if (!name || !code) { err.textContent = "Entre ton prenom et ton code d acces."; return; }
+
+  err.textContent = "Verification...";
+
+  // Try to fetch from JSONBin first (live check)
+  var liveUsers = await fetchUsersFromJB();
+  var usersToCheck = (liveUsers && liveUsers.length) ? liveUsers : ACCESS.users;
+
+  var user = null;
+  for (var i = 0; i < usersToCheck.length; i++) {
+    var u = usersToCheck[i];
+    if (u.name.toLowerCase() === name.toLowerCase() && u.code === code) {
+      user = u; break;
+    }
+  }
+
+  if (!user) {
+    err.textContent = "Prenom ou code incorrect. Contacte l administrateur.";
+    return;
+  }
+  if (!user.active) {
+    err.textContent = "Acces revoque. Contacte l administrateur.";
+    return;
+  }
+  if (user.expiry && new Date(user.expiry) < new Date()) {
+    err.textContent = "Ton acces a expire le " + user.expiry + ". Contacte l administrateur.";
+    return;
+  }
+
+  // Valid — create session
+  var expiry = new Date(); expiry.setHours(expiry.getHours() + 8);
+  var session = {name: user.name, code: user.code, role: user.role, expires: expiry.toISOString(), isAdmin: false};
+  localStorage.setItem("ac_session", JSON.stringify(session));
+  ACCESS.currentUser = session;
+
+  // Log access
+  logAccess(user.name, "connexion");
+  if (liveUsers) pushLogToJB();
+
+  err.style.color = "#085041";
+  err.textContent = "Acces accorde! Chargement...";
+  setTimeout(hideLockScreen, 800);
+}
+
+function doAdminLogin() {
+  var pwd = (document.getElementById("admin-password").value || "").trim();
+  var err = document.getElementById("admin-err");
+  if (!pwd) { err.textContent = "Entre le mot de passe admin."; return; }
+  if (!ACCESS.adminPwd) {
+    // First time — set the password
+    ACCESS.adminPwd = pwd;
+    saveJBConfig();
+    var expiry = new Date(); expiry.setDate(expiry.getDate() + 365);
+    var session = {name: "Admin", code: "ADMIN", role: "full", expires: expiry.toISOString(), isAdmin: true};
+    localStorage.setItem("ac_session", JSON.stringify(session));
+    ACCESS.currentUser = session; ACCESS.isAdmin = true;
+    hideLockScreen();
+    return;
+  }
+  if (pwd !== ACCESS.adminPwd) {
+    err.textContent = "Mot de passe incorrect.";
+    setTimeout(function(){ err.textContent = ""; }, 2000);
+    return;
+  }
+  var expiry = new Date(); expiry.setDate(expiry.getDate() + 365);
+  var session = {name: "Admin", code: "ADMIN", role: "full", expires: expiry.toISOString(), isAdmin: true};
+  localStorage.setItem("ac_session", JSON.stringify(session));
+  ACCESS.currentUser = session; ACCESS.isAdmin = true;
+  logAccess("Admin", "connexion admin");
+  hideLockScreen();
+}
+
+function doLogout() {
+  if (!confirm("Te deconnecter de l outil ?")) return;
+  localStorage.removeItem("ac_session");
+  location.reload();
+}
+
+// ---- JSONBIN ----
+function loadJBConfig() {
+  var el;
+  el = document.getElementById("jb-bin-id");    if(el) el.value = ACCESS.jbBinId;
+  el = document.getElementById("jb-master-key"); if(el) el.value = ACCESS.jbKey;
+  el = document.getElementById("jb-admin-pwd");  if(el) el.value = ACCESS.adminPwd;
+}
+
+function saveJBConfig() {
+  ACCESS.jbBinId  = (document.getElementById("jb-bin-id")||{}).value    || ACCESS.jbBinId;
+  ACCESS.jbKey    = (document.getElementById("jb-master-key")||{}).value || ACCESS.jbKey;
+  ACCESS.adminPwd = (document.getElementById("jb-admin-pwd")||{}).value  || ACCESS.adminPwd;
+  localStorage.setItem("ac_config", JSON.stringify({jbBinId:ACCESS.jbBinId, jbKey:ACCESS.jbKey, adminPwd:ACCESS.adminPwd}));
+}
+
+async function fetchUsersFromJB() {
+  if (!ACCESS.jbBinId || !ACCESS.jbKey) return null;
+  try {
+    var resp = await fetch("https://api.jsonbin.io/v3/b/" + ACCESS.jbBinId + "/latest", {
+      headers: {"X-Master-Key": ACCESS.jbKey, "X-Bin-Meta": "false"}
+    });
+    if (!resp.ok) return null;
+    var data = await resp.json();
+    return data.users || [];
+  } catch(e) { return null; }
+}
+
+async function testJBConnection() {
+  saveJBConfig();
+  var el = document.getElementById("jb-test-result");
+  if (el) el.textContent = "Test en cours...";
+  if (!ACCESS.jbBinId || !ACCESS.jbKey) {
+    if (el) { el.textContent = "Configure d abord le Bin ID et la Master Key."; el.style.color = "#7a1a1a"; }
+    return;
+  }
+  var users = await fetchUsersFromJB();
+  if (users !== null) {
+    if (users.length) {
+      ACCESS.users = users;
+      localStorage.setItem("ac_users", JSON.stringify(ACCESS.users));
+    }
+    if (el) { el.textContent = "Connexion JSONBin reussie! " + users.length + " utilisateur(s) charge(s)."; el.style.color = "#085041"; }
+    renderAdminPanel();
+  } else {
+    if (el) { el.textContent = "Echec connexion. Verifie le Bin ID et la Master Key."; el.style.color = "#7a1a1a"; }
+  }
+}
+
+async function pushUsersToJB() {
+  saveJBConfig();
+  if (!ACCESS.jbBinId || !ACCESS.jbKey) { alert("Configure d abord JSONBin.io."); return; }
+  try {
+    var resp = await fetch("https://api.jsonbin.io/v3/b/" + ACCESS.jbBinId, {
+      method: "PUT",
+      headers: {"Content-Type": "application/json", "X-Master-Key": ACCESS.jbKey},
+      body: JSON.stringify({users: ACCESS.users, logs: ACCESS.logs.slice(-50), updated: new Date().toISOString()})
+    });
+    if (resp.ok) {
+      var el = document.getElementById("jb-test-result");
+      if (el) { el.textContent = "Utilisateurs synchronises avec JSONBin."; el.style.color = "#085041"; }
+    } else { alert("Erreur lors de la sync JSONBin."); }
+  } catch(e) { alert("Erreur: " + e.message); }
+}
+
+async function pushLogToJB() {
+  if (!ACCESS.jbBinId || !ACCESS.jbKey) return;
+  try {
+    await fetch("https://api.jsonbin.io/v3/b/" + ACCESS.jbBinId, {
+      method: "PUT",
+      headers: {"Content-Type": "application/json", "X-Master-Key": ACCESS.jbKey},
+      body: JSON.stringify({users: ACCESS.users, logs: ACCESS.logs.slice(-100), updated: new Date().toISOString()})
+    });
+  } catch(e) {}
+}
+
+// ---- USER MANAGEMENT ----
+function generateCode() {
+  var chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+  var code  = "";
+  for (var i = 0; i < 8; i++) code += chars[Math.floor(Math.random() * chars.length)];
+  var el = document.getElementById("new-user-code");
+  if (el) el.value = code;
+}
+
+function addUser() {
+  var name   = (document.getElementById("new-user-name")||{}).value.trim();
+  var code   = ((document.getElementById("new-user-code")||{}).value||"").trim().toUpperCase();
+  var expiry = (document.getElementById("new-user-expiry")||{}).value || "";
+  var role   = (document.getElementById("new-user-role")||{}).value || "viewer";
+  if (!name || !code) { alert("Prenom et code sont obligatoires."); return; }
+  // Check duplicate
+  for (var i = 0; i < ACCESS.users.length; i++) {
+    if (ACCESS.users[i].name.toLowerCase() === name.toLowerCase()) {
+      if (!confirm("Un utilisateur avec le prenom " + name + " existe deja. Remplacer ?")) return;
+      ACCESS.users.splice(i, 1); break;
+    }
+  }
+  ACCESS.users.push({name:name, code:code, role:role, expiry:expiry, active:true, created:new Date().toISOString(), lastAccess:null});
+  localStorage.setItem("ac_users", JSON.stringify(ACCESS.users));
+  // Clear form
+  var el;
+  el = document.getElementById("new-user-name"); if(el) el.value = "";
+  el = document.getElementById("new-user-code"); if(el) el.value = "";
+  renderAdminPanel();
+  alert("Utilisateur " + name + " ajoute! Code: " + code + "\nPartage ces informations: Prenom: " + name + " | Code: " + code + (expiry?" | Expire le: "+expiry:""));
+}
+
+function toggleUserAccess(idx) {
+  if (idx < 0 || idx >= ACCESS.users.length) return;
+  ACCESS.users[idx].active = !ACCESS.users[idx].active;
+  localStorage.setItem("ac_users", JSON.stringify(ACCESS.users));
+  renderAdminPanel();
+}
+
+function deleteUser(idx) {
+  if (idx < 0 || idx >= ACCESS.users.length) return;
+  var u = ACCESS.users[idx];
+  if (!confirm("Supprimer definitivement l acces de " + u.name + " ?")) return;
+  ACCESS.users.splice(idx, 1);
+  localStorage.setItem("ac_users", JSON.stringify(ACCESS.users));
+  renderAdminPanel();
+}
+
+function copyInvite(idx) {
+  var u = ACCESS.users[idx];
+  if (!u) return;
+  var msg = "Bonjour " + u.name + ",\n\nTu as acces au Cockpit E-commerce UrbanElectroStore.\n\n"
+    + "Lien : " + window.location.href.split("?")[0] + "\nPrenom : " + u.name + "\nCode : " + u.code
+    + (u.expiry ? "\nAcces valable jusqu au : " + u.expiry : "")
+    + "\n\nBonne utilisation !";
+  if (navigator.clipboard) navigator.clipboard.writeText(msg).then(function(){ alert("Message d invitation copie !"); });
+}
+
+function logAccess(name, action) {
+  ACCESS.logs.push({name:name, action:action, date:new Date().toISOString(), ua: navigator.userAgent.slice(0,80)});
+  // Update lastAccess on user
+  for (var i = 0; i < ACCESS.users.length; i++) {
+    if (ACCESS.users[i].name.toLowerCase() === name.toLowerCase()) {
+      ACCESS.users[i].lastAccess = new Date().toISOString();
+      break;
+    }
+  }
+  localStorage.setItem("ac_logs",  JSON.stringify(ACCESS.logs.slice(-100)));
+  localStorage.setItem("ac_users", JSON.stringify(ACCESS.users));
+}
+
+function renderAdminPanel() {
+  if (!ACCESS.isAdmin) return;
+  renderUsersList();
+  renderLogs();
+}
+
+function renderUsersList() {
+  var el = document.getElementById("users-list"); if(!el) return;
+  if (!ACCESS.users.length) { el.innerHTML = "<div style='color:var(--mut);font-size:12px'>Aucun utilisateur. Ajoute le premier ci-dessus.</div>"; return; }
+  var roleLabel = {viewer:"Lecture", editor:"Editeur", full:"Complet"};
+  el.innerHTML = ACCESS.users.map(function(u, i) {
+    var expired  = u.expiry && new Date(u.expiry) < new Date();
+    var statusBg = !u.active ? "#fef2f2" : expired ? "#fef3e2" : "#e8f4ee";
+    var statusCl = !u.active ? "#7a1a1a" : expired ? "#7a4a00" : "#085041";
+    var statusLbl= !u.active ? "Revoque"  : expired ? "Expire"  : "Actif";
+    var lastAcc  = u.lastAccess ? new Date(u.lastAccess).toLocaleDateString("fr-FR") : "Jamais";
+    return "<div class='user-row'>"
+      + "<span class='uname'>" + u.name + "</span>"
+      + "<span class='ucode'>" + u.code + "</span>"
+      + "<span class='ustatus' style='background:" + statusBg + ";color:" + statusCl + "'>" + statusLbl + "</span>"
+      + "<span class='uexp'>" + (u.expiry ? "Expire " + u.expiry : "Sans expiration") + "</span>"
+      + "<span class='uexp'>" + roleLabel[u.role||"viewer"] + "</span>"
+      + "<span style='font-size:11px;color:var(--mut)'>Derniere connexion: " + lastAcc + "</span>"
+      + "<div style='display:flex;gap:4px;margin-left:auto'>"
+        + "<button class='btn bsm bg' onclick='copyInvite(" + i + ")' title='Copier invitation'>&#128231;</button>"
+        + "<button class='btn bsm' onclick='toggleUserAccess(" + i + ")' title='" + (u.active?"Revoquer l acces":"Reactiver l acces") + "' style='color:" + (u.active?"#7a1a1a":"#085041") + "'>"
+          + (u.active ? "&#128683; Revoquer" : "&#9989; Reactiver") + "</button>"
+        + "<button class='btn bsm' onclick='deleteUser(" + i + ")' title='Supprimer' style='color:#7a1a1a'>&#128465;</button>"
+      + "</div>"
+      + "</div>";
+  }).join("");
+}
+
+function renderLogs() {
+  var el = document.getElementById("access-logs"); if(!el) return;
+  var logs = ACCESS.logs.slice().reverse().slice(0,20);
+  if (!logs.length) { el.innerHTML = "<span style='color:var(--mut)'>Aucun log.</span>"; return; }
+  el.innerHTML = logs.map(function(l) {
+    var d = new Date(l.date).toLocaleString("fr-FR");
+    return "<div style='display:flex;gap:10px;padding:.25rem 0;border-bottom:0.5px solid var(--bord);font-size:12px'>"
+      + "<span style='color:var(--mut);min-width:130px;flex-shrink:0'>" + d + "</span>"
+      + "<span style='font-weight:500;min-width:80px'>" + l.name + "</span>"
+      + "<span style='color:var(--mut)'>" + l.action + "</span>"
+      + "</div>";
+  }).join("");
+}
+
+function exportUsersCSV() {
+  var rows = [["Prenom","Code","Role","Actif","Expiration","Cree le","Derniere connexion"]];
+  ACCESS.users.forEach(function(u){
+    rows.push(['"'+u.name+'"', u.code, u.role||"viewer", u.active?"oui":"non", u.expiry||"", u.created||"", u.lastAccess||""]);
+  });
+  dl(rows.map(function(r){ return r.join(","); }).join("\n"), "utilisateurs_acces.csv");
+}
+
+
 // INIT -- EN DERNIER
 // ============================================================
+initAccessControl();
 updateApiBar();
 renderCatTabs();
 render();
