@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>NOF — Cockpit E-commerce</title>
+<title>UrbanElectroStore — Cockpit E-commerce</title>
 <style>
 :root{--bg:#f7f6f3;--sur:#fff;--bord:#e5e3dc;--bord2:#d0cec5;--txt:#18180f;--mut:#7a7870;--grn:#085041;--gnbg:#e8f4ee;--orn:#7a4a00;--orbg:#fef3e2;--red:#7a1a1a;--rdbg:#fef2f2;--blu:#0c3d6e;--blbg:#e8f0fb;--pur:#3b2a8a;--pubg:#edeafb;--r:9px}
 *{box-sizing:border-box;margin:0;padding:0}
@@ -177,7 +177,7 @@ tr.sel td{background:#f0f8f3}
 </div>
 
 <div class="topbar">
-  <h1>&#128722; NOF &mdash; Cockpit E-commerce</h1>
+  <h1>&#128722; UrbanElectroStore &mdash; Cockpit E-commerce</h1>
   <div class="topr">
     <button class="btn" onclick="openImport()">&#8679; Importer XML/CSV</button>
     <button class="btn bg" onclick="exportScoring()">&#8681; Scoring CSV</button>
@@ -1160,31 +1160,22 @@ var PRODUCTS = [
 ];
 
 // ============================================================
-// PERSISTENCE PRODUITS — charge depuis localStorage si dispo
+// PERSISTENCE PRODUITS — par utilisateur
 // ============================================================
-(function() {
-  try {
-    var saved = localStorage.getItem("products_catalogue");
-    if (saved) {
-      var parsed = JSON.parse(saved);
-      if (Array.isArray(parsed) && parsed.length > 0) {
-        PRODUCTS = parsed;
-      }
-    }
-  } catch(e) { /* ignore */ }
-})();
+// Ne pas charger ici — sera charge apres login via loadUserData()
+// PRODUCTS reste avec les 77 par defaut jusqu au login
 
 function saveProducts() {
-  try { localStorage.setItem("products_catalogue", JSON.stringify(PRODUCTS)); } catch(e) {}
+  try { localStorage.setItem(getUserKey("products_catalogue"), JSON.stringify(PRODUCTS)); } catch(e) {}
 }
 
 function resetProductsToDefault() {
-  if (!confirm("Reinitialiser le catalogue aux " + DEFAULT_PRODUCTS.length + " produits d origine ? Tous les produits importes seront supprimes.")) return;
+  if (!confirm("Reinitialiser le catalogue aux " + DEFAULT_PRODUCTS.length + " produits d origine ? Tous tes produits importes seront supprimes.")) return;
   PRODUCTS = DEFAULT_PRODUCTS.slice();
-  localStorage.removeItem("products_catalogue");
+  saveProducts();
   renderCatTabs(); render(); renderMarg(); populateCtProducts();
   updateSelPanel();
-  alert("Catalogue reinitialise aux produits d origine.");
+  alert("Catalogue reinitialise.");
 }
 
 // ============================================================
@@ -1201,27 +1192,57 @@ var pendingImport = [];
 
 // Load persisted data
 function loadUserData() {
-  // Called after login — loads data for the current user
+  // Called after login — loads ALL data for the current user (fully isolated)
   var prefix = (ACCESS && ACCESS.currentUser)
     ? ("__" + ACCESS.currentUser.name.toLowerCase().replace(/[^a-z0-9]/g, "_"))
     : "__guest";
+  var isAdmin = ACCESS && ACCESS.isAdmin;
+
+  // Scores, marges, campagnes — toujours per-user
   try { userScores = JSON.parse(localStorage.getItem("userScores" + prefix) || "{}"); } catch(e) { userScores = {}; }
   try { margins    = JSON.parse(localStorage.getItem("margins"    + prefix) || "{}"); } catch(e) { margins = {}; }
   try { campaigns  = JSON.parse(localStorage.getItem("campaigns"  + prefix) || "[]"); } catch(e) { campaigns = []; }
+
+  // Produits — per-user
+  // Admin sans sauvegarde -> DEFAULT_PRODUCTS (77 produits)
+  // Autre utilisateur sans sauvegarde -> catalogue VIDE (repart de 0)
+  var savedProds = null;
+  try {
+    var rawProds = localStorage.getItem("products_catalogue" + prefix);
+    if (rawProds) {
+      var parsed = JSON.parse(rawProds);
+      if (Array.isArray(parsed) && parsed.length > 0) savedProds = parsed;
+    }
+  } catch(e) {}
+
+  if (savedProds) {
+    PRODUCTS = savedProds;
+  } else if (isAdmin) {
+    PRODUCTS = DEFAULT_PRODUCTS.slice(); // Admin: 77 produits par defaut
+    saveProducts(); // Sauvegarde pour l admin
+  } else {
+    PRODUCTS = []; // Nouvel utilisateur: catalogue vide
+  }
+
   // Refresh UI with loaded data
+  if (typeof renderCatTabs === "function")   renderCatTabs();
   if (typeof render === "function")          render();
   if (typeof renderCampaigns === "function") renderCampaigns();
   if (typeof renderMarg === "function")      renderMarg();
+  if (typeof populateCtProducts === "function") populateCtProducts();
+  if (typeof updateSelPanel === "function")  updateSelPanel();
 }
 
-// Load with empty defaults — will be reloaded after login
+// All user data loaded after login via loadUserData()
+// Do NOT load anything here — wait for authentication
 (function() {
   userScores = {}; margins = {}; campaigns = [];
+  // PRODUCTS stays as DEFAULT_PRODUCTS until login sets the right catalog
 })();
 
 function getUserKey(key) {
   // Keys that are per-user (namespaced with username)
-  var perUserKeys = ["userScores", "margins", "campaigns"];
+  var perUserKeys = ["userScores", "margins", "campaigns", "products_catalogue"];
   if (perUserKeys.indexOf(key) >= 0) {
     var user = ACCESS && ACCESS.currentUser ? ACCESS.currentUser.name : "guest";
     return key + "__" + user.toLowerCase().replace(/[^a-z0-9]/g, "_");
@@ -1340,6 +1361,11 @@ function render() {
       + "</tr>";
   });
   document.getElementById("tb").innerHTML = rows.join("");
+  // Show empty state if no products
+  if (!PRODUCTS.length) {
+    document.getElementById("tb").innerHTML = "<tr><td colspan='14' style='text-align:center;padding:2rem;color:var(--mut)'>"
+      + "Ton catalogue est vide. Importe tes produits via <b>Importer XML/CSV</b> ou <b>WooCommerce</b>.</td></tr>";
+  }
   updateStats();
 }
 
@@ -4327,6 +4353,7 @@ function doLogout() {
   // Ne pas effacer les donnees localStorage — elles sont sauvegardees par utilisateur
   // Juste vider la memoire et afficher l ecran de connexion
   userScores = {}; margins = {}; campaigns = {};
+  PRODUCTS = []; selIds = new Set();
   genAds = {}; lastSpyData = null; lastGuideData = null; lastTranslations = null;
   ACCESS.currentUser = null; ACCESS.isAdmin = false;
   // Remove user badge and info
@@ -4479,7 +4506,7 @@ function deleteUser(idx) {
 function copyInvite(idx) {
   var u = ACCESS.users[idx];
   if (!u) return;
-  var msg = "Bonjour " + u.name + ",\n\nTu as acces au Cockpit E-commerce NOF.\n\n"
+  var msg = "Bonjour " + u.name + ",\n\nTu as acces au Cockpit E-commerce UrbanElectroStore.\n\n"
     + "Lien : " + window.location.href.split("?")[0] + "\nPrenom : " + u.name + "\nCode : " + u.code
     + (u.expiry ? "\nAcces valable jusqu au : " + u.expiry : "")
     + "\n\nBonne utilisation !";
