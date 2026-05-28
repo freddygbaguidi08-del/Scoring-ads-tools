@@ -139,6 +139,8 @@ tr.sel td{background:#f0f8f3}
   <button class="mtab" onclick="showMain('tendances')">&#128200; Tendances</button>
   <button class="mtab" onclick="showMain('calculateurs')">&#129518; Calculateurs</button>
   <button class="mtab" onclick="showMain('guidads')">&#127919; Guide Ads</button>
+  <button class="mtab" onclick="showMain('woocommerce')">&#128722; WooCommerce</button>
+  <button class="mtab" onclick="showMain('translator')">&#127760; Traducteur</button>
 </div>
 
 <div class="panel on" id="tab-scoring">
@@ -676,6 +678,142 @@ tr.sel td{background:#f0f8f3}
   <div id="guide-empty" class="ads-empty" style="margin-top:.5rem">Selectionne un produit, ton niveau et ton budget. L IA cree ton guide complet en 15 secondes.</div>
 </div>
 
+
+<!-- TAB WOOCOMMERCE -->
+<div class="panel" id="tab-woocommerce">
+  <div class="al ai" style="margin-top:.5rem;margin-bottom:.65rem">
+    Connecte ton site WooCommerce pour importer automatiquement tes produits, ventes reelles et stocks. Les donnees alimentent le scoring sans saisie manuelle.
+  </div>
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(290px,1fr));gap:10px;margin-bottom:.7rem">
+    <div class="card-section">
+      <h3>Connexion a ta boutique</h3>
+      <div class="form-row" style="margin-top:.5rem">
+        <div class="form-group" style="flex:1;min-width:200px">
+          <label>URL de ta boutique</label>
+          <input type="text" id="wc-url" placeholder="https://urbanelectrostore.com" style="width:100%">
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group" style="flex:1">
+          <label>Consumer Key (ck_...)</label>
+          <input type="password" id="wc-key" placeholder="ck_xxxxxxxxxxxx" style="width:100%">
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group" style="flex:1">
+          <label>Consumer Secret (cs_...)</label>
+          <input type="password" id="wc-secret" placeholder="cs_xxxxxxxxxxxx" style="width:100%">
+        </div>
+      </div>
+      <div style="font-size:11px;color:var(--mut);margin:.4rem 0 .6rem">
+        Cles dans WooCommerce : WooCommerce &gt; Reglages &gt; Avance &gt; REST API &gt; Creer une cle (Lecture seule suffit)
+      </div>
+      <div style="display:flex;gap:6px;flex-wrap:wrap">
+        <button class="btn bd" onclick="testWooConnection()">Tester la connexion</button>
+        <button class="btn bg" onclick="saveWooCredentials()">Sauvegarder</button>
+      </div>
+      <div id="wc-test-result" style="margin-top:.4rem;font-size:12px"></div>
+    </div>
+    <div class="card-section">
+      <h3>Statut de la connexion</h3>
+      <div id="wc-status" style="font-size:12px;color:var(--mut);line-height:2;margin-top:.4rem">
+        Aucune connexion configuree. Entre tes identifiants et teste la connexion.
+      </div>
+      <div id="wc-store-info" style="margin-top:.5rem"></div>
+    </div>
+  </div>
+  <div style="display:flex;gap:7px;margin-bottom:.65rem;flex-wrap:wrap">
+    <button class="btn bd" onclick="importWooProducts()">&#8679; Importer les produits</button>
+    <button class="btn bb" onclick="importWooSales()">&#128200; Importer les ventes (scores reels)</button>
+    <button class="btn" onclick="importWooStock()">&#128230; Verifier les stocks</button>
+  </div>
+  <div id="wc-loading" style="display:none" class="loading"><div class="spin"></div><span id="wc-msg">Connexion en cours...</span></div>
+  <div id="wc-result"></div>
+  <div style="margin-top:.75rem">
+    <div class="card-section">
+      <h3>Comment creer les cles API WooCommerce</h3>
+      <ol style="padding-left:1.1rem;font-size:12px;line-height:2;color:var(--txt)">
+        <li>Va dans <b>WooCommerce &gt; Reglages &gt; Avance &gt; REST API</b></li>
+        <li>Clique <b>Ajouter une cle</b></li>
+        <li>Description : <i>Cockpit Scoring</i></li>
+        <li>Utilisateur : ton compte admin</li>
+        <li>Permissions : <b>Lecture</b> (suffisant)</li>
+        <li>Clique <b>Generer la cle API</b></li>
+        <li>Copie la <b>Consumer Key</b> (ck_...) et <b>Consumer Secret</b> (cs_...) ici</li>
+      </ol>
+      <div class="al ao" style="margin-top:.5rem;font-size:11.5px">
+        Important : ton site doit avoir SSL (https://) et les permaliens reglages doivent etre actives (pas en mode simple).
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- TAB TRADUCTEUR ADS -->
+<div class="panel" id="tab-translator">
+  <div class="al ai" style="margin-top:.5rem;margin-bottom:.65rem">
+    Traduis et adapte culturellement tes meilleures ads vers plusieurs langues. La traduction est culturelle, pas litterale — chaque marche recoit un message adapte a ses codes.</div>
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(290px,1fr));gap:10px;margin-bottom:.7rem">
+    <div class="card-section">
+      <h3>Source de la publicite a traduire</h3>
+      <div class="subtabs" id="tr-source-tabs" style="margin:.5rem 0 .5rem">
+        <button class="stab on" onclick="switchTrSource(this,'generated')">Ads generees</button>
+        <button class="stab" onclick="switchTrSource(this,'manual')">Saisie manuelle</button>
+      </div>
+      <div id="tr-generated-source">
+        <div style="font-size:11px;color:var(--mut);margin-bottom:.35rem">Selectionne un produit dont tu as deja genere les ads :</div>
+        <select id="tr-product-sel" style="width:100%;margin-bottom:.5rem" onchange="loadTrAds()"></select>
+        <div id="tr-ads-list" style="font-size:12px;color:var(--mut)">Genere d abord des ads dans l onglet Generateur Ads.</div>
+      </div>
+      <div id="tr-manual-source" style="display:none">
+        <div style="font-size:11px;color:var(--mut);margin-bottom:.25rem">Colle ton texte publicitaire a traduire :</div>
+        <textarea id="tr-manual-text" placeholder="Accroche : Tondez plus vite, payez moins cher !
+
+Texte : Decouvrez la Scheppach MP132-40, la tondeuse thermique a 99,99 euros - 20 euros moins chere que chez Cdiscount.
+
+CTA : Voir l offre" style="width:100%;height:130px;padding:7px 9px;border:1px solid var(--bord2);border-radius:7px;font-size:12px;font-family:inherit;resize:vertical;background:var(--sur);color:var(--txt)"></textarea>
+        <input type="text" id="tr-manual-product" placeholder="Nom du produit (pour le contexte)" style="width:100%;margin-top:.35rem;padding:5px 8px;border:1px solid var(--bord2);border-radius:7px;font-size:12px">
+      </div>
+    </div>
+    <div class="card-section">
+      <h3>Langues cibles</h3>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin:.5rem 0">
+        <label style="display:flex;align-items:center;gap:7px;font-size:12px;cursor:pointer;padding:.3rem .5rem;border-radius:6px;background:var(--bg)"><input type="checkbox" id="tr-en" checked> Anglais (GB/US)</label>
+        <label style="display:flex;align-items:center;gap:7px;font-size:12px;cursor:pointer;padding:.3rem .5rem;border-radius:6px;background:var(--bg)"><input type="checkbox" id="tr-es"> Espagnol (ES)</label>
+        <label style="display:flex;align-items:center;gap:7px;font-size:12px;cursor:pointer;padding:.3rem .5rem;border-radius:6px;background:var(--bg)"><input type="checkbox" id="tr-de"> Allemand (DE)</label>
+        <label style="display:flex;align-items:center;gap:7px;font-size:12px;cursor:pointer;padding:.3rem .5rem;border-radius:6px;background:var(--bg)"><input type="checkbox" id="tr-it"> Italien (IT)</label>
+        <label style="display:flex;align-items:center;gap:7px;font-size:12px;cursor:pointer;padding:.3rem .5rem;border-radius:6px;background:var(--bg)"><input type="checkbox" id="tr-nl"> Neerlandais (NL)</label>
+        <label style="display:flex;align-items:center;gap:7px;font-size:12px;cursor:pointer;padding:.3rem .5rem;border-radius:6px;background:var(--bg)"><input type="checkbox" id="tr-pt"> Portugais (PT)</label>
+      </div>
+      <div class="form-row" style="margin-top:.3rem">
+        <div class="form-group">
+          <label>Reseau cible</label>
+          <select id="tr-network">
+            <option value="meta">Meta (FB+IG)</option>
+            <option value="google">Google Shopping</option>
+            <option value="tiktok">TikTok</option>
+            <option value="all">Tous les reseaux</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Adaptation culturelle</label>
+          <select id="tr-cultural">
+            <option value="full">Complete (ton + references)</option>
+            <option value="light">Legere (traduction proche)</option>
+          </select>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div style="display:flex;gap:7px;margin-bottom:.65rem;flex-wrap:wrap">
+    <button class="btn bd" onclick="runTranslator()">Traduire les ads</button>
+    <button class="btn bg" onclick="exportTranslations()">Exporter CSV toutes langues</button>
+    <button class="btn" onclick="clearTranslations()">Effacer</button>
+  </div>
+  <div id="tr-loading" style="display:none" class="loading"><div class="spin"></div><span id="tr-msg">Traduction en cours...</span></div>
+  <div id="tr-result"></div>
+  <div id="tr-empty" class="ads-empty" style="margin-top:.5rem">Selectionne une source, les langues cibles et clique Traduire.</div>
+</div>
+
 <div class="mbg" id="imp-modal" style="display:none" onclick="if(event.target===this)closeImport()">
   <div class="modal">
     <h2>Importer des produits</h2>
@@ -701,6 +839,7 @@ tr.sel td{background:#f0f8f3}
   </div>
 </div>
 <script>
+
 
 "use strict";
 
@@ -1064,7 +1203,7 @@ function updateSelPanel() {
 // ============================================================
 // NAVIGATION
 // ============================================================
-var TAB_IDS = ["scoring","ads","marge","saisonnal","perf","contenu","rapport","dashboard","checklist","geo","spy","tendances","calculateurs","guidads"];
+var TAB_IDS = ["scoring","ads","marge","saisonnal","perf","contenu","rapport","dashboard","checklist","geo","spy","tendances","calculateurs","guidads","woocommerce","translator"];
 function showMain(t) {
   document.querySelectorAll(".mtab").forEach(function(b, i){
     b.classList.toggle("on", TAB_IDS[i] === t);
@@ -1084,7 +1223,9 @@ function showMain(t) {
   if (t === "spy")          populateSpyProducts();
   if (t === "tendances")    populateTendancesProducts();
   if (t === "calculateurs") renderCalculateurs();
-  if (t === "guidads")      populateGuidAdsProducts();
+  if (t === "guidads")       populateGuidAdsProducts();
+  if (t === "woocommerce")   initWooTab();
+  if (t === "translator")    initTranslatorTab();
 }
 function sendToAds() { showMain("ads"); }
 function toggleNet(btn) {
@@ -2511,6 +2652,14 @@ async function runTendances() {
       : Math.round(((sc[nowM]||5)+(sc[(nowM+1)%12]||5)+(sc[(nowM+2)%12]||5))/3);
     seasonScores[c] = score;
   });
+  // Top products by current season
+  var nowMLocal = new Date().getMonth();
+  var topByPeriod = catProducts.slice().sort(function(a,b){
+    var sa = (SEASONAL[a[2]]||[])[nowMLocal] || 5;
+    var sb = (SEASONAL[b[2]]||[])[nowMLocal] || 5;
+    return (sb * 2 + calcPrio(b)) - (sa * 2 + calcPrio(a));
+  }).slice(0,15);
+
   var prompt = "Expert e-commerce et marketing digital France. Analyse les tendances de marche pour "
     + (cat ? "la categorie " + cat : "ces categories: " + cats.join(", "))
     + " pour " + (horizonLabel[horizon]||"ce mois") + ".\n\n"
@@ -2542,6 +2691,50 @@ function renderTendancesResult(data, horizon, seasonScores) {
   }
   if (data.tendances_globales) {
     h += "<div style='font-size:12px;color:var(--mut);margin-bottom:.65rem'>" + data.tendances_globales + "</div>";
+  }
+
+  // PRODUITS STARS section — NEW
+  if (data.produits_stars_periode && data.produits_stars_periode.length) {
+    h += "<div style='margin-bottom:.75rem'>"
+      + "<div style='font-size:13px;font-weight:600;margin-bottom:.45rem;display:flex;align-items:center;gap:7px'>"
+        + "<span style='font-size:16px'>&#11088;</span> Produits stars a lancer MAINTENANT"
+      + "</div>"
+      + "<div style='display:grid;grid-template-columns:repeat(auto-fill,minmax(245px,1fr));gap:8px'>";
+    data.produits_stars_periode.forEach(function(p, i) {
+      var rankColor = i===0?"#1D9E75":i===1?"#378ADD":i===2?"#BA7517":"var(--mut)";
+      var scoreW = Math.round((p.score_periode||5)*10);
+      var row = null;
+      for (var ri=0; ri<PRODUCTS.length; ri++) {
+        if (PRODUCTS[ri][1].toLowerCase().indexOf((p.nom||"").slice(0,15).toLowerCase()) >= 0) {
+          row = PRODUCTS[ri]; break;
+        }
+      }
+      var catColors = (row && CAT_COLORS[row[2]]) ? CAT_COLORS[row[2]] : ["#f0efe9","#2a2a20"];
+      h += "<div class='card-section' style='border-top:2px solid " + rankColor + ";border-radius:0 0 var(--r) var(--r);position:relative'>"
+        + "<div style='position:absolute;top:.4rem;right:.5rem;font-size:10px;font-weight:700;color:" + rankColor + ";opacity:.15;font-size:28px'>#" + p.rang + "</div>"
+        + "<div style='display:flex;align-items:flex-start;gap:7px;margin-bottom:.4rem'>"
+          + "<span style='font-size:15px;font-weight:700;color:" + rankColor + ";flex-shrink:0'>#" + p.rang + "</span>"
+          + "<div style='flex:1'>"
+            + "<div style='font-size:12.5px;font-weight:500;color:var(--txt);margin-bottom:2px'>" + (p.nom||"") + "</div>"
+            + "<span class='bdg' style='background:" + catColors[0] + ";color:" + catColors[1] + "'>" + (p.categorie||"") + "</span>"
+          + "</div>"
+        + "</div>"
+        + "<div style='display:flex;align-items:center;gap:6px;margin-bottom:.4rem'>"
+          + "<div style='flex:1;height:7px;background:var(--bg);border-radius:4px;overflow:hidden'>"
+            + "<div style='height:100%;background:" + rankColor + ";width:" + scoreW + "%'></div></div>"
+          + "<span style='font-size:11px;font-weight:700;color:" + rankColor + "'>" + (p.score_periode||"?") + "/10</span>"
+        + "</div>"
+        + (p.pourquoi_maintenant ? "<div style='font-size:11.5px;color:var(--txt);margin-bottom:.35rem'>" + p.pourquoi_maintenant + "</div>" : "")
+        + (p.hook ? "<div style='padding:.3rem .5rem;background:var(--bg);border-radius:5px;font-size:11.5px;font-style:italic;border-left:2px solid " + rankColor + ";margin-bottom:.35rem;color:var(--txt)'>" + p.hook + "</div>" : "")
+        + "<div style='display:flex;gap:5px;flex-wrap:wrap'>"
+          + (p.canal_ideal ? "<span class='tag'>" + p.canal_ideal + "</span>" : "")
+          + (p.budget_min  ? "<span class='tag'>Budget min: " + p.budget_min + "</span>" : "")
+          + (row && row[7]==="win" ? "<span class='bdg' style='background:#e8f4ee;color:#085041'>Prix avantageux</span>" : "")
+        + "</div>"
+        + "<button class='btn bg' style='margin-top:.4rem;width:100%;font-size:11px' onclick='sendToAdsFromSpy(this)' data-nom='" + encodeURIComponent(p.nom||"").slice(0,40) + "'>Generer les ads pour ce produit</button>"
+        + "</div>";
+    });
+    h += "</div></div>";
   }
   if (data.opportunites && data.opportunites.length) {
     h += "<div style='font-size:12px;font-weight:500;margin-bottom:.45rem'>Opportunites pour " + horizon + "</div>"
@@ -3177,6 +3370,497 @@ function exportGuideAds() {
 }
 
 
+
+// ============================================================
+// WOOCOMMERCE API
+// ============================================================
+var wcConfig = {};
+
+function initWooTab() {
+  try {
+    var saved = JSON.parse(localStorage.getItem("wc_config") || "{}");
+    wcConfig = saved;
+    if (saved.url)    { var el = document.getElementById("wc-url");    if(el) el.value = saved.url; }
+    if (saved.key)    { var el2= document.getElementById("wc-key");    if(el2) el2.value = saved.key; }
+    if (saved.secret) { var el3= document.getElementById("wc-secret"); if(el3) el3.value = saved.secret; }
+    updateWcStatus();
+  } catch(e) {}
+}
+
+function saveWooCredentials() {
+  var url    = ((document.getElementById("wc-url")||{}).value    || "").trim().replace(/\/$/, "");
+  var key    = ((document.getElementById("wc-key")||{}).value    || "").trim();
+  var secret = ((document.getElementById("wc-secret")||{}).value || "").trim();
+  if (!url || !key || !secret) { alert("Remplis les 3 champs."); return; }
+  wcConfig = {url: url, key: key, secret: secret};
+  localStorage.setItem("wc_config", JSON.stringify(wcConfig));
+  updateWcStatus();
+  var r = document.getElementById("wc-test-result");
+  if (r) { r.textContent = "Identifiants sauvegardes."; r.style.color = "var(--grn)"; }
+}
+
+function updateWcStatus() {
+  var st = document.getElementById("wc-status"); if (!st) return;
+  if (wcConfig.url) {
+    st.innerHTML = "<span style='color:#085041;font-weight:500'>Boutique configuree</span><br>"
+      + "URL : " + wcConfig.url + "<br>"
+      + "Cle : " + (wcConfig.key || "").slice(0,12) + "...<br>"
+      + "Statut : <span id='wc-conn-status'>Non verifie</span>";
+  } else {
+    st.textContent = "Aucune connexion configuree. Entre tes identifiants et teste la connexion.";
+  }
+}
+
+async function wooFetch(endpoint) {
+  if (!wcConfig.url || !wcConfig.key || !wcConfig.secret) {
+    throw new Error("Configure d abord ta boutique WooCommerce (URL + cles API).");
+  }
+  var url  = wcConfig.url + "/wp-json/wc/v3/" + endpoint;
+  var auth = btoa(wcConfig.key + ":" + wcConfig.secret);
+  var resp = await fetch(url, {
+    method: "GET",
+    headers: {"Authorization": "Basic " + auth, "Content-Type": "application/json"}
+  });
+  if (!resp.ok) {
+    var txt = await resp.text();
+    var msg = resp.status === 401 ? "Cles API invalides. Verifie Consumer Key et Consumer Secret."
+      : resp.status === 404 ? "API WooCommerce introuvable. Verifie l URL et que les permaliens sont actives."
+      : resp.status === 403 ? "Acces refuse. Verifies les permissions de la cle API (Lecture requise)."
+      : "Erreur " + resp.status + ": " + txt.slice(0, 150);
+    throw new Error(msg);
+  }
+  return resp.json();
+}
+
+async function testWooConnection() {
+  var btn = document.querySelector("button[onclick='testWooConnection()']");
+  var res = document.getElementById("wc-test-result");
+  saveWooCredentials();
+  if (btn) { btn.textContent = "Test en cours..."; btn.disabled = true; }
+  if (res) { res.textContent = ""; res.style.color = ""; }
+  try {
+    var data = await wooFetch("system_status");
+    var store = (data.settings && data.settings.title) ? data.settings.title : "Boutique WooCommerce";
+    var ver   = (data.environment && data.environment.wc_version) ? data.environment.wc_version : "";
+    if (res) {
+      res.innerHTML = "<span style='color:#085041;font-weight:500'>Connexion reussie!</span> " + store + (ver ? " (WC " + ver + ")" : "");
+      res.style.color = "#085041";
+    }
+    var cs = document.getElementById("wc-conn-status");
+    if (cs) { cs.textContent = "Connecte"; cs.style.color = "#085041"; }
+    var si = document.getElementById("wc-store-info");
+    if (si) si.innerHTML = "<div class='al ag' style='font-size:11.5px'><b>" + store + "</b> connecte avec succes. Tu peux maintenant importer les produits et les ventes.</div>";
+  } catch(e) {
+    if (res) { res.textContent = e.message; res.style.color = "#7a1a1a"; }
+  } finally {
+    if (btn) { btn.textContent = "Tester la connexion"; btn.disabled = false; }
+  }
+}
+
+async function importWooProducts() {
+  var loadEl = document.getElementById("wc-loading");
+  var resEl  = document.getElementById("wc-result");
+  var msgEl  = document.getElementById("wc-msg");
+  if (loadEl) loadEl.style.display = "flex";
+  if (resEl)  resEl.innerHTML = "";
+  if (msgEl)  msgEl.textContent = "Import des produits WooCommerce...";
+  try {
+    var allProducts = [];
+    var page = 1;
+    var perPage = 100;
+    while (true) {
+      if (msgEl) msgEl.textContent = "Page " + page + " en cours...";
+      var data = await wooFetch("products?per_page=" + perPage + "&page=" + page + "&status=publish");
+      if (!data || !data.length) break;
+      allProducts = allProducts.concat(data);
+      if (data.length < perPage) break;
+      page++;
+      if (page > 10) break;
+    }
+    if (!allProducts.length) throw new Error("Aucun produit trouve. Verifie que ta boutique a des produits publies.");
+    var maxId = Math.max.apply(null, [0].concat(PRODUCTS.map(function(r){ return r[0]; })));
+    var nid   = maxId + 1;
+    var imported = [];
+    var updated  = 0;
+    allProducts.forEach(function(wp) {
+      var price   = parseFloat(wp.regular_price || wp.price || "0") || 0;
+      var name    = (wp.name || "").replace(/<[^>]+>/g, "").trim();
+      var catName = (wp.categories && wp.categories[0]) ? wp.categories[0].name : "Divers";
+      var cat     = guessCat(catName, name);
+      if (!price || !name) return;
+      var existing = null;
+      for (var i = 0; i < PRODUCTS.length; i++) {
+        var existing_name = PRODUCTS[i][1].toLowerCase();
+        if (existing_name === name.toLowerCase() || (wp.sku && PRODUCTS[i][1].toLowerCase().indexOf(wp.sku.toLowerCase()) >= 0)) {
+          existing = i; break;
+        }
+      }
+      if (existing !== null) {
+        PRODUCTS[existing][3] = price;
+        updated++;
+      } else {
+        var stock  = wp.stock_status === "instock" ? "En stock" : "Rupture";
+        var isVirt = wp.virtual || false;
+        imported.push([nid++, name, cat, price, 5, "WooCommerce Import", stock, "par", "med"]);
+      }
+    });
+    PRODUCTS = PRODUCTS.concat(imported);
+    renderCatTabs(); render();
+    if (loadEl) loadEl.style.display = "none";
+    if (resEl) resEl.innerHTML = "<div class='al ag'>"
+      + "<b>Import reussi!</b><br>"
+      + imported.length + " nouveau(x) produit(s) ajoute(s)<br>"
+      + updated + " produit(s) mis a jour (prix)<br>"
+      + "Total: " + PRODUCTS.length + " produits dans le catalogue"
+      + "</div>"
+      + "<div class='al ai' style='margin-top:.4rem'>Tous les produits importes ont un score de 5/10 par defaut. Utilise <b>IA : Auto-scorer</b> dans l onglet Produits pour les noter automatiquement.</div>";
+  } catch(e) {
+    if (loadEl) loadEl.style.display = "none";
+    if (resEl)  resEl.innerHTML = "<div class='al ao'>Erreur: " + e.message + "</div>";
+  }
+}
+
+async function importWooSales() {
+  var loadEl = document.getElementById("wc-loading");
+  var resEl  = document.getElementById("wc-result");
+  var msgEl  = document.getElementById("wc-msg");
+  if (loadEl) loadEl.style.display = "flex";
+  if (resEl)  resEl.innerHTML = "";
+  if (msgEl)  msgEl.textContent = "Import des ventes des 90 derniers jours...";
+  try {
+    var dateFrom = new Date(); dateFrom.setDate(dateFrom.getDate() - 90);
+    var dateStr  = dateFrom.toISOString().slice(0, 10);
+    var orders   = [];
+    var page     = 1;
+    while (page <= 5) {
+      if (msgEl) msgEl.textContent = "Commandes page " + page + "...";
+      var data = await wooFetch("orders?per_page=100&page=" + page + "&status=completed&after=" + dateStr + "T00:00:00");
+      if (!data || !data.length) break;
+      orders = orders.concat(data);
+      if (data.length < 100) break;
+      page++;
+    }
+    var salesByProduct = {};
+    orders.forEach(function(order) {
+      (order.line_items || []).forEach(function(item) {
+        var n = (item.name || "").toLowerCase();
+        if (!salesByProduct[n]) salesByProduct[n] = {qty: 0, revenue: 0};
+        salesByProduct[n].qty     += (item.quantity || 0);
+        salesByProduct[n].revenue += parseFloat(item.total || "0");
+      });
+    });
+    var maxQty = Math.max.apply(null, Object.values(salesByProduct).map(function(s){ return s.qty; }).concat([1]));
+    var matched = 0;
+    PRODUCTS.forEach(function(r) {
+      var pname = r[1].toLowerCase();
+      var best  = null; var bestScore = 0;
+      Object.keys(salesByProduct).forEach(function(sname) {
+        var words = sname.split(" ").filter(function(w){ return w.length > 3; });
+        var matches = words.filter(function(w){ return pname.indexOf(w) >= 0; }).length;
+        var sc = matches / Math.max(words.length, 1);
+        if (sc > bestScore && sc > 0.4) { bestScore = sc; best = sname; }
+      });
+      if (best) {
+        var sd = salesByProduct[best];
+        var venScore = Math.min(5, Math.max(1, Math.round((sd.qty / maxQty) * 5)));
+        var panScore = Math.min(5, Math.max(1, venScore + (sd.revenue > 500 ? 1 : 0)));
+        var ctrScore = Math.min(5, Math.max(1, Math.round(venScore * 0.8)));
+        if (!userScores[r[0]]) userScores[r[0]] = {};
+        userScores[r[0]].ven = String(venScore);
+        userScores[r[0]].pan = String(panScore);
+        userScores[r[0]].ctr = userScores[r[0]].ctr || String(ctrScore);
+        userScores[r[0]].soc = userScores[r[0]].soc || String(Math.min(5, Math.max(1, venScore)));
+        matched++;
+      }
+    });
+    persist("userScores", userScores);
+    render();
+    if (loadEl) loadEl.style.display = "none";
+    if (resEl) resEl.innerHTML = "<div class='al ag'>"
+      + "<b>Ventes importees!</b><br>"
+      + orders.length + " commandes analysees sur les 90 derniers jours<br>"
+      + matched + " produit(s) mis a jour avec de vraies donnees de vente<br>"
+      + "Les scores ont ete automatiquement calcules depuis tes ventes reelles."
+      + "</div>"
+      + "<div class='al ai' style='margin-top:.4rem'>Va dans l onglet <b>Produits</b> pour voir les nouveaux scores. Tu peux encore ajuster manuellement les valeurs CTR et Social.</div>";
+  } catch(e) {
+    if (loadEl) loadEl.style.display = "none";
+    if (resEl)  resEl.innerHTML = "<div class='al ao'>Erreur: " + e.message + "</div>";
+  }
+}
+
+async function importWooStock() {
+  var loadEl = document.getElementById("wc-loading");
+  var resEl  = document.getElementById("wc-result");
+  var msgEl  = document.getElementById("wc-msg");
+  if (loadEl) loadEl.style.display = "flex";
+  if (resEl)  resEl.innerHTML = "";
+  if (msgEl)  msgEl.textContent = "Verification des stocks...";
+  try {
+    var data = await wooFetch("products?per_page=100&page=1&status=publish");
+    var outOfStock = data.filter(function(p){ return p.stock_status !== "instock" || (p.manage_stock && p.stock_quantity <= 5); });
+    var lowStock   = data.filter(function(p){ return p.manage_stock && p.stock_quantity > 0 && p.stock_quantity <= 10; });
+    var inStock    = data.filter(function(p){ return p.stock_status === "instock"; });
+    if (loadEl) loadEl.style.display = "none";
+    var h = "<div style='display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:7px;margin-bottom:.65rem'>"
+      + kpi("Produits en stock", inStock.length)
+      + kpi("Stock faible (<10)", lowStock.length)
+      + kpi("Rupture de stock", outOfStock.length)
+      + kpi("Total verifie", data.length)
+      + "</div>";
+    if (outOfStock.length) {
+      h += "<div class='al ao' style='margin-bottom:.55rem'><b>Ruptures de stock — ne pas lancer de pub !</b><br>"
+        + outOfStock.slice(0,10).map(function(p){ return "- " + p.name + (p.manage_stock ? " (stock: " + (p.stock_quantity||0) + ")" : " (epuise)"); }).join("<br>") + "</div>";
+    }
+    if (lowStock.length) {
+      h += "<div class='al ao' style='margin-bottom:.55rem'><b>Stock faible — surveiller avant lancement :</b><br>"
+        + lowStock.slice(0,10).map(function(p){ return "- " + p.name + " (stock: " + p.stock_quantity + ")"; }).join("<br>") + "</div>";
+    }
+    if (!outOfStock.length && !lowStock.length) {
+      h += "<div class='al ag'>Tous les produits sont en stock. Tu peux lancer des pubs sans risque de rupture.</div>";
+    }
+    if (resEl) resEl.innerHTML = h;
+  } catch(e) {
+    if (loadEl) loadEl.style.display = "none";
+    if (resEl)  resEl.innerHTML = "<div class='al ao'>Erreur: " + e.message + "</div>";
+  }
+}
+
+// ============================================================
+// TRADUCTEUR ADS MULTILINGUE
+// ============================================================
+var lastTranslations = null;
+
+function initTranslatorTab() {
+  var sel = document.getElementById("tr-product-sel"); if (!sel) return;
+  var keys = Object.keys(genAds);
+  if (keys.length === 0) {
+    sel.innerHTML = "<option>Aucune ad generee - va dans Generateur Ads</option>";
+    var adsList = document.getElementById("tr-ads-list");
+    if (adsList) adsList.textContent = "Genere d abord des ads dans l onglet Generateur Ads.";
+    return;
+  }
+  sel.innerHTML = keys.map(function(id) {
+    var item = genAds[id];
+    return "<option value='" + id + "'>" + item.product[1] + " (" + fp(item.product[3]) + ")</option>";
+  }).join("");
+  loadTrAds();
+}
+
+function loadTrAds() {
+  var sel = document.getElementById("tr-product-sel"); if (!sel) return;
+  var pid = sel.value;
+  var item = genAds[pid];
+  var adsList = document.getElementById("tr-ads-list"); if (!adsList) return;
+  if (!item) { adsList.textContent = "Aucune ad pour ce produit."; return; }
+  var nets = Object.keys(item.data).filter(function(n){ return item.data[n]; });
+  adsList.innerHTML = "<div style='font-size:11px;color:var(--mut);margin-bottom:.3rem'>Ads disponibles pour " + item.product[1] + " :</div>"
+    + nets.map(function(n){
+        var d = item.data[n]; if (!d) return "";
+        var ads = d.ads ? d.ads.slice(0,2).map(function(a){ return a.accroche; }).join(" | ") : (d.accroche || d.titre || "");
+        return "<div style='display:flex;align-items:flex-start;gap:7px;padding:.3rem .5rem;background:var(--bg);border-radius:5px;margin-bottom:3px;font-size:11.5px'>"
+          + "<span style='font-weight:600;min-width:50px;flex-shrink:0'>" + n + "</span>"
+          + "<span style='color:var(--mut);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:300px'>" + ads + "</span>"
+          + "</div>";
+      }).join("");
+}
+
+function switchTrSource(btn, src) {
+  document.querySelectorAll("#tr-source-tabs .stab").forEach(function(b){ b.classList.remove("on"); });
+  btn.classList.add("on");
+  var gen = document.getElementById("tr-generated-source");
+  var man = document.getElementById("tr-manual-source");
+  if (gen) gen.style.display = src === "generated" ? "block" : "none";
+  if (man) man.style.display = src === "manual"    ? "block" : "none";
+}
+
+function getActiveLangs() {
+  var langMap = {
+    en: {id:"tr-en", name:"Anglais", code:"en", flag:"GB"},
+    es: {id:"tr-es", name:"Espagnol", code:"es", flag:"ES"},
+    de: {id:"tr-de", name:"Allemand", code:"de", flag:"DE"},
+    it: {id:"tr-it", name:"Italien",  code:"it", flag:"IT"},
+    nl: {id:"tr-nl", name:"Neerlandais", code:"nl", flag:"NL"},
+    pt: {id:"tr-pt", name:"Portugais", code:"pt", flag:"PT"}
+  };
+  var active = [];
+  Object.keys(langMap).forEach(function(k) {
+    var el = document.getElementById(langMap[k].id);
+    if (el && el.checked) active.push(langMap[k]);
+  });
+  return active;
+}
+
+async function runTranslator() {
+  var sourceTab  = document.querySelector("#tr-source-tabs .stab.on");
+  var isManual   = sourceTab && sourceTab.textContent.indexOf("manuelle") >= 0;
+  var langs      = getActiveLangs();
+  var network    = (document.getElementById("tr-network")||{}).value || "meta";
+  var cultural   = (document.getElementById("tr-cultural")||{}).value || "full";
+  if (!langs.length) { alert("Selectionne au moins une langue cible."); return; }
+  var sourceText = "";
+  var productName = "";
+  var productData = null;
+  if (isManual) {
+    sourceText  = ((document.getElementById("tr-manual-text")||{}).value || "").trim();
+    productName = ((document.getElementById("tr-manual-product")||{}).value || "Produit").trim();
+    if (!sourceText) { alert("Colle le texte de ton ad a traduire."); return; }
+  } else {
+    var sel = document.getElementById("tr-product-sel"); if (!sel) { alert("Aucun produit selectionne."); return; }
+    var pid = sel.value;
+    var item = genAds[pid];
+    if (!item) { alert("Aucune ad generee pour ce produit. Va dans Generateur Ads."); return; }
+    productName = item.product[1];
+    productData = item.data;
+    var netData = productData[network] || productData[Object.keys(productData)[0]];
+    if (!netData) { alert("Pas de donnee pour ce reseau."); return; }
+    if (netData.ads && netData.ads.length) {
+      sourceText = "VARIATIONS:\n" + netData.ads.map(function(a){
+        return "Variation " + a.var + ":\nAccroche: " + a.accroche + "\nTexte: " + a.texte + "\nCTA: " + a.cta;
+      }).join("\n\n");
+    } else {
+      sourceText = [
+        netData.accroche ? "Accroche: " + netData.accroche : "",
+        netData.titre    ? "Titre: " + netData.titre : "",
+        netData.description ? "Description: " + netData.description : "",
+        netData.script   ? "Script: " + netData.script : ""
+      ].filter(Boolean).join("\n");
+    }
+  }
+  var loadEl = document.getElementById("tr-loading");
+  var resEl  = document.getElementById("tr-result");
+  var empEl  = document.getElementById("tr-empty");
+  var msgEl  = document.getElementById("tr-msg");
+  if (loadEl) loadEl.style.display = "flex";
+  if (resEl)  resEl.innerHTML = "";
+  if (empEl)  empEl.style.display = "none";
+  var results = [];
+  for (var li = 0; li < langs.length; li++) {
+    var lang = langs[li];
+    if (msgEl) msgEl.textContent = "Traduction en " + lang.name + " (" + (li+1) + "/" + langs.length + ")...";
+    try {
+      var schema = '{"langue":"' + lang.name + '","code":"' + lang.code + '",'
+        + '"traductions":[{"variation":"A","accroche":"string","texte":"string","cta":"string","note_culturelle":"string"}],'
+        + '"specificites_marche":"string","mots_a_eviter":["m1","m2"],"conseil":"string"}';
+      var cultLabel = cultural === "full" ? "adaptation culturelle complete (ton, references culturelles, expressions locales, humour si pertinent)" : "traduction proche du texte original";
+      var prompt = "Expert en traduction publicitaire et marketing international.\n\n"
+        + "Traduis et adapte cette publicite du francais vers le " + lang.name + ".\n"
+        + "Type d adaptation: " + cultLabel + "\n"
+        + "Reseau: " + network + "\n"
+        + "Produit: " + productName + "\n\n"
+        + "TEXTE SOURCE (francais):\n" + sourceText + "\n\n"
+        + "Regles importantes:\n"
+        + "- Adapte le registre de langue (tutoiement/vouvoiement selon la culture locale)\n"
+        + "- Adapte les references culturelles et expressions idiomatiques\n"
+        + "- Garde la meme puissance persuasive que l original\n"
+        + "- Si l original a plusieurs variations, traduis chacune\n"
+        + "- Note les specificites importantes de ce marche pour ce produit\n\n"
+        + "Reponds UNIQUEMENT en JSON valide sans markdown:\n" + schema;
+      var raw  = await callAI(prompt, 1200);
+      var data = safeJSON(raw);
+      results.push({lang: lang, data: data, ok: true});
+    } catch(e) {
+      results.push({lang: lang, error: e.message, ok: false});
+    }
+  }
+  lastTranslations = {results: results, product: productName, source: sourceText, network: network};
+  if (loadEl) loadEl.style.display = "none";
+  if (resEl)  resEl.innerHTML = renderTranslations(results, productName, network);
+}
+
+function renderTranslations(results, productName, network) {
+  var h = "<div style='margin-bottom:.6rem;display:flex;align-items:center;gap:8px'>"
+    + "<b style='font-size:13px'>" + productName + "</b>"
+    + "<span style='font-size:11px;color:var(--mut)'>" + network + " — " + results.filter(function(r){ return r.ok; }).length + "/" + results.length + " langues traduites</span>"
+    + "</div>";
+  var flagEmojis = {en:"🇬🇧", es:"🇪🇸", de:"🇩🇪", it:"🇮🇹", nl:"🇳🇱", pt:"🇵🇹", fr:"🇫🇷"};
+  var netColors  = {meta:"#1877f2", google:"#ea4335", tiktok:"#010101", pinterest:"#e60023", all:"#7F77DD"};
+  var nc = netColors[network] || "#888";
+  h += "<div style='display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:9px'>";
+  results.forEach(function(item) {
+    var flag = flagEmojis[item.lang.code] || "🌐";
+    if (!item.ok) {
+      h += "<div class='card-section' style='border-top:2px solid #E24B4A;border-radius:0 0 var(--r) var(--r)'>"
+        + "<div style='font-weight:500;margin-bottom:.35rem'>" + flag + " " + item.lang.name + "</div>"
+        + "<div class='al ao' style='font-size:11.5px'>Erreur: " + item.error + "</div></div>";
+      return;
+    }
+    var d = item.data;
+    h += "<div class='card-section' style='border-top:2px solid " + nc + ";border-radius:0 0 var(--r) var(--r)'>"
+      + "<div style='display:flex;align-items:center;justify-content:space-between;margin-bottom:.5rem'>"
+        + "<div style='display:flex;align-items:center;gap:7px'>"
+          + "<span style='font-size:20px'>" + flag + "</span>"
+          + "<div><div style='font-size:13px;font-weight:500'>" + item.lang.name + "</div>"
+            + "<div style='font-size:10px;color:var(--mut)'>" + item.lang.code.toUpperCase() + " — " + network + "</div></div>"
+        + "</div>"
+        + "<button class='btn bsm' onclick='copyTranslation(this)'>Copier</button>"
+      + "</div>";
+    if (d.traductions && d.traductions.length) {
+      d.traductions.forEach(function(t) {
+        h += "<div style='background:var(--bg);border-radius:7px;padding:.45rem .6rem;margin-bottom:.35rem'>"
+          + (t.variation ? "<div style='font-size:10px;font-weight:600;color:var(--mut);text-transform:uppercase;margin-bottom:.2rem'>Variation " + t.variation + "</div>" : "")
+          + (t.accroche  ? "<div style='font-size:12px;font-weight:500;margin-bottom:.2rem'>" + t.accroche + "</div>" : "")
+          + (t.texte     ? "<div style='font-size:11.5px;color:var(--txt);margin-bottom:.2rem'>" + t.texte + "</div>" : "")
+          + (t.cta       ? "<div style='font-size:11px;color:" + nc + ";font-weight:500'>CTA: " + t.cta + "</div>" : "")
+          + (t.note_culturelle ? "<div style='font-size:10.5px;color:var(--mut);font-style:italic;margin-top:.2rem;padding-top:.2rem;border-top:0.5px solid var(--bord)'>" + t.note_culturelle + "</div>" : "")
+          + "</div>";
+      });
+    }
+    if (d.specificites_marche) {
+      h += "<div style='font-size:11px;color:var(--mut);margin-bottom:.3rem'><b>Specificites " + item.lang.name + " :</b> " + d.specificites_marche + "</div>";
+    }
+    if (d.mots_a_eviter && d.mots_a_eviter.length) {
+      h += "<div style='display:flex;flex-wrap:wrap;gap:3px;margin-bottom:.3rem'>"
+        + "<span style='font-size:10px;color:var(--mut)'>A eviter: </span>"
+        + d.mots_a_eviter.map(function(m){ return "<span class='tag' style='color:#7a1a1a'>" + m + "</span>"; }).join("") + "</div>";
+    }
+    if (d.conseil) {
+      h += "<div style='font-size:11px;color:var(--grn);font-style:italic'>" + d.conseil + "</div>";
+    }
+    h += "</div>";
+  });
+  h += "</div>";
+  return h;
+}
+
+function copyTranslation(btn) {
+  var card = btn.closest(".card-section"); if (!card) return;
+  var text = Array.from(card.querySelectorAll("div[style*='font-size:12px'],div[style*='font-size:11.5px'],div[style*='color:'][style*='font-weight:500']"))
+    .map(function(e){ return e.textContent.trim(); }).filter(Boolean).join("\n");
+  if (navigator.clipboard) navigator.clipboard.writeText(text).then(function(){
+    btn.textContent = "OK!"; setTimeout(function(){ btn.textContent = "Copier"; }, 1500);
+  });
+}
+
+function exportTranslations() {
+  if (!lastTranslations) { alert("Traduis d abord des ads."); return; }
+  var rows = [["Produit","Reseau","Langue","Code","Variation","Accroche","Texte","CTA","Note culturelle"]];
+  lastTranslations.results.forEach(function(item) {
+    if (!item.ok || !item.data.traductions) return;
+    item.data.traductions.forEach(function(t) {
+      rows.push([
+        '"' + lastTranslations.product + '"',
+        lastTranslations.network,
+        item.lang.name,
+        item.lang.code.toUpperCase(),
+        t.variation || "A",
+        '"' + (t.accroche||"").replace(/"/g,'""') + '"',
+        '"' + (t.texte||"").replace(/"/g,'""') + '"',
+        '"' + (t.cta||"").replace(/"/g,'""') + '"',
+        '"' + (t.note_culturelle||"").replace(/"/g,'""') + '"'
+      ].join(","));
+    });
+  });
+  dl(rows.join("\n"), "traductions_" + lastTranslations.product.slice(0,20).replace(/\s/g,"_") + ".csv");
+}
+
+function clearTranslations() {
+  lastTranslations = null;
+  var r = document.getElementById("tr-result"); if(r) r.innerHTML = "";
+  var e = document.getElementById("tr-empty");  if(e) e.style.display = "block";
+}
+
+
 // INIT -- EN DERNIER
 // ============================================================
 updateApiBar();
@@ -3190,8 +3874,10 @@ populateChecklistProducts();
 populateGeoProducts();
 populateSpyProducts();
 populateTendancesProducts();
+initWooTab();
 buildReport();
 document.getElementById("c-date").value = new Date().toISOString().slice(0,10);
+
 
 </script>
 </body>
