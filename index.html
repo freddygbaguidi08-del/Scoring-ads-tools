@@ -120,6 +120,7 @@ tr.sel td{background:#f0f8f3}
   <div class="topr">
     <button class="btn" onclick="openImport()">&#8679; Importer XML/CSV</button>
     <button class="btn bg" onclick="exportScoring()">&#8681; Scoring CSV</button>
+    <button class="btn" onclick="runDeduplication()" title="Supprimer les produits en double">&#128683; Dedoublonner</button>
     <button class="btn" onclick="printReport()">&#128438; Imprimer rapport</button>
   </div>
 </div>
@@ -1871,6 +1872,7 @@ function parseXML(txt) {
   var doc    = parser.parseFromString(txt, "text/xml");
   var items  = doc.querySelectorAll("item");
   var maxId  = Math.max.apply(null, [0].concat(PRODUCTS.map(function(r){return r[0];})));
+  var alreadyIn = PRODUCTS.slice(); // snapshot for dedup check
   var nid    = maxId + 1;
   return Array.from(items).map(function(item){
     function g(tag){ var el = item.getElementsByTagNameNS("http://base.google.com/ns/1.0", tag.replace("g:",""))[0] || item.getElementsByTagName(tag)[0]; return el ? el.textContent.trim() : ""; }
@@ -1879,7 +1881,10 @@ function parseXML(txt) {
     var type  = g("g:product_type") || g("product_type") || "";
     var cat   = guessCat(type, title);
     if (!title || !price) return null;
-    return [nid++, title, cat, price, 5, "A identifier", "--", "par", "med"];
+    if (isDuplicate(title, price, alreadyIn, 0.88)) return null; // skip duplicate
+    var newRow = [nid++, title, cat, price, 5, "A identifier", "--", "par", "med"];
+    alreadyIn.push(newRow); // prevent intra-import dups too
+    return newRow;
   }).filter(Boolean);
 }
 
@@ -1887,6 +1892,7 @@ function parseCSVData(txt) {
   var lines = txt.trim().split("\n").filter(function(l){ return l.trim(); });
   var maxId = Math.max.apply(null, [0].concat(PRODUCTS.map(function(r){return r[0];})));
   var nid   = maxId + 1;
+  var alreadyIn = PRODUCTS.slice();
   var hdr   = lines[0].toLowerCase().split(/[,;]/);
   var ni = hdr.findIndex(function(h){ return h.indexOf("nom")>=0||h.indexOf("name")>=0||h.indexOf("titre")>=0; });
   var pi = hdr.findIndex(function(h){ return h.indexOf("prix")>=0||h.indexOf("price")>=0; });
@@ -1897,7 +1903,10 @@ function parseCSVData(txt) {
     var price = parseFloat((cols[pi]||"").replace(/[^\d.]/g,"")) || 0;
     var catR  = (cols[ci]||"").replace(/^"|"$/g,"").trim();
     if (!name || !price) return null;
-    return [nid++, name, guessCat(catR, name), price, 5, "A identifier", "--", "par", "med"];
+    if (isDuplicate(name, price, alreadyIn, 0.88)) return null;
+    var newRow = [nid++, name, guessCat(catR, name), price, 5, "A identifier", "--", "par", "med"];
+    alreadyIn.push(newRow);
+    return newRow;
   }).filter(Boolean);
 }
 
@@ -1919,11 +1928,14 @@ function guessCat(t, n) {
 }
 
 function confirmImport() {
-  if (!pendingImport.length) return;
+  if (!pendingImport.length) {
+    alert("Aucun nouveau produit a importer (tous deja presents ou fichier vide).");
+    closeImport(); return;
+  }
   PRODUCTS = PRODUCTS.concat(pendingImport);
   closeImport();
   renderCatTabs(); render(); renderMarg(); populateCtProducts();
-  alert(pendingImport.length + " produit(s) importe(s).");
+  alert(pendingImport.length + " produit(s) importe(s) sans doublon.");
   pendingImport = [];
 }
 
@@ -3496,15 +3508,17 @@ async function importWooProducts() {
         }
       }
       if (existing !== null) {
-        PRODUCTS[existing][3] = price;
+        PRODUCTS[existing][3] = price; // update price only
         updated++;
+      } else if (!isDuplicate(name, price, PRODUCTS, 0.88)) {
+        imported.push([nid++, name, cat, price, 5, "WooCommerce Import",
+          (wp.stock_status === "instock" ? "En stock" : "Rupture"), "par", "med"]);
+        PRODUCTS.push(imported[imported.length-1]); // add to avoid intra-import dups
       } else {
-        var stock  = wp.stock_status === "instock" ? "En stock" : "Rupture";
-        var isVirt = wp.virtual || false;
-        imported.push([nid++, name, cat, price, 5, "WooCommerce Import", stock, "par", "med"]);
+        updated++; // counted as "updated" (duplicate skipped)
       }
     });
-    PRODUCTS = PRODUCTS.concat(imported);
+    // Products already added individually during import (dedup check per item)
     renderCatTabs(); render();
     if (loadEl) loadEl.style.display = "none";
     if (resEl) resEl.innerHTML = "<div class='al ag'>"
@@ -3860,6 +3874,68 @@ function clearTranslations() {
   var e = document.getElementById("tr-empty");  if(e) e.style.display = "block";
 }
 
+
+
+// ============================================================
+// DEDUPLICATION
+// ============================================================
+function normalizeProductName(name) {
+  return (name || "").toLowerCase()
+    .replace(/[^a-z0-9]/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+function similarityScore(a, b) {
+  var na = normalizeProductName(a);
+  var nb = normalizeProductName(b);
+  if (na === nb) return 1.0;
+  // Token overlap
+  var ta = na.split(" ").filter(function(w){ return w.length > 2; });
+  var tb = nb.split(" ").filter(function(w){ return w.length > 2; });
+  if (!ta.length || !tb.length) return 0;
+  var common = ta.filter(function(w){ return tb.indexOf(w) >= 0; }).length;
+  return common / Math.max(ta.length, tb.length);
+}
+
+function isDuplicate(name, price, existingList, threshold) {
+  if (!threshold) threshold = 0.85;
+  for (var i = 0; i < existingList.length; i++) {
+    var r = existingList[i];
+    var sim = similarityScore(name, r[1]);
+    // Same name similarity + same price = duplicate
+    if (sim >= threshold) return true;
+    // Near-identical name but slightly different price (same product, price updated)
+    if (sim >= 0.75 && Math.abs(r[3] - price) / Math.max(r[3], price, 1) < 0.05) return true;
+  }
+  return false;
+}
+
+function deduplicateProducts() {
+  var before = PRODUCTS.length;
+  var seen   = [];
+  var unique = [];
+  PRODUCTS.forEach(function(r) {
+    if (!isDuplicate(r[1], r[3], seen, 0.90)) {
+      seen.push(r);
+      unique.push(r);
+    }
+  });
+  PRODUCTS = unique;
+  var removed = before - PRODUCTS.length;
+  renderCatTabs(); render(); renderMarg(); populateCtProducts();
+  updateSelPanel();
+  return removed;
+}
+
+function runDeduplication() {
+  var removed = deduplicateProducts();
+  if (removed === 0) {
+    alert("Aucun doublon detecte! Tous tes " + PRODUCTS.length + " produits sont uniques.");
+  } else {
+    alert(removed + " doublon(s) supprime(s). Catalogue: " + PRODUCTS.length + " produits uniques.");
+  }
+}
 
 // INIT -- EN DERNIER
 // ============================================================
