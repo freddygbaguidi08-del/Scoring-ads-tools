@@ -121,6 +121,7 @@ tr.sel td{background:#f0f8f3}
     <button class="btn" onclick="openImport()">&#8679; Importer XML/CSV</button>
     <button class="btn bg" onclick="exportScoring()">&#8681; Scoring CSV</button>
     <button class="btn" onclick="runDeduplication()" title="Supprimer les produits en double">&#128683; Dedoublonner</button>
+    <button class="btn" onclick="resetProductsToDefault()" title="Reinitialiser aux produits d origine" style="color:#7a1a1a">&#8635; Reset catalogue</button>
     <button class="btn" onclick="printReport()">&#128438; Imprimer rapport</button>
   </div>
 </div>
@@ -1009,6 +1010,34 @@ var PRODUCTS = [
 [76,"Voltman MANAO inertie 1500W","Chauffage",102.80,7,"Cdiscount","~109EUR","win","med"],
 [77,"Voltman connecte Wifi fonte","Chauffage",155.47,8,"Amazon/Cdiscount","~169EUR","win","high"]
 ];
+
+// ============================================================
+// PERSISTENCE PRODUITS — charge depuis localStorage si dispo
+// ============================================================
+(function() {
+  try {
+    var saved = localStorage.getItem("products_catalogue");
+    if (saved) {
+      var parsed = JSON.parse(saved);
+      if (Array.isArray(parsed) && parsed.length > 0) {
+        PRODUCTS = parsed;
+      }
+    }
+  } catch(e) { /* ignore */ }
+})();
+
+function saveProducts() {
+  try { localStorage.setItem("products_catalogue", JSON.stringify(PRODUCTS)); } catch(e) {}
+}
+
+function resetProductsToDefault() {
+  if (!confirm("Reinitialiser le catalogue aux " + DEFAULT_PRODUCTS.length + " produits d origine ? Tous les produits importes seront supprimes.")) return;
+  PRODUCTS = DEFAULT_PRODUCTS.slice();
+  localStorage.removeItem("products_catalogue");
+  renderCatTabs(); render(); renderMarg(); populateCtProducts();
+  updateSelPanel();
+  alert("Catalogue reinitialise aux produits d origine.");
+}
 
 // ============================================================
 // STATE
@@ -1934,6 +1963,7 @@ function confirmImport() {
   }
   PRODUCTS = PRODUCTS.concat(pendingImport);
   closeImport();
+  saveProducts();
   renderCatTabs(); render(); renderMarg(); populateCtProducts();
   alert(pendingImport.length + " produit(s) importe(s) sans doublon.");
   pendingImport = [];
@@ -3519,6 +3549,7 @@ async function importWooProducts() {
       }
     });
     // Products already added individually during import (dedup check per item)
+    saveProducts();
     renderCatTabs(); render();
     if (loadEl) loadEl.style.display = "none";
     if (resEl) resEl.innerHTML = "<div class='al ag'>"
@@ -3923,6 +3954,7 @@ function deduplicateProducts() {
   });
   PRODUCTS = unique;
   var removed = before - PRODUCTS.length;
+  saveProducts();
   renderCatTabs(); render(); renderMarg(); populateCtProducts();
   updateSelPanel();
   return removed;
