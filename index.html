@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>UrbanElectroStore — Cockpit E-commerce</title>
+<title>NOF — Cockpit E-commerce</title>
 <style>
 :root{--bg:#f7f6f3;--sur:#fff;--bord:#e5e3dc;--bord2:#d0cec5;--txt:#18180f;--mut:#7a7870;--grn:#085041;--gnbg:#e8f4ee;--orn:#7a4a00;--orbg:#fef3e2;--red:#7a1a1a;--rdbg:#fef2f2;--blu:#0c3d6e;--blbg:#e8f0fb;--pur:#3b2a8a;--pubg:#edeafb;--r:9px}
 *{box-sizing:border-box;margin:0;padding:0}
@@ -134,7 +134,7 @@ tr.sel td{background:#f0f8f3}
 <div class="login-overlay" id="login-overlay">
   <div class="login-box" id="login-box-user">
     <div class="logo">🛍</div>
-    <h2>UrbanElectroStore — Cockpit</h2>
+    <h2>NOF — Cockpit</h2>
     <p class="sub">Entre tes identifiants pour acceder a l outil</p>
     <div class="login-field">
       <label>Ton prenom ou identifiant</label>
@@ -177,7 +177,7 @@ tr.sel td{background:#f0f8f3}
 </div>
 
 <div class="topbar">
-  <h1>&#128722; UrbanElectroStore &mdash; Cockpit E-commerce</h1>
+  <h1>&#128722; NOF &mdash; Cockpit E-commerce</h1>
   <div class="topr">
     <button class="btn" onclick="openImport()">&#8679; Importer XML/CSV</button>
     <button class="btn bg" onclick="exportScoring()">&#8681; Scoring CSV</button>
@@ -754,7 +754,7 @@ tr.sel td{background:#f0f8f3}
       <div class="form-row" style="margin-top:.5rem">
         <div class="form-group" style="flex:1;min-width:200px">
           <label>URL de ta boutique</label>
-          <input type="text" id="wc-url" placeholder="https://urbanelectrostore.com" style="width:100%">
+          <input type="text" id="wc-url" placeholder="https://NOF.com" style="width:100%">
         </div>
       </div>
       <div class="form-row">
@@ -4506,7 +4506,7 @@ function deleteUser(idx) {
 function copyInvite(idx) {
   var u = ACCESS.users[idx];
   if (!u) return;
-  var msg = "Bonjour " + u.name + ",\n\nTu as acces au Cockpit E-commerce UrbanElectroStore.\n\n"
+  var msg = "Bonjour " + u.name + ",\n\nTu as acces au Cockpit E-commerce NOF.\n\n"
     + "Lien : " + window.location.href.split("?")[0] + "\nPrenom : " + u.name + "\nCode : " + u.code
     + (u.expiry ? "\nAcces valable jusqu au : " + u.expiry : "")
     + "\n\nBonne utilisation !";
