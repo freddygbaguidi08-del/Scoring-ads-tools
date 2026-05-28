@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>UrbanElectroStore — Cockpit E-commerce</title>
+<title>NOF — Cockpit E-commerce</title>
 <style>
 :root{--bg:#f7f6f3;--sur:#fff;--bord:#e5e3dc;--bord2:#d0cec5;--txt:#18180f;--mut:#7a7870;--grn:#085041;--gnbg:#e8f4ee;--orn:#7a4a00;--orbg:#fef3e2;--red:#7a1a1a;--rdbg:#fef2f2;--blu:#0c3d6e;--blbg:#e8f0fb;--pur:#3b2a8a;--pubg:#edeafb;--r:9px}
 *{box-sizing:border-box;margin:0;padding:0}
@@ -177,7 +177,7 @@ tr.sel td{background:#f0f8f3}
 </div>
 
 <div class="topbar">
-  <h1>&#128722; UrbanElectroStore &mdash; Cockpit E-commerce</h1>
+  <h1>&#128722; NOF &mdash; Cockpit E-commerce</h1>
   <div class="topr">
     <button class="btn" onclick="openImport()">&#8679; Importer XML/CSV</button>
     <button class="btn bg" onclick="exportScoring()">&#8681; Scoring CSV</button>
@@ -1200,14 +1200,37 @@ var genAds     = {};
 var pendingImport = [];
 
 // Load persisted data
+function loadUserData() {
+  // Called after login — loads data for the current user
+  var prefix = (ACCESS && ACCESS.currentUser)
+    ? ("__" + ACCESS.currentUser.name.toLowerCase().replace(/[^a-z0-9]/g, "_"))
+    : "__guest";
+  try { userScores = JSON.parse(localStorage.getItem("userScores" + prefix) || "{}"); } catch(e) { userScores = {}; }
+  try { margins    = JSON.parse(localStorage.getItem("margins"    + prefix) || "{}"); } catch(e) { margins = {}; }
+  try { campaigns  = JSON.parse(localStorage.getItem("campaigns"  + prefix) || "[]"); } catch(e) { campaigns = []; }
+  // Refresh UI with loaded data
+  if (typeof render === "function")          render();
+  if (typeof renderCampaigns === "function") renderCampaigns();
+  if (typeof renderMarg === "function")      renderMarg();
+}
+
+// Load with empty defaults — will be reloaded after login
 (function() {
-  try { userScores = JSON.parse(localStorage.getItem("userScores") || "{}"); } catch(e) { userScores = {}; }
-  try { margins    = JSON.parse(localStorage.getItem("margins")    || "{}"); } catch(e) { margins = {}; }
-  try { campaigns  = JSON.parse(localStorage.getItem("campaigns")  || "[]"); } catch(e) { campaigns = []; }
+  userScores = {}; margins = {}; campaigns = [];
 })();
 
+function getUserKey(key) {
+  // Keys that are per-user (namespaced with username)
+  var perUserKeys = ["userScores", "margins", "campaigns"];
+  if (perUserKeys.indexOf(key) >= 0) {
+    var user = ACCESS && ACCESS.currentUser ? ACCESS.currentUser.name : "guest";
+    return key + "__" + user.toLowerCase().replace(/[^a-z0-9]/g, "_");
+  }
+  return key; // shared or global keys unchanged
+}
+
 function persist(key, data) {
-  try { localStorage.setItem(key, JSON.stringify(data)); } catch(e) {}
+  try { localStorage.setItem(getUserKey(key), JSON.stringify(data)); } catch(e) {}
 }
 
 // ============================================================
@@ -3568,6 +3591,17 @@ function exportGuideAds() {
 var wcConfig = {};
 
 function initWooTab() {
+  // Protect WooCommerce tab from non-admin users
+  var resEl = document.getElementById("wc-result");
+  if (ACCESS && ACCESS.currentUser && !ACCESS.isAdmin) {
+    var adminOnly = document.querySelector("#tab-woocommerce .al");
+    if (adminOnly) adminOnly.innerHTML = "<b>Acces reserve a l administrateur.</b> Cette section permet de connecter la boutique WooCommerce.";
+    // Hide action buttons
+    ["importWooProducts","importWooSales","importWooStock"].forEach(function(fn){
+      document.querySelectorAll("button[onclick^='"+fn+"']").forEach(function(b){ b.style.display="none"; });
+    });
+    return;
+  }
   try {
     var saved = JSON.parse(localStorage.getItem("wc_config") || "{}");
     wcConfig = saved;
@@ -4161,6 +4195,8 @@ function initAccessControl() {
 function hideLockScreen() {
   var overlay = document.getElementById("login-overlay");
   if (overlay) overlay.style.display = "none";
+  // Load user-specific data
+  loadUserData();
   // Show user badge in topbar
   showUserBadge();
   // Show admin tab if admin
@@ -4187,8 +4223,15 @@ function showUserBadge() {
   badge.className = "access-badge";
   badge.title     = "Clique pour te deconnecter";
   badge.onclick   = doLogout;
-  badge.innerHTML = "&#128100; " + u.name + (ACCESS.isAdmin ? " (Admin)" : "") + " &nbsp;&#x2715;";
+  var roleLabel   = ACCESS.isAdmin ? " (Admin)" : (u.role === "full" ? " (Complet)" : u.role === "editor" ? " (Editeur)" : " (Lecture)");
+  badge.innerHTML = "&#128100; " + u.name + roleLabel + " &nbsp;&#x2715;";
   topbar.parentNode.insertBefore(badge, topbar.nextSibling);
+  // Add "mes donnees" info
+  var info = document.createElement("span");
+  info.id            = "user-data-info";
+  info.style.cssText = "font-size:11px;color:var(--mut);padding:0 8px";
+  info.textContent   = "Donnees: " + u.name;
+  topbar.parentNode.insertBefore(info, badge.nextSibling);
 }
 
 // ---- LOGIN ----
@@ -4279,9 +4322,35 @@ function doAdminLogin() {
 }
 
 function doLogout() {
-  if (!confirm("Te deconnecter de l outil ?")) return;
+  if (!confirm("Te deconnecter ?")) return;
   localStorage.removeItem("ac_session");
-  location.reload();
+  // Ne pas effacer les donnees localStorage — elles sont sauvegardees par utilisateur
+  // Juste vider la memoire et afficher l ecran de connexion
+  userScores = {}; margins = {}; campaigns = {};
+  genAds = {}; lastSpyData = null; lastGuideData = null; lastTranslations = null;
+  ACCESS.currentUser = null; ACCESS.isAdmin = false;
+  // Remove user badge and info
+  var badge = document.querySelector(".access-badge");
+  if (badge) badge.remove();
+  var info = document.getElementById("user-data-info");
+  if (info) info.remove();
+  // Hide admin tab
+  var admTab = document.getElementById("mtab-admin");
+  if (admTab) admTab.style.display = "none";
+  // Show login screen
+  showUserLogin();
+  document.getElementById("login-username").value = "";
+  document.getElementById("login-code").value = "";
+  document.getElementById("login-err").textContent = "";
+  document.getElementById("login-overlay").style.display = "flex";
+  // Reset renders
+  render();
+  // Show confirmation message on login screen
+  var err = document.getElementById("login-err");
+  if (err) {
+    err.style.color = "#085041";
+    err.textContent = "Deconnecte. Tes donnees sont sauvegardees.";
+  }
 }
 
 // ---- JSONBIN ----
@@ -4410,7 +4479,7 @@ function deleteUser(idx) {
 function copyInvite(idx) {
   var u = ACCESS.users[idx];
   if (!u) return;
-  var msg = "Bonjour " + u.name + ",\n\nTu as acces au Cockpit E-commerce UrbanElectroStore.\n\n"
+  var msg = "Bonjour " + u.name + ",\n\nTu as acces au Cockpit E-commerce NOF.\n\n"
     + "Lien : " + window.location.href.split("?")[0] + "\nPrenom : " + u.name + "\nCode : " + u.code
     + (u.expiry ? "\nAcces valable jusqu au : " + u.expiry : "")
     + "\n\nBonne utilisation !";
