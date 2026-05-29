@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>NOF — Cockpit E-commerce</title>
-<meta name="description" content="Scoring produits, generateur d ads IA et geo-ciblage pour NOF">
+<title>UrbanElectroStore — Cockpit E-commerce</title>
+<meta name="description" content="Scoring produits, generateur d ads IA et geo-ciblage pour UrbanElectroStore">
 <meta name="theme-color" content="#18180f">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -18,8 +18,16 @@
 :root{--bg:#f7f6f3;--sur:#fff;--bord:#e5e3dc;--bord2:#d0cec5;--txt:#18180f;--mut:#7a7870;--grn:#085041;--gnbg:#e8f4ee;--orn:#7a4a00;--orbg:#fef3e2;--red:#7a1a1a;--rdbg:#fef2f2;--blu:#0c3d6e;--blbg:#e8f0fb;--pur:#3b2a8a;--pubg:#edeafb;--r:9px}
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:-apple-system,Arial,sans-serif;background:var(--bg);color:var(--txt);font-size:13px;padding-bottom:env(safe-area-inset-bottom,0px)}
-.apibar{display:flex;align-items:center;gap:8px;padding:.5rem 1rem;background:var(--orbg);border-bottom:1px solid #f0d9a0;flex-wrap:wrap}
+.apibar{display:flex;align-items:center;gap:8px;padding:.5rem 1rem;background:var(--orbg);border-bottom:1px solid #f0d9a0;flex-wrap:wrap;transition:all .25s ease}
 .apibar.ok{background:var(--gnbg);border-color:#b0d8be}
+.apibar.collapsed{padding:.3rem 1rem;background:var(--gnbg);border-color:#b0d8be;cursor:pointer}
+.apibar.collapsed .apist{font-size:11px;color:var(--grn)}
+.apibar.collapsed .apisel,
+.apibar.collapsed .apiinp,
+.apibar.collapsed #key-link,
+.apibar.collapsed button:not(#api-collapse-btn){display:none!important}
+#api-collapse-btn{padding:3px 9px;font-size:11px;border-radius:6px;border:1px solid rgba(8,80,65,.25);background:rgba(8,80,65,.08);color:var(--grn);cursor:pointer;font-family:inherit;white-space:nowrap;flex-shrink:0}
+#api-collapse-btn:hover{background:rgba(8,80,65,.15)}
 .apist{font-size:12px;color:var(--orn);flex:1;min-width:150px}
 .apibar.ok .apist{color:var(--grn)}
 .apisel{padding:5px 8px;border:1px solid var(--bord2);border-radius:7px;font-size:12px;background:#fff;cursor:pointer}
@@ -287,6 +295,7 @@ th{position:sticky;top:0;z-index:1}
 /* ===== MOBILE API BAR COMPACT ===== */
 @media(max-width:640px){
   .apibar{flex-direction:column;align-items:stretch;gap:5px;padding:.4rem .75rem}
+  .apibar.collapsed{flex-direction:row;flex-wrap:nowrap;align-items:center;padding:.3rem .75rem}
   .apist{font-size:11px}
   .apisel,.apiinp{width:100%;box-sizing:border-box}
   .apibar .btn{align-self:flex-start}
@@ -322,7 +331,7 @@ th{position:sticky;top:0;z-index:1}
 <div class="login-overlay" id="login-overlay">
   <div class="login-box" id="login-box-user">
     <div class="logo">🛍</div>
-    <h2>NOF — Cockpit</h2>
+    <h2>UrbanElectroStore — Cockpit</h2>
     <p class="sub">Entre tes identifiants pour acceder a l outil</p>
     <div class="login-field">
       <label>Ton prenom ou identifiant</label>
@@ -362,10 +371,11 @@ th{position:sticky;top:0;z-index:1}
   <a id="key-link" href="https://console.groq.com/keys" target="_blank" class="btn bg" style="font-size:11px">Obtenir cle gratuite</a>
   <button class="btn" id="test-btn" onclick="testConnection()" style="font-size:11px">Tester la connexion</button>
   <span id="test-result" style="font-size:11px;max-width:300px"></span>
+  <button id="api-collapse-btn" onclick="collapseApiBar()" style="display:none">&#8963; Masquer</button>
 </div>
 
 <div class="topbar">
-  <h1>&#128722; NOF &mdash; Cockpit E-commerce</h1>
+  <h1>&#128722; UrbanElectroStore &mdash; Cockpit E-commerce</h1>
   <span id="sync-indicator" onclick="manualSync()" title="Cliquer pour synchroniser maintenant"
     style="font-size:11px;font-weight:500;padding:3px 10px;border-radius:20px;cursor:pointer;background:#e8f0fb;color:#0c3d6e;display:inline-flex;align-items:center;gap:4px">&#9729; Cloud</span>
   <div class="topr">
@@ -947,7 +957,7 @@ th{position:sticky;top:0;z-index:1}
       <div class="form-row" style="margin-top:.5rem">
         <div class="form-group" style="flex:1;min-width:200px">
           <label>URL de ta boutique</label>
-          <input type="text" id="wc-url" placeholder="https://NOF.com" style="width:100%">
+          <input type="text" id="wc-url" placeholder="https://urbanelectrostore.com" style="width:100%">
         </div>
       </div>
       <div class="form-row">
@@ -1244,21 +1254,48 @@ function toggleKeyVis() {
   i.type = i.type === "password" ? "text" : "password";
 }
 function updateApiBar() {
-  var bar = document.getElementById("apibar");
-  var st  = document.getElementById("apist");
-  var inp = document.getElementById("api-inp");
-  var sel = document.getElementById("prov-sel");
-  var lnk = document.getElementById("key-link");
+  var bar    = document.getElementById("apibar");
+  var st     = document.getElementById("apist");
+  var inp    = document.getElementById("api-inp");
+  var sel    = document.getElementById("prov-sel");
+  var lnk    = document.getElementById("key-link");
+  var colBtn = document.getElementById("api-collapse-btn");
   if (!bar) return;
-  var p = getProv();
+  var p  = getProv();
   var ok = apiKey.length > 0 && apiKey.indexOf(p.prefix) === 0;
   if (sel) sel.value = curProvider;
   if (inp) { inp.value = apiKey; inp.placeholder = p.ph; }
   if (lnk) lnk.href = p.link;
-  bar.className = ok ? "apibar ok" : "apibar";
-  if (st) st.textContent = ok
-    ? "Cle " + p.name + " active. Generateur pret."
-    : "Entre ta cle " + p.name + " (gratuite) ci-dessus.";
+  var wasExpanded = bar.dataset.expanded === "1";
+  if (ok && !wasExpanded) {
+    bar.className = "apibar collapsed";
+    var nm = {groq:"Groq",gemini:"Gemini",anthropic:"Claude"};
+    if (st) st.innerHTML = "&#9989;&nbsp;<b>" + (nm[curProvider]||curProvider) + " connecte</b> &mdash; <span onclick='expandApiBar()' style='text-decoration:underline;cursor:pointer;font-weight:400'>Modifier</span>";
+    if (colBtn) colBtn.style.display = "none";
+  } else if (ok && wasExpanded) {
+    bar.className = "apibar ok";
+    if (st) st.textContent = "Cle " + p.name + " active.";
+    if (colBtn) colBtn.style.display = "";
+  } else {
+    bar.className = "apibar";
+    bar.dataset.expanded = "0";
+    if (st) st.textContent = "Entre ta cle " + p.name + " (gratuite) ci-dessus.";
+    if (colBtn) colBtn.style.display = "none";
+  }
+}
+
+function collapseApiBar() {
+  var bar = document.getElementById("apibar");
+  if (bar) { bar.dataset.expanded = "0"; updateApiBar(); }
+}
+
+function expandApiBar() {
+  var bar = document.getElementById("apibar");
+  if (!bar) return;
+  bar.dataset.expanded = "1";
+  updateApiBar();
+  var inp = document.getElementById("api-inp");
+  if (inp) setTimeout(function(){ inp.focus(); inp.select(); }, 50);
 }
 
 // ============================================================
@@ -4801,7 +4838,7 @@ function deleteUser(idx) {
 function copyInvite(idx) {
   var u = ACCESS.users[idx];
   if (!u) return;
-  var msg = "Bonjour " + u.name + ",\n\nTu as acces au Cockpit E-commerce NOF.\n\n"
+  var msg = "Bonjour " + u.name + ",\n\nTu as acces au Cockpit E-commerce UrbanElectroStore.\n\n"
     + "Lien : " + window.location.href.split("?")[0] + "\nPrenom : " + u.name + "\nCode : " + u.code
     + (u.expiry ? "\nAcces valable jusqu au : " + u.expiry : "")
     + "\n\nBonne utilisation !";
