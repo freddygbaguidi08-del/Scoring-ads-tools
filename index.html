@@ -109,8 +109,8 @@ tr.sel td{background:#f0f8f3}
 @media print{.apibar,.topbar,.maintabs,.ctrls,.subtabs,.btn,.topr{display:none!important}.panel{display:block!important;padding:0}.rpt-block{break-inside:avoid}}
 
 /* ===== LOGIN & ACCESS CONTROL ===== */
-.login-overlay{position:fixed;inset:0;background:var(--bg);z-index:9999;display:flex;align-items:center;justify-content:center;padding:1rem}
-.login-box{background:var(--sur);border:1px solid var(--bord);border-radius:16px;width:100%;max-width:400px;padding:2rem 2.25rem;text-align:center;box-shadow:0 8px 40px rgba(0,0,0,.12)}
+.login-overlay{position:fixed;inset:0;background:var(--bg);z-index:9999;display:flex;align-items:center;justify-content:center;padding:1rem;overflow-y:auto}
+.login-box{background:var(--sur);border:1px solid var(--bord);border-radius:16px;width:100%;max-width:400px;padding:2rem 2.25rem;text-align:center;box-shadow:0 8px 40px rgba(0,0,0,.12);margin:auto}
 .login-box .logo{font-size:28px;margin-bottom:.5rem}
 .login-box h2{font-size:16px;font-weight:600;margin-bottom:.25rem}
 .login-box .sub{font-size:12px;color:var(--mut);margin-bottom:1.5rem}
@@ -134,6 +134,45 @@ tr.sel td{background:#f0f8f3}
 .user-row .ucode{font-family:monospace;color:var(--mut);font-size:11px}
 .user-row .ustatus{font-size:10px;padding:2px 7px;border-radius:20px}
 .user-row .uexp{font-size:10px;color:var(--mut)}
+
+
+/* ===== MOBILE RESPONSIVE ===== */
+@media (max-width: 640px) {
+  .apibar{padding:.4rem .75rem;gap:6px}
+  .apibar .apist{font-size:11px;min-width:100px;flex:1 1 100%}
+  .apiinp{min-width:0;flex:1}
+  #key-link{display:none}
+  .topbar{padding:.5rem .75rem;gap:6px}
+  .topbar h1{font-size:13px}
+  .topr{display:grid;grid-template-columns:1fr 1fr;gap:5px;width:100%}
+  .topr .btn{font-size:11px;padding:5px 8px;justify-content:center;text-align:center}
+  #sync-indicator{display:none}
+  .maintabs{overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;flex-wrap:nowrap}
+  .maintabs::-webkit-scrollbar{display:none}
+  .mtab{font-size:11.5px;padding:.45rem .75rem;white-space:nowrap;flex-shrink:0}
+  .panel{padding:.55rem .75rem 2rem}
+  .stats{gap:5px}
+  .stat{min-width:80px;padding:.4rem .6rem}
+  .stat .vl{font-size:15px}
+  .stat .lb{font-size:9px}
+  .subtabs{overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;flex-wrap:nowrap}
+  .subtabs::-webkit-scrollbar{display:none}
+  .stab{flex-shrink:0;font-size:10.5px}
+  .ctrls{gap:5px}
+  .ctrls input{min-width:0;flex:1}
+  .ctrls select{flex:1}
+  .adgrid{grid-template-columns:1fr}
+  .card-section{padding:.65rem .8rem}
+  .form-row{flex-direction:column;gap:5px}
+  .form-group input,.form-group select{width:100%!important}
+  .login-box{padding:1.5rem 1.25rem}
+  #logout-btn{font-size:11px;padding:4px 8px}
+  #admin-access-btn{padding:4px 7px}
+}
+@media (max-width: 400px) {
+  .topr{grid-template-columns:1fr}
+  .topbar h1{font-size:12px}
+}
 
 </style>
 </head>
@@ -191,18 +230,18 @@ tr.sel td{background:#f0f8f3}
   <span id="sync-indicator" onclick="manualSync()" title="Cliquer pour synchroniser maintenant"
     style="font-size:11px;font-weight:500;padding:3px 10px;border-radius:20px;cursor:pointer;background:#e8f0fb;color:#0c3d6e;display:inline-flex;align-items:center;gap:4px">&#9729; Cloud</span>
   <div class="topr">
-    <button class="btn bb" onclick="loadFromCloud()" title="Recharger toutes les donnees depuis le cloud">&#9729; Charger cloud</button>
-    <button class="btn" onclick="openImport()">&#8679; Importer XML/CSV</button>
+    <button class="btn bb" onclick="loadFromCloud()" title="Charger depuis le cloud">&#9729; Charger cloud</button>
+    <button class="btn" onclick="openImport()">&#8679; Importer</button>
     <button class="btn bg" onclick="exportScoring()">&#8681; Scoring CSV</button>
-    <button class="btn" onclick="runDeduplication()" title="Supprimer les produits en double">&#128683; Dedoublonner</button>
-    <button class="btn" onclick="resetProductsToDefault()" title="Reinitialiser aux produits d origine" style="color:#7a1a1a">&#8635; Reset catalogue</button>
-    <button class="btn" onclick="printReport()">&#128438; Imprimer rapport</button>
-    <button id="admin-access-btn" onclick="accessAdminFromTopbar()" title="Acces admin (Ctrl+Shift+A)" style="padding:5px 8px;font-size:13px;border:none;background:transparent;cursor:pointer;color:var(--mut);opacity:.5" onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=.5">&#128274;</button>
-    <button id="logout-btn" onclick="doLogout()" style="display:none;padding:5px 11px;border-radius:7px;border:1px solid var(--bord2);background:var(--sur);font-size:12px;cursor:pointer;color:#7a1a1a;font-family:inherit" title="Se deconnecter">&#128100; Deconnexion</button>
+    <button class="btn" onclick="runDeduplication()">&#128683; Dedoublonner</button>
+    <button class="btn" onclick="resetProductsToDefault()" style="color:#7a1a1a">&#8635; Reset</button>
+    <button class="btn" onclick="printReport()">&#128438; Rapport</button>
+    <button id="admin-access-btn" onclick="accessAdminFromTopbar()" title="Admin (Ctrl+Shift+A)" style="padding:5px 8px;font-size:13px;border:none;background:transparent;cursor:pointer;color:var(--mut);opacity:.5" onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=.5">&#128274;</button>
+    <button id="logout-btn" onclick="doLogout()" style="display:none;padding:5px 11px;border-radius:7px;border:1px solid var(--bord2);background:var(--sur);font-size:12px;cursor:pointer;color:#7a1a1a;font-family:inherit">&#128100; <span id="logout-name">Deconnexion</span></button>
   </div>
 </div>
 
-<div class="maintabs">
+<div class="maintabs" id="maintabs">
   <button class="mtab on" onclick="showMain('scoring')">&#128202; Produits</button>
   <button class="mtab" onclick="showMain('ads')">&#127919; Ads</button>
   <button class="mtab" onclick="showMain('marge')">&#128176; Marge &amp; ROI</button>
@@ -1491,7 +1530,15 @@ function updateSelPanel() {
 var TAB_IDS = ["scoring","ads","marge","saisonnal","perf","contenu","rapport","dashboard","checklist","geo","spy","tendances","calculateurs","guidads","woocommerce","translator","admin"];
 function showMain(t) {
   document.querySelectorAll(".mtab").forEach(function(b, i){
-    b.classList.toggle("on", TAB_IDS[i] === t);
+    var isOn = TAB_IDS[i] === t;
+    b.classList.toggle("on", isOn);
+    // Scroll active tab into view on mobile
+    if (isOn) {
+      var tabs = document.getElementById("maintabs");
+      if (tabs && b.offsetLeft) {
+        tabs.scrollLeft = b.offsetLeft - 20;
+      }
+    }
   });
   document.querySelectorAll(".panel").forEach(function(p){ p.classList.remove("on"); });
   var el = document.getElementById("tab-" + t);
@@ -4251,6 +4298,8 @@ var ACCESS = {
 };
 
 // ---- INIT ----
+var SESSION_VERSION = "v2"; // increment to force re-login
+
 function initAccessControl() {
   try {
     var cfg = JSON.parse(localStorage.getItem("ac_config") || "{}");
@@ -4266,10 +4315,15 @@ function initAccessControl() {
     var sess = JSON.parse(localStorage.getItem("ac_session") || "null");
     if (sess && sess.expires && new Date(sess.expires) > new Date()) {
       ACCESS.currentUser = sess;
-      // isAdmin: true if flagged OR if name is "Admin" OR if no adminPwd set yet (first use)
+      // isAdmin detection — multiple fallbacks for backward compatibility
       ACCESS.isAdmin = sess.isAdmin === true
         || sess.name === "Admin"
         || !ACCESS.adminPwd;
+      // Force save updated session with isAdmin flag
+      if (ACCESS.isAdmin && !sess.isAdmin) {
+        sess.isAdmin = true;
+        localStorage.setItem("ac_session", JSON.stringify(sess));
+      }
       hideLockScreen();
       return;
     }
@@ -4282,10 +4336,13 @@ function initAccessControl() {
 function hideLockScreen() {
   var overlay = document.getElementById("login-overlay");
   if (overlay) overlay.style.display = "none";
-  // Load user-specific data
-  loadUserData();
-  // Show user badge in topbar
+  // Show user badge first (fast, no data needed)
   showUserBadge();
+  // Show admin tab
+  var admTab = document.getElementById("mtab-admin");
+  if (admTab) admTab.style.display = ACCESS.isAdmin ? "" : "none";
+  // Load user-specific data (products, scores, margins, campaigns)
+  loadUserData();
   // Show admin tab if admin (always re-check)
   var admTab = document.getElementById("mtab-admin");
   if (admTab) {
@@ -4313,7 +4370,9 @@ function showUserBadge() {
   var roleLabel = ACCESS.isAdmin ? " (Admin)" : (u.role === "full" ? " (Complet)" : u.role === "editor" ? " (Editeur)" : " (Lecture)");
   if (logoutBtn) {
     logoutBtn.style.display = "";
-    logoutBtn.innerHTML = "&#128100; " + u.name + roleLabel + " &nbsp;&#x2715;";
+    var nameSpan = document.getElementById("logout-name");
+    if (nameSpan) nameSpan.textContent = u.name + roleLabel + " x";
+    else logoutBtn.innerHTML = "&#128100; " + u.name + roleLabel + " x";
   }
   // Also add a badge near the title for visibility
   var existing = document.querySelector(".access-badge");
