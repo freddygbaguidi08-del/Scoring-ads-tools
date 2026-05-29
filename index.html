@@ -1082,20 +1082,22 @@ var PROVIDERS = {
   gemini:    {name:"Google Gemini Flash",   prefix:"AIza",   link:"https://aistudio.google.com/app/apikey", ph:"AIza..."},
   anthropic: {name:"Anthropic Claude",      prefix:"sk-ant", link:"https://console.anthropic.com/settings/keys", ph:"sk-ant-..."}
 };
-var curProvider = localStorage.getItem("ai_provider") || "groq";
-var apiKey      = localStorage.getItem("api_key_" + curProvider) || "";
+var curProvider = "groq"; // will be loaded per-user after login
+var apiKey      = "";      // will be loaded per-user after login
 
 function getProv() { return PROVIDERS[curProvider] || PROVIDERS.groq; }
 function changeProvider() {
   var s = document.getElementById("prov-sel"); if (!s) return;
   curProvider = s.value;
-  localStorage.setItem("ai_provider", curProvider);
-  apiKey = localStorage.getItem("api_key_" + curProvider) || "";
+  localStorage.setItem(getUserKey("ai_provider"), curProvider);
+  apiKey = localStorage.getItem(getUserKey("api_key_" + curProvider)) || "";
   updateApiBar();
 }
 function saveKey(v) {
   apiKey = (v || "").trim();
-  localStorage.setItem("api_key_" + curProvider, apiKey);
+  // Store per-user: api_key_{provider} is in perUserKeys via getUserKey
+  var storageKey = getUserKey("api_key_" + curProvider);
+  localStorage.setItem(storageKey, apiKey);
   updateApiBar();
 }
 function toggleKeyVis() {
@@ -1273,6 +1275,19 @@ var genAds     = {};
 var pendingImport = [];
 
 // Load persisted data
+function loadUserApiKeys() {
+  // Load API keys for the current user — fully isolated
+  var prov = localStorage.getItem(getUserKey("ai_provider")) || "groq";
+  curProvider = prov;
+  apiKey      = localStorage.getItem(getUserKey("api_key_" + prov)) || "";
+  // Also load WooCommerce config for this user
+  try {
+    var savedWC = JSON.parse(localStorage.getItem(getUserKey("wc_config")) || "{}");
+    wcConfig = savedWC;
+  } catch(e) { wcConfig = {}; }
+  updateApiBar();
+}
+
 function loadUserData() {
   // 1. Load from localStorage cache immediately (fast, no network)
   var prefix  = (ACCESS && ACCESS.currentUser)
@@ -3734,7 +3749,7 @@ function initWooTab() {
     return;
   }
   try {
-    var saved = JSON.parse(localStorage.getItem("wc_config") || "{}");
+    var saved = JSON.parse(localStorage.getItem(getUserKey("wc_config")) || "{}");
     wcConfig = saved;
     if (saved.url)    { var el = document.getElementById("wc-url");    if(el) el.value = saved.url; }
     if (saved.key)    { var el2= document.getElementById("wc-key");    if(el2) el2.value = saved.key; }
@@ -3749,7 +3764,7 @@ function saveWooCredentials() {
   var secret = ((document.getElementById("wc-secret")||{}).value || "").trim();
   if (!url || !key || !secret) { alert("Remplis les 3 champs."); return; }
   wcConfig = {url: url, key: key, secret: secret};
-  localStorage.setItem("wc_config", JSON.stringify(wcConfig));
+  localStorage.setItem(getUserKey("wc_config"), JSON.stringify(wcConfig));
   updateWcStatus();
   var r = document.getElementById("wc-test-result");
   if (r) { r.textContent = "Identifiants sauvegardes."; r.style.color = "var(--grn)"; }
@@ -4341,7 +4356,9 @@ function hideLockScreen() {
   // Show admin tab
   var admTab = document.getElementById("mtab-admin");
   if (admTab) admTab.style.display = ACCESS.isAdmin ? "" : "none";
-  // Load user-specific data (products, scores, margins, campaigns)
+  // Load per-user API keys (clears other user's keys from UI)
+  loadUserApiKeys();
+  // Load per-user data (products, scores, margins, campaigns)
   loadUserData();
   // Show admin tab if admin (always re-check)
   var admTab = document.getElementById("mtab-admin");
@@ -4483,6 +4500,9 @@ function doLogout() {
   userScores = {}; margins = {}; campaigns = {};
   PRODUCTS = []; selIds = new Set();
   genAds = {}; lastSpyData = null; lastGuideData = null; lastTranslations = null;
+  // Clear API keys and WooCommerce config from memory
+  apiKey = ""; curProvider = "groq"; wcConfig = {};
+  updateApiBar();
   ACCESS.currentUser = null; ACCESS.isAdmin = false;
   // Hide logout button
   var logoutBtn = document.getElementById("logout-btn");
