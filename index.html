@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>NOF — Cockpit E-commerce</title>
+<title>UrbanElectroStore — Cockpit E-commerce</title>
 <style>
 :root{--bg:#f7f6f3;--sur:#fff;--bord:#e5e3dc;--bord2:#d0cec5;--txt:#18180f;--mut:#7a7870;--grn:#085041;--gnbg:#e8f4ee;--orn:#7a4a00;--orbg:#fef3e2;--red:#7a1a1a;--rdbg:#fef2f2;--blu:#0c3d6e;--blbg:#e8f0fb;--pur:#3b2a8a;--pubg:#edeafb;--r:9px}
 *{box-sizing:border-box;margin:0;padding:0}
@@ -134,7 +134,7 @@ tr.sel td{background:#f0f8f3}
 <div class="login-overlay" id="login-overlay">
   <div class="login-box" id="login-box-user">
     <div class="logo">🛍</div>
-    <h2>NOF — Cockpit</h2>
+    <h2>UrbanElectroStore — Cockpit</h2>
     <p class="sub">Entre tes identifiants pour acceder a l outil</p>
     <div class="login-field">
       <label>Ton prenom ou identifiant</label>
@@ -177,7 +177,7 @@ tr.sel td{background:#f0f8f3}
 </div>
 
 <div class="topbar">
-  <h1>&#128722; NOF &mdash; Cockpit E-commerce</h1>
+  <h1>&#128722; UrbanElectroStore &mdash; Cockpit E-commerce</h1>
   <span id="sync-indicator" onclick="manualSync()" title="Cliquer pour synchroniser maintenant"
     style="font-size:11px;font-weight:500;padding:3px 10px;border-radius:20px;cursor:pointer;background:#e8f0fb;color:#0c3d6e;display:inline-flex;align-items:center;gap:4px">&#9729; Cloud</span>
   <div class="topr">
@@ -187,6 +187,7 @@ tr.sel td{background:#f0f8f3}
     <button class="btn" onclick="runDeduplication()" title="Supprimer les produits en double">&#128683; Dedoublonner</button>
     <button class="btn" onclick="resetProductsToDefault()" title="Reinitialiser aux produits d origine" style="color:#7a1a1a">&#8635; Reset catalogue</button>
     <button class="btn" onclick="printReport()">&#128438; Imprimer rapport</button>
+    <button id="admin-access-btn" onclick="accessAdminFromTopbar()" title="Acces admin (Ctrl+Shift+A)" style="padding:5px 8px;font-size:13px;border:none;background:transparent;cursor:pointer;color:var(--mut);opacity:.5" onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=.5">&#128274;</button>
   </div>
 </div>
 
@@ -757,7 +758,7 @@ tr.sel td{background:#f0f8f3}
       <div class="form-row" style="margin-top:.5rem">
         <div class="form-group" style="flex:1;min-width:200px">
           <label>URL de ta boutique</label>
-          <input type="text" id="wc-url" placeholder="https://NOF.com" style="width:100%">
+          <input type="text" id="wc-url" placeholder="https://urbanelectrostore.com" style="width:100%">
         </div>
       </div>
       <div class="form-row">
@@ -4253,7 +4254,10 @@ function initAccessControl() {
     var sess = JSON.parse(localStorage.getItem("ac_session") || "null");
     if (sess && sess.expires && new Date(sess.expires) > new Date()) {
       ACCESS.currentUser = sess;
-      ACCESS.isAdmin     = sess.isAdmin || false;
+      // isAdmin: true if flagged OR if name is "Admin" OR if no adminPwd set yet (first use)
+      ACCESS.isAdmin = sess.isAdmin === true
+        || sess.name === "Admin"
+        || !ACCESS.adminPwd;
       hideLockScreen();
       return;
     }
@@ -4270,10 +4274,10 @@ function hideLockScreen() {
   loadUserData();
   // Show user badge in topbar
   showUserBadge();
-  // Show admin tab if admin
-  if (ACCESS.isAdmin) {
-    var admTab = document.getElementById("mtab-admin");
-    if (admTab) admTab.style.display = "";
+  // Show admin tab if admin (always re-check)
+  var admTab = document.getElementById("mtab-admin");
+  if (admTab) {
+    admTab.style.display = ACCESS.isAdmin ? "" : "none";
   }
   // Pre-fill new user expiry date
   var expEl = document.getElementById("new-user-expiry");
@@ -4392,6 +4396,9 @@ function doAdminLogin() {
   var session = {name: "Admin", code: "ADMIN", role: "full", expires: expiry.toISOString(), isAdmin: true};
   localStorage.setItem("ac_session", JSON.stringify(session));
   ACCESS.currentUser = session; ACCESS.isAdmin = true;
+  // Ensure admin tab visible
+  var admTab = document.getElementById("mtab-admin");
+  if (admTab) admTab.style.display = "";
   logAccess("Admin", "connexion admin");
   hideLockScreen();
 }
@@ -4559,7 +4566,7 @@ function deleteUser(idx) {
 function copyInvite(idx) {
   var u = ACCESS.users[idx];
   if (!u) return;
-  var msg = "Bonjour " + u.name + ",\n\nTu as acces au Cockpit E-commerce NOF.\n\n"
+  var msg = "Bonjour " + u.name + ",\n\nTu as acces au Cockpit E-commerce UrbanElectroStore.\n\n"
     + "Lien : " + window.location.href.split("?")[0] + "\nPrenom : " + u.name + "\nCode : " + u.code
     + (u.expiry ? "\nAcces valable jusqu au : " + u.expiry : "")
     + "\n\nBonne utilisation !";
@@ -4842,6 +4849,38 @@ async function loadFromCloud() {
   }
 }
 
+
+// Keyboard shortcut: Ctrl+Shift+A = show admin login
+document.addEventListener("keydown", function(e) {
+  if (e.ctrlKey && e.shiftKey && e.key === "A") {
+    e.preventDefault();
+    if (ACCESS.isAdmin) {
+      showMain("admin");
+      // Make sure admin tab is visible
+      var admTab = document.getElementById("mtab-admin");
+      if (admTab) admTab.style.display = "";
+    } else {
+      // Show admin login overlay
+      var overlay = document.getElementById("login-overlay");
+      if (overlay) overlay.style.display = "flex";
+      showAdminLogin();
+    }
+  }
+});
+
+function accessAdminFromTopbar() {
+  if (ACCESS.isAdmin) {
+    // Already admin — go to admin panel
+    var admTab = document.getElementById("mtab-admin");
+    if (admTab) admTab.style.display = "";
+    showMain("admin");
+  } else {
+    // Show admin login
+    var overlay = document.getElementById("login-overlay");
+    if (overlay) overlay.style.display = "flex";
+    showAdminLogin();
+  }
+}
 
 // INIT -- EN DERNIER
 // ============================================================
