@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>NOF — Cockpit E-commerce</title>
+<title>UrbanElectroStore — Cockpit E-commerce</title>
 <style>
 :root{--bg:#f7f6f3;--sur:#fff;--bord:#e5e3dc;--bord2:#d0cec5;--txt:#18180f;--mut:#7a7870;--grn:#085041;--gnbg:#e8f4ee;--orn:#7a4a00;--orbg:#fef3e2;--red:#7a1a1a;--rdbg:#fef2f2;--blu:#0c3d6e;--blbg:#e8f0fb;--pur:#3b2a8a;--pubg:#edeafb;--r:9px}
 *{box-sizing:border-box;margin:0;padding:0}
@@ -134,7 +134,7 @@ tr.sel td{background:#f0f8f3}
 <div class="login-overlay" id="login-overlay">
   <div class="login-box" id="login-box-user">
     <div class="logo">🛍</div>
-    <h2>NOF — Cockpit</h2>
+    <h2>UrbanElectroStore — Cockpit</h2>
     <p class="sub">Entre tes identifiants pour acceder a l outil</p>
     <div class="login-field">
       <label>Ton prenom ou identifiant</label>
@@ -177,8 +177,11 @@ tr.sel td{background:#f0f8f3}
 </div>
 
 <div class="topbar">
-  <h1>&#128722; NOF &mdash; Cockpit E-commerce</h1>
+  <h1>&#128722; UrbanElectroStore &mdash; Cockpit E-commerce</h1>
+  <span id="sync-indicator" onclick="manualSync()" title="Cliquer pour synchroniser maintenant"
+    style="font-size:11px;font-weight:500;padding:3px 10px;border-radius:20px;cursor:pointer;background:#e8f0fb;color:#0c3d6e;display:inline-flex;align-items:center;gap:4px">&#9729; Cloud</span>
   <div class="topr">
+    <button class="btn bb" onclick="loadFromCloud()" title="Recharger toutes les donnees depuis le cloud">&#9729; Charger cloud</button>
     <button class="btn" onclick="openImport()">&#8679; Importer XML/CSV</button>
     <button class="btn bg" onclick="exportScoring()">&#8681; Scoring CSV</button>
     <button class="btn" onclick="runDeduplication()" title="Supprimer les produits en double">&#128683; Dedoublonner</button>
@@ -754,7 +757,7 @@ tr.sel td{background:#f0f8f3}
       <div class="form-row" style="margin-top:.5rem">
         <div class="form-group" style="flex:1;min-width:200px">
           <label>URL de ta boutique</label>
-          <input type="text" id="wc-url" placeholder="https://NOF.com" style="width:100%">
+          <input type="text" id="wc-url" placeholder="https://urbanelectrostore.com" style="width:100%">
         </div>
       </div>
       <div class="form-row">
@@ -912,6 +915,32 @@ CTA : Voir l offre" style="width:100%;height:130px;padding:7px 9px;border:1px so
       <button class="btn bg" onclick="pushUsersToJB()">Sauvegarder les utilisateurs</button>
     </div>
     <div id="jb-test-result" style="font-size:12px;margin-top:.35rem"></div>
+  </div>
+
+  <!-- SYNC STATUS DASHBOARD -->
+  <div class="adm-panel">
+    <h3>Synchronisation cloud</h3>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:8px;margin:.5rem 0;font-size:12px">
+      <div style="background:var(--bg);border-radius:7px;padding:.5rem .75rem">
+        <div style="font-size:10px;color:var(--mut);text-transform:uppercase;margin-bottom:.25rem">Statut</div>
+        <div id="adm-sync-status">Non configure</div>
+      </div>
+      <div style="background:var(--bg);border-radius:7px;padding:.5rem .75rem">
+        <div style="font-size:10px;color:var(--mut);text-transform:uppercase;margin-bottom:.25rem">Utilisateurs cloud</div>
+        <div id="adm-sync-users">--</div>
+      </div>
+      <div style="background:var(--bg);border-radius:7px;padding:.5rem .75rem">
+        <div style="font-size:10px;color:var(--mut);text-transform:uppercase;margin-bottom:.25rem">Derniere sync</div>
+        <div id="adm-sync-time">--</div>
+      </div>
+    </div>
+    <div style="display:flex;gap:7px;flex-wrap:wrap;margin-top:.35rem">
+      <button class="btn bd" onclick="manualSync()">&#9729; Synchroniser maintenant</button>
+      <button class="btn bb" onclick="loadFromCloud()">&#8681; Recharger depuis le cloud</button>
+    </div>
+    <div class="al ai" style="margin-top:.5rem;font-size:11.5px">
+      <b>Comment ca marche :</b> Toutes les donnees (produits, scores, marges, campagnes) sont automatiquement sauvegardees dans JSONBin apres chaque modification (delai de 2 secondes). Au prochain login sur n importe quel appareil, les donnees sont rechargees depuis le cloud.
+    </div>
   </div>
 
   <!-- Ajouter un utilisateur -->
@@ -1167,6 +1196,7 @@ var PRODUCTS = [
 
 function saveProducts() {
   try { localStorage.setItem(getUserKey("products_catalogue"), JSON.stringify(PRODUCTS)); } catch(e) {}
+  scheduleSync(); // auto-sync to cloud
 }
 
 function resetProductsToDefault() {
@@ -1192,45 +1222,59 @@ var pendingImport = [];
 
 // Load persisted data
 function loadUserData() {
-  // Called after login — loads ALL data for the current user (fully isolated)
-  var prefix = (ACCESS && ACCESS.currentUser)
+  // 1. Load from localStorage cache immediately (fast, no network)
+  var prefix  = (ACCESS && ACCESS.currentUser)
     ? ("__" + ACCESS.currentUser.name.toLowerCase().replace(/[^a-z0-9]/g, "_"))
     : "__guest";
   var isAdmin = ACCESS && ACCESS.isAdmin;
 
-  // Scores, marges, campagnes — toujours per-user
   try { userScores = JSON.parse(localStorage.getItem("userScores" + prefix) || "{}"); } catch(e) { userScores = {}; }
   try { margins    = JSON.parse(localStorage.getItem("margins"    + prefix) || "{}"); } catch(e) { margins = {}; }
   try { campaigns  = JSON.parse(localStorage.getItem("campaigns"  + prefix) || "[]"); } catch(e) { campaigns = []; }
 
-  // Produits — per-user
-  // Admin sans sauvegarde -> DEFAULT_PRODUCTS (77 produits)
-  // Autre utilisateur sans sauvegarde -> catalogue VIDE (repart de 0)
   var savedProds = null;
   try {
     var rawProds = localStorage.getItem("products_catalogue" + prefix);
     if (rawProds) {
-      var parsed = JSON.parse(rawProds);
-      if (Array.isArray(parsed) && parsed.length > 0) savedProds = parsed;
+      var p2 = JSON.parse(rawProds);
+      if (Array.isArray(p2) && p2.length > 0) savedProds = p2;
     }
   } catch(e) {}
 
   if (savedProds) {
     PRODUCTS = savedProds;
   } else if (isAdmin) {
-    PRODUCTS = DEFAULT_PRODUCTS.slice(); // Admin: 77 produits par defaut
-    saveProducts(); // Sauvegarde pour l admin
+    PRODUCTS = DEFAULT_PRODUCTS.slice();
+    saveProducts();
   } else {
-    PRODUCTS = []; // Nouvel utilisateur: catalogue vide
+    PRODUCTS = [];
   }
 
-  // Refresh UI with loaded data
-  if (typeof renderCatTabs === "function")   renderCatTabs();
-  if (typeof render === "function")          render();
-  if (typeof renderCampaigns === "function") renderCampaigns();
-  if (typeof renderMarg === "function")      renderMarg();
+  // Refresh UI immediately with local data
+  if (typeof renderCatTabs === "function")      renderCatTabs();
+  if (typeof render === "function")             render();
+  if (typeof renderCampaigns === "function")    renderCampaigns();
+  if (typeof renderMarg === "function")         renderMarg();
   if (typeof populateCtProducts === "function") populateCtProducts();
-  if (typeof updateSelPanel === "function")  updateSelPanel();
+  if (typeof updateSelPanel === "function")     updateSelPanel();
+
+  // 2. Then try to load fresher data from cloud (async, in background)
+  if (ACCESS.jbBinId && ACCESS.jbKey) {
+    showSyncStatus("syncing");
+    loadAllDataFromJB().then(function(ok) {
+      if (ok) {
+        showSyncStatus("ok");
+        if (typeof renderCatTabs === "function")      renderCatTabs();
+        if (typeof render === "function")             render();
+        if (typeof renderCampaigns === "function")    renderCampaigns();
+        if (typeof renderMarg === "function")         renderMarg();
+        if (typeof populateCtProducts === "function") populateCtProducts();
+        if (typeof updateSelPanel === "function")     updateSelPanel();
+      } else {
+        showSyncStatus("idle");
+      }
+    }).catch(function() { showSyncStatus("idle"); });
+  }
 }
 
 // All user data loaded after login via loadUserData()
@@ -1252,6 +1296,7 @@ function getUserKey(key) {
 
 function persist(key, data) {
   try { localStorage.setItem(getUserKey(key), JSON.stringify(data)); } catch(e) {}
+  scheduleSync(); // auto-sync to cloud
 }
 
 // ============================================================
@@ -4238,6 +4283,10 @@ function hideLockScreen() {
   }
   // Load JB config
   loadJBConfig();
+  // Show initial sync status
+  if (ACCESS.jbBinId && ACCESS.jbKey) {
+    showSyncStatus("idle");
+  }
 }
 
 function showUserBadge() {
@@ -4348,7 +4397,11 @@ function doAdminLogin() {
 }
 
 function doLogout() {
-  if (!confirm("Te deconnecter ?")) return;
+  if (!confirm("Te deconnecter ? Tes donnees seront sauvegardees.")) return;
+  // Final sync before logout
+  if (ACCESS.jbBinId && ACCESS.jbKey) {
+    pushAllDataToJB().catch(function(){});
+  }
   localStorage.removeItem("ac_session");
   // Ne pas effacer les donnees localStorage — elles sont sauvegardees par utilisateur
   // Juste vider la memoire et afficher l ecran de connexion
@@ -4506,7 +4559,7 @@ function deleteUser(idx) {
 function copyInvite(idx) {
   var u = ACCESS.users[idx];
   if (!u) return;
-  var msg = "Bonjour " + u.name + ",\n\nTu as acces au Cockpit E-commerce NOF.\n\n"
+  var msg = "Bonjour " + u.name + ",\n\nTu as acces au Cockpit E-commerce UrbanElectroStore.\n\n"
     + "Lien : " + window.location.href.split("?")[0] + "\nPrenom : " + u.name + "\nCode : " + u.code
     + (u.expiry ? "\nAcces valable jusqu au : " + u.expiry : "")
     + "\n\nBonne utilisation !";
@@ -4530,6 +4583,22 @@ function renderAdminPanel() {
   if (!ACCESS.isAdmin) return;
   renderUsersList();
   renderLogs();
+  renderSyncDashboard();
+}
+
+function renderSyncDashboard() {
+  var el1 = document.getElementById("adm-sync-status");
+  var el2 = document.getElementById("adm-sync-users");
+  var el3 = document.getElementById("adm-sync-time");
+  if (!el1) return;
+  var configured = ACCESS.jbBinId && ACCESS.jbKey;
+  el1.innerHTML = configured
+    ? "<span style='color:#085041;font-weight:500'>Configure</span>"
+    : "<span style='color:#7a1a1a'>Non configure</span>";
+  el2.textContent = ACCESS.users.length + " utilisateur(s)";
+  el3.textContent = lastSyncTime
+    ? lastSyncTime.toLocaleString("fr-FR")
+    : "Jamais";
 }
 
 function renderUsersList() {
@@ -4579,6 +4648,198 @@ function exportUsersCSV() {
     rows.push(['"'+u.name+'"', u.code, u.role||"viewer", u.active?"oui":"non", u.expiry||"", u.created||"", u.lastAccess||""]);
   });
   dl(rows.map(function(r){ return r.join(","); }).join("\n"), "utilisateurs_acces.csv");
+}
+
+
+
+// ============================================================
+// CLOUD SYNC — JSONBin.io (cross-device)
+// Structure du bin:
+// {
+//   "users": [...],
+//   "logs": [...],
+//   "data": {
+//     "admin":  { products:[], scores:{}, margins:{}, campaigns:[] },
+//     "pierre": { products:[], scores:{}, margins:{}, campaigns:[] }
+//   },
+//   "updated": "ISO date"
+// }
+// ============================================================
+
+var syncTimer = null;
+var lastSyncTime = null;
+var syncStatus = "idle"; // idle | syncing | ok | error
+
+// ---- UI INDICATORS ----
+function showSyncStatus(status, msg) {
+  syncStatus = status;
+  var el = document.getElementById("sync-indicator");
+  if (!el) return;
+  var styles = {
+    syncing: ["&#8635; Sync...", "#7a4a00", "#fef3e2"],
+    ok:      ["&#10003; Sync",  "#085041", "#e8f4ee"],
+    error:   ["&#x26a0; Sync",  "#7a1a1a", "#fef2f2"],
+    idle:    ["&#9729; Cloud",  "#0c3d6e", "#e8f0fb"]
+  };
+  var s = styles[status] || styles.idle;
+  el.innerHTML = s[0] + (msg ? " " + msg : "");
+  el.style.color = s[1];
+  el.style.background = s[2];
+  if (status === "ok") setTimeout(function(){ showSyncStatus("idle"); }, 3000);
+}
+
+// ---- DEBOUNCED AUTO-SYNC ----
+function scheduleSync() {
+  if (!ACCESS.jbBinId || !ACCESS.jbKey) return;
+  clearTimeout(syncTimer);
+  showSyncStatus("syncing");
+  syncTimer = setTimeout(function(){
+    pushAllDataToJB().then(function(){
+      showSyncStatus("ok", new Date().toLocaleTimeString("fr-FR", {hour:"2-digit",minute:"2-digit"}));
+    }).catch(function(e){
+      showSyncStatus("error");
+    });
+  }, 2000); // 2 sec debounce
+}
+
+// ---- PUSH ALL DATA TO JSONBIN ----
+async function pushAllDataToJB() {
+  if (!ACCESS.jbBinId || !ACCESS.jbKey) return;
+  // Build current user's data snapshot
+  var userKey = ACCESS.currentUser
+    ? ACCESS.currentUser.name.toLowerCase().replace(/[^a-z0-9]/g,"_")
+    : "guest";
+  // Load existing bin first to preserve other users' data
+  var existingData = {};
+  try {
+    var r = await fetch("https://api.jsonbin.io/v3/b/" + ACCESS.jbBinId + "/latest", {
+      headers: {"X-Master-Key": ACCESS.jbKey, "X-Bin-Meta": "false"}
+    });
+    if (r.ok) existingData = await r.json();
+  } catch(e) {}
+
+  if (!existingData.data) existingData.data = {};
+  existingData.users   = ACCESS.users;
+  existingData.logs    = ACCESS.logs.slice(-100);
+  existingData.updated = new Date().toISOString();
+  // Save current user's full data
+  existingData.data[userKey] = {
+    products:  PRODUCTS,
+    scores:    userScores,
+    margins:   margins,
+    campaigns: campaigns
+  };
+
+  var resp = await fetch("https://api.jsonbin.io/v3/b/" + ACCESS.jbBinId, {
+    method: "PUT",
+    headers: {"Content-Type":"application/json","X-Master-Key": ACCESS.jbKey},
+    body: JSON.stringify(existingData)
+  });
+  if (!resp.ok) throw new Error("JSONBin erreur " + resp.status);
+  lastSyncTime = new Date();
+  // Also save to localStorage as cache
+  persistLocalOnly("jb_cache", existingData);
+  return true;
+}
+
+// ---- LOAD ALL DATA FROM JSONBIN ----
+async function loadAllDataFromJB() {
+  if (!ACCESS.jbBinId || !ACCESS.jbKey) return false;
+  try {
+    var r = await fetch("https://api.jsonbin.io/v3/b/" + ACCESS.jbBinId + "/latest", {
+      headers: {"X-Master-Key": ACCESS.jbKey, "X-Bin-Meta": "false"}
+    });
+    if (!r.ok) return false;
+    var bin = await r.json();
+    var userKey = ACCESS.currentUser
+      ? ACCESS.currentUser.name.toLowerCase().replace(/[^a-z0-9]/g,"_")
+      : "guest";
+    var isAdmin = ACCESS.isAdmin;
+    // Load access control data
+    if (bin.users && bin.users.length) {
+      ACCESS.users = bin.users;
+      localStorage.setItem("ac_users", JSON.stringify(ACCESS.users));
+    }
+    if (bin.logs) {
+      ACCESS.logs = bin.logs;
+      localStorage.setItem("ac_logs", JSON.stringify(ACCESS.logs));
+    }
+    // Load user data
+    var userData = bin.data && bin.data[userKey] ? bin.data[userKey] : null;
+    if (userData) {
+      if (Array.isArray(userData.products) && userData.products.length) {
+        PRODUCTS = userData.products;
+      } else if (isAdmin) {
+        PRODUCTS = DEFAULT_PRODUCTS.slice();
+      } else {
+        PRODUCTS = [];
+      }
+      userScores = userData.scores    || {};
+      margins    = userData.margins   || {};
+      campaigns  = userData.campaigns || [];
+    } else {
+      // No cloud data for this user yet
+      if (isAdmin) {
+        PRODUCTS = DEFAULT_PRODUCTS.slice();
+      } else {
+        PRODUCTS = [];
+      }
+      userScores = {}; margins = {}; campaigns = [];
+    }
+    // Cache to localStorage
+    persistLocalOnly("jb_cache", bin);
+    // Update localStorage per-user keys as cache
+    var prefix = "__" + userKey;
+    try { localStorage.setItem("userScores" + prefix,       JSON.stringify(userScores)); } catch(e) {}
+    try { localStorage.setItem("margins" + prefix,           JSON.stringify(margins)); }    catch(e) {}
+    try { localStorage.setItem("campaigns" + prefix,         JSON.stringify(campaigns)); }  catch(e) {}
+    try { localStorage.setItem("products_catalogue" + prefix, JSON.stringify(PRODUCTS)); }  catch(e) {}
+    return true;
+  } catch(e) {
+    console.error("Cloud load error:", e);
+    return false;
+  }
+}
+
+function persistLocalOnly(key, data) {
+  try { localStorage.setItem(key, JSON.stringify(data)); } catch(e) {}
+}
+
+// ---- MANUAL SYNC BUTTON ----
+async function manualSync() {
+  if (!ACCESS.jbBinId || !ACCESS.jbKey) {
+    alert("Configure JSONBin.io dans l onglet Admin Acces pour activer la synchronisation cloud.");
+    return;
+  }
+  showSyncStatus("syncing");
+  try {
+    await pushAllDataToJB();
+    showSyncStatus("ok");
+    var el = document.getElementById("sync-indicator");
+    if (el) {
+      var t = new Date().toLocaleTimeString("fr-FR", {hour:"2-digit",minute:"2-digit"});
+      el.innerHTML = "&#10003; Sync a " + t;
+    }
+  } catch(e) {
+    showSyncStatus("error");
+    alert("Erreur de synchronisation: " + e.message);
+  }
+}
+
+async function loadFromCloud() {
+  showSyncStatus("syncing");
+  var ok = await loadAllDataFromJB();
+  if (ok) {
+    showSyncStatus("ok");
+    renderCatTabs(); render(); renderMarg(); renderCampaigns();
+    populateCtProducts(); updateSelPanel();
+    var el = document.getElementById("sync-indicator");
+    if (el) el.innerHTML = "&#10003; Donne es chargees";
+    setTimeout(function(){ showSyncStatus("idle"); }, 3000);
+  } else {
+    showSyncStatus("error");
+    alert("Impossible de charger depuis le cloud. Verifie la connexion JSONBin.");
+  }
 }
 
 
