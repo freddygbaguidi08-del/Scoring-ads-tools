@@ -2,19 +2,29 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>UrbanElectroStore — Cockpit E-commerce</title>
+<meta name="description" content="Scoring produits, generateur d ads IA et geo-ciblage pour UrbanElectroStore">
+<meta name="theme-color" content="#18180f">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Cockpit Ads">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192x192.png">
+<link rel="icon" type="image/png" sizes="512x512" href="icons/icon-512x512.png">
 <style>
 :root{--bg:#f7f6f3;--sur:#fff;--bord:#e5e3dc;--bord2:#d0cec5;--txt:#18180f;--mut:#7a7870;--grn:#085041;--gnbg:#e8f4ee;--orn:#7a4a00;--orbg:#fef3e2;--red:#7a1a1a;--rdbg:#fef2f2;--blu:#0c3d6e;--blbg:#e8f0fb;--pur:#3b2a8a;--pubg:#edeafb;--r:9px}
 *{box-sizing:border-box;margin:0;padding:0}
-body{font-family:-apple-system,Arial,sans-serif;background:var(--bg);color:var(--txt);font-size:13px}
+body{font-family:-apple-system,Arial,sans-serif;background:var(--bg);color:var(--txt);font-size:13px;padding-bottom:env(safe-area-inset-bottom,0px)}
 .apibar{display:flex;align-items:center;gap:8px;padding:.5rem 1rem;background:var(--orbg);border-bottom:1px solid #f0d9a0;flex-wrap:wrap}
 .apibar.ok{background:var(--gnbg);border-color:#b0d8be}
 .apist{font-size:12px;color:var(--orn);flex:1;min-width:150px}
 .apibar.ok .apist{color:var(--grn)}
 .apisel{padding:5px 8px;border:1px solid var(--bord2);border-radius:7px;font-size:12px;background:#fff;cursor:pointer}
 .apiinp{flex:2;min-width:140px;padding:5px 8px;border:1px solid var(--bord2);border-radius:7px;font-size:12px;font-family:inherit}
-.topbar{display:flex;align-items:center;justify-content:space-between;padding:.55rem 1rem;background:var(--sur);border-bottom:1px solid var(--bord);gap:8px;flex-wrap:wrap}
+.topbar{display:flex;align-items:center;justify-content:space-between;padding:.55rem 1rem;padding-top:calc(.55rem + env(safe-area-inset-top,0px));background:var(--sur);border-bottom:1px solid var(--bord);gap:8px;flex-wrap:wrap}
 .topbar h1{font-size:14px;font-weight:600}
 .topr{display:flex;gap:5px;flex-wrap:wrap}
 .maintabs{display:flex;background:var(--sur);border-bottom:1px solid var(--bord);flex-wrap:wrap;gap:0}
@@ -188,6 +198,7 @@ tr.sel td{background:#f0f8f3}
     <button class="btn" onclick="resetProductsToDefault()" title="Reinitialiser aux produits d origine" style="color:#7a1a1a">&#8635; Reset catalogue</button>
     <button class="btn" onclick="printReport()">&#128438; Imprimer rapport</button>
     <button id="admin-access-btn" onclick="accessAdminFromTopbar()" title="Acces admin (Ctrl+Shift+A)" style="padding:5px 8px;font-size:13px;border:none;background:transparent;cursor:pointer;color:var(--mut);opacity:.5" onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=.5">&#128274;</button>
+    <button id="logout-btn" onclick="doLogout()" style="display:none;padding:5px 11px;border-radius:7px;border:1px solid var(--bord2);background:var(--sur);font-size:12px;cursor:pointer;color:#7a1a1a;font-family:inherit" title="Se deconnecter">&#128100; Deconnexion</button>
   </div>
 </div>
 
@@ -937,6 +948,7 @@ CTA : Voir l offre" style="width:100%;height:130px;padding:7px 9px;border:1px so
     </div>
     <div style="display:flex;gap:7px;flex-wrap:wrap;margin-top:.35rem">
       <button class="btn bd" onclick="manualSync()">&#9729; Synchroniser maintenant</button>
+      <button class="btn" onclick="clearPWACache()" title="Vider le cache PWA pour forcer le rechargement">&#128465; Vider cache PWA</button>
       <button class="btn bb" onclick="loadFromCloud()">&#8681; Recharger depuis le cloud</button>
     </div>
     <div class="al ai" style="margin-top:.5rem;font-size:11.5px">
@@ -4296,21 +4308,18 @@ function hideLockScreen() {
 function showUserBadge() {
   var u = ACCESS.currentUser;
   if (!u) return;
-  var topbar = document.querySelector(".topbar h1");
-  if (!topbar) return;
-  var badge = document.createElement("span");
-  badge.className = "access-badge";
-  badge.title     = "Clique pour te deconnecter";
-  badge.onclick   = doLogout;
-  var roleLabel   = ACCESS.isAdmin ? " (Admin)" : (u.role === "full" ? " (Complet)" : u.role === "editor" ? " (Editeur)" : " (Lecture)");
-  badge.innerHTML = "&#128100; " + u.name + roleLabel + " &nbsp;&#x2715;";
-  topbar.parentNode.insertBefore(badge, topbar.nextSibling);
-  // Add "mes donnees" info
-  var info = document.createElement("span");
-  info.id            = "user-data-info";
-  info.style.cssText = "font-size:11px;color:var(--mut);padding:0 8px";
-  info.textContent   = "Donnees: " + u.name;
-  topbar.parentNode.insertBefore(info, badge.nextSibling);
+  // Show topbar logout button
+  var logoutBtn = document.getElementById("logout-btn");
+  var roleLabel = ACCESS.isAdmin ? " (Admin)" : (u.role === "full" ? " (Complet)" : u.role === "editor" ? " (Editeur)" : " (Lecture)");
+  if (logoutBtn) {
+    logoutBtn.style.display = "";
+    logoutBtn.innerHTML = "&#128100; " + u.name + roleLabel + " &nbsp;&#x2715;";
+  }
+  // Also add a badge near the title for visibility
+  var existing = document.querySelector(".access-badge");
+  if (existing) existing.remove();
+  var info = document.getElementById("user-data-info");
+  if (info) info.remove();
 }
 
 // ---- LOGIN ----
@@ -4416,7 +4425,9 @@ function doLogout() {
   PRODUCTS = []; selIds = new Set();
   genAds = {}; lastSpyData = null; lastGuideData = null; lastTranslations = null;
   ACCESS.currentUser = null; ACCESS.isAdmin = false;
-  // Remove user badge and info
+  // Hide logout button
+  var logoutBtn = document.getElementById("logout-btn");
+  if (logoutBtn) { logoutBtn.style.display = "none"; logoutBtn.innerHTML = "&#128100; Deconnexion"; }
   var badge = document.querySelector(".access-badge");
   if (badge) badge.remove();
   var info = document.getElementById("user-data-info");
@@ -4900,6 +4911,111 @@ initWooTab();
 buildReport();
 document.getElementById("c-date").value = new Date().toISOString().slice(0,10);
 
+
+
+// ============================================================
+// SERVICE WORKER + PWA
+// ============================================================
+var deferredInstallPrompt = null;
+
+function registerServiceWorker() {
+  if (!("serviceWorker" in navigator)) return;
+  navigator.serviceWorker.register("./service-worker.js").then(function(reg) {
+    console.log("[PWA] Service Worker registered:", reg.scope);
+    reg.addEventListener("updatefound", function() {
+      var newSW = reg.installing;
+      if (!newSW) return;
+      newSW.addEventListener("statechange", function() {
+        if (newSW.state === "installed" && navigator.serviceWorker.controller) {
+          // New version available
+          showPWAUpdateBanner();
+        }
+      });
+    });
+  }).catch(function(err) {
+    console.warn("[PWA] SW registration failed:", err);
+  });
+}
+
+function showPWAUpdateBanner() {
+  var banner = document.createElement("div");
+  banner.style.cssText = "position:fixed;bottom:1rem;left:50%;transform:translateX(-50%);background:var(--txt);color:#fff;padding:.55rem 1rem;border-radius:9px;font-size:12px;z-index:9998;display:flex;align-items:center;gap:10px;box-shadow:0 4px 20px rgba(0,0,0,.2)";
+  banner.innerHTML = "Nouvelle version disponible "
+    + "<button onclick='reloadForUpdate()' style='padding:3px 10px;border-radius:6px;border:none;background:#fff;color:var(--txt);font-size:11px;cursor:pointer;font-family:inherit'>Mettre a jour</button>"
+    + "<button onclick='this.parentNode.remove()' style='padding:3px 8px;border-radius:6px;border:none;background:rgba(255,255,255,.15);color:#fff;font-size:11px;cursor:pointer;font-family:inherit'>Plus tard</button>";
+  document.body.appendChild(banner);
+}
+
+function reloadForUpdate() {
+  if (navigator.serviceWorker.controller) {
+    navigator.serviceWorker.controller.postMessage({type: "SKIP_WAITING"});
+  }
+  window.location.reload();
+}
+
+// Install prompt (Android Chrome)
+window.addEventListener("beforeinstallprompt", function(e) {
+  e.preventDefault();
+  deferredInstallPrompt = e;
+  showInstallButton();
+});
+
+function showInstallButton() {
+  var btn = document.getElementById("pwa-install-btn");
+  if (!btn) {
+    btn = document.createElement("button");
+    btn.id = "pwa-install-btn";
+    btn.textContent = "Installer l app";
+    btn.style.cssText = "display:none;padding:5px 11px;border-radius:7px;border:1px solid var(--bord2);background:var(--gnbg);color:var(--grn);font-size:12px;cursor:pointer;font-family:inherit;white-space:nowrap";
+    btn.onclick = installPWA;
+    var topr = document.querySelector(".topr");
+    if (topr) topr.insertBefore(btn, topr.firstChild);
+  }
+  btn.style.display = "";
+}
+
+function installPWA() {
+  if (!deferredInstallPrompt) return;
+  deferredInstallPrompt.prompt();
+  deferredInstallPrompt.userChoice.then(function(result) {
+    console.log("[PWA] Install:", result.outcome);
+    deferredInstallPrompt = null;
+    var btn = document.getElementById("pwa-install-btn");
+    if (btn) btn.style.display = "none";
+  });
+}
+
+// Detect if already installed
+window.addEventListener("appinstalled", function() {
+  var btn = document.getElementById("pwa-install-btn");
+  if (btn) btn.style.display = "none";
+  console.log("[PWA] App installed!");
+});
+
+// Clear cache utility (called from admin panel)
+function clearPWACache() {
+  if (navigator.serviceWorker.controller) {
+    navigator.serviceWorker.controller.postMessage({type: "CLEAR_CACHE"});
+    navigator.serviceWorker.addEventListener("message", function(e) {
+      if (e.data && e.data.type === "CACHE_CLEARED") {
+        alert("Cache PWA vide. La prochaine ouverture rechargera tous les fichiers.");
+      }
+    }, {once: true});
+  } else {
+    alert("Service Worker non actif. Rechargez la page.");
+  }
+}
+
+// Online/offline detection
+window.addEventListener("online",  function(){ showSyncStatus("idle"); });
+window.addEventListener("offline", function(){
+  showSyncStatus("error");
+  var el = document.getElementById("sync-indicator");
+  if (el) el.innerHTML = "Mode hors ligne";
+});
+
+// Register SW on load
+window.addEventListener("load", registerServiceWorker);
 
 </script>
 </body>
