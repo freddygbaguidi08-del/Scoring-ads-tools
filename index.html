@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>NOF — Cockpit E-commerce</title>
-<meta name="description" content="Scoring produits, generateur d ads IA et geo-ciblage pour NOF">
+<title>UrbanElectroStore — Cockpit E-commerce</title>
+<meta name="description" content="Scoring produits, generateur d ads IA et geo-ciblage pour UrbanElectroStore">
 <meta name="theme-color" content="#18180f">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -174,16 +174,155 @@ tr.sel td{background:#f0f8f3}
   .topbar h1{font-size:12px}
 }
 
+
+/* ===== INTER FONT ===== */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
+body{font-family:'Inter',-apple-system,Arial,sans-serif}
+
+/* ===== DESIGN TOKENS PREMIUM ===== */
+:root{
+  --shadow-sm:0 1px 3px rgba(0,0,0,.06),0 1px 2px rgba(0,0,0,.04);
+  --shadow-md:0 4px 12px rgba(0,0,0,.08),0 2px 4px rgba(0,0,0,.04);
+  --transition:all .18s cubic-bezier(.4,0,.2,1);
+  --transition-fast:all .12s cubic-bezier(.4,0,.2,1);
+}
+
+/* ===== TOASTS ===== */
+#toast-container{position:fixed;bottom:80px;right:16px;z-index:99999;display:flex;flex-direction:column;gap:8px;pointer-events:none;max-width:360px}
+@media(max-width:640px){#toast-container{bottom:76px;right:8px;left:8px;max-width:none}}
+.toast-item{display:flex;align-items:flex-start;gap:10px;padding:12px 14px;border-radius:12px;font-size:13px;font-weight:500;line-height:1.4;pointer-events:all;cursor:pointer;box-shadow:var(--shadow-md);border:0.5px solid transparent;transition:var(--transition);transform:translateX(120%);opacity:0}
+.toast-item.show{transform:translateX(0);opacity:1}
+.toast-item.hide{transform:translateX(120%);opacity:0}
+.toast-item.success{background:#E1F5EE;border-color:#9FE1CB;color:#04342C}
+.toast-item.error{background:#FCEBEB;border-color:#F7C1C1;color:#501313}
+.toast-item.warning{background:#FAEEDA;border-color:#FAC775;color:#412402}
+.toast-item.info{background:#E6F1FB;border-color:#B5D4F4;color:#042C53}
+.toast-item.default{background:#fff;border-color:var(--bord);color:var(--txt)}
+.toast-icon{font-size:16px;flex-shrink:0;margin-top:1px}
+.toast-body{flex:1}
+.toast-title{font-weight:600;margin-bottom:1px}
+.toast-msg{font-size:12px;opacity:.8;font-weight:400}
+.toast-close{font-size:16px;opacity:.5;flex-shrink:0;line-height:1;padding:2px;cursor:pointer}
+.toast-close:hover{opacity:1}
+.toast-progress{position:absolute;bottom:0;left:0;height:3px;border-radius:0 0 12px 12px;background:currentColor;opacity:.25}
+
+/* ===== BOTTOM NAV MOBILE ===== */
+#bottom-nav{display:none}
+@media(max-width:640px){
+  #bottom-nav{display:flex;position:fixed;bottom:0;left:0;right:0;z-index:1000;background:var(--sur);border-top:0.5px solid var(--bord);padding:6px 0 calc(6px + env(safe-area-inset-bottom,0px));box-shadow:0 -4px 20px rgba(0,0,0,.06)}
+  .bn-item{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;padding:4px 0;font-size:10px;font-weight:500;color:var(--mut);cursor:pointer;transition:var(--transition-fast);-webkit-tap-highlight-color:transparent;border:none;background:transparent;font-family:inherit}
+  .bn-item.on{color:var(--grn)}
+  .bn-item i{font-size:20px;transition:var(--transition-fast)}
+  .bn-item.on i{transform:translateY(-1px)}
+  /* Offset panels on mobile to not be hidden by bottom nav */
+  .panel.on{padding-bottom:calc(2rem + 80px)}
+}
+
+/* ===== BOTTOM SHEET (More menu) ===== */
+#bottom-sheet-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:1001;opacity:0;transition:opacity .2s}
+#bottom-sheet-overlay.show{opacity:1}
+#bottom-sheet{position:fixed;bottom:0;left:0;right:0;z-index:1002;background:var(--sur);border-radius:20px 20px 0 0;padding:8px 16px calc(16px + env(safe-area-inset-bottom,0px));transform:translateY(100%);transition:transform .3s cubic-bezier(.32,.72,0,1)}
+#bottom-sheet.show{transform:translateY(0)}
+.bs-handle{width:36px;height:4px;background:var(--bord2);border-radius:2px;margin:4px auto 16px;display:block}
+.bs-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.bs-item{display:flex;flex-direction:column;align-items:center;gap:5px;padding:12px 8px;border-radius:12px;background:var(--bg);font-size:11px;font-weight:500;color:var(--txt);cursor:pointer;border:none;font-family:inherit;transition:var(--transition-fast);-webkit-tap-highlight-color:transparent}
+.bs-item:active{background:var(--bord)}
+.bs-item i{font-size:22px;color:var(--grn)}
+.bs-item.on{background:var(--gnbg);color:var(--grn)}
+
+/* ===== TAB TRANSITIONS ===== */
+.panel{animation:none}
+.panel.on{animation:fadeSlideIn .2s cubic-bezier(.4,0,.2,1)}
+@keyframes fadeSlideIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+
+/* ===== PREMIUM BUTTONS ===== */
+.btn{transition:var(--transition-fast);position:relative;overflow:hidden}
+.btn:active{transform:scale(.97)}
+.btn-dark-premium{background:var(--txt);color:#fff;border-color:transparent;border-radius:8px}
+.btn-dark-premium:hover{background:#2a2a20}
+.btn-dark-premium:active{transform:scale(.97)}
+
+/* ===== PREMIUM CARDS ===== */
+.card-section{transition:var(--transition-fast);border:0.5px solid var(--bord)}
+.card-section:hover{box-shadow:var(--shadow-sm)}
+.adcard{transition:var(--transition-fast)}
+.adcard:hover{box-shadow:var(--shadow-sm)}
+
+/* ===== PREMIUM TABLE ===== */
+tr{transition:background .1s}
+th{position:sticky;top:0;z-index:1}
+
+/* ===== SCORE ANIMATION ===== */
+@keyframes scorePop{0%{transform:scale(1.25)}100%{transform:scale(1)}}
+.score-pop{animation:scorePop .3s cubic-bezier(.34,1.56,.64,1)}
+
+/* ===== STAT CARDS PREMIUM ===== */
+.stat{transition:var(--transition-fast);cursor:default}
+.stat:hover{box-shadow:var(--shadow-sm);transform:translateY(-1px)}
+
+/* ===== INPUTS PREMIUM ===== */
+.ctrls input:focus,.ctrls select:focus,.form-group input:focus,.form-group select:focus{
+  box-shadow:0 0 0 3px rgba(8,80,65,.12);
+  border-color:var(--grn);
+}
+
+/* ===== LOGIN PREMIUM ===== */
+.login-box{box-shadow:var(--shadow-md)}
+.login-btn{transition:var(--transition-fast)}
+.login-btn:active{transform:scale(.98)}
+
+/* ===== BADGE PREMIUM ===== */
+.bdg{transition:var(--transition-fast)}
+
+/* ===== SCROLLBAR ===== */
+::-webkit-scrollbar{width:5px;height:5px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--bord2);border-radius:10px}
+::-webkit-scrollbar-thumb:hover{background:var(--mut)}
+
+/* ===== TOPBAR PREMIUM ===== */
+.topbar{box-shadow:var(--shadow-sm);position:sticky;top:0;z-index:100}
+.apibar{position:sticky;top:0;z-index:101}
+
+/* ===== MOBILE API BAR COMPACT ===== */
+@media(max-width:640px){
+  .apibar{flex-direction:column;align-items:stretch;gap:5px;padding:.4rem .75rem}
+  .apist{font-size:11px}
+  .apisel,.apiinp{width:100%;box-sizing:border-box}
+  .apibar .btn{align-self:flex-start}
+  #sync-indicator{display:none}
+}
+
 </style>
 </head>
 <body>
 
 
+<!-- TOAST CONTAINER -->
+<div id="toast-container"></div>
+
+<!-- BOTTOM NAV (mobile) -->
+<nav id="bottom-nav" role="navigation" aria-label="Navigation principale">
+  <button class="bn-item on"  data-tab="scoring"   onclick="showMain('scoring');setBNActive(this)"><i class="ti ti-chart-bar" aria-hidden="true"></i>Produits</button>
+  <button class="bn-item"     data-tab="ads"        onclick="showMain('ads');setBNActive(this)"><i class="ti ti-target" aria-hidden="true"></i>Ads</button>
+  <button class="bn-item"     data-tab="marge"      onclick="showMain('marge');setBNActive(this)"><i class="ti ti-currency-euro" aria-hidden="true"></i>Marge</button>
+  <button class="bn-item"     data-tab="tendances"  onclick="showMain('tendances');setBNActive(this)"><i class="ti ti-trending-up" aria-hidden="true"></i>Tendances</button>
+  <button class="bn-item"     data-tab="__more"     onclick="openBottomSheet()"><i class="ti ti-dots" aria-hidden="true"></i>Plus</button>
+</nav>
+
+<!-- BOTTOM SHEET (more tabs) -->
+<div id="bottom-sheet-overlay" onclick="closeBottomSheet()"></div>
+<div id="bottom-sheet" role="dialog" aria-label="Tous les onglets">
+  <span class="bs-handle"></span>
+  <div class="bs-grid" id="bs-grid"></div>
+  <div style="height:.5rem"></div>
+</div>
+
 <!-- ===== LOGIN OVERLAY ===== -->
 <div class="login-overlay" id="login-overlay">
   <div class="login-box" id="login-box-user">
     <div class="logo">🛍</div>
-    <h2>NOF — Cockpit</h2>
+    <h2>UrbanElectroStore — Cockpit</h2>
     <p class="sub">Entre tes identifiants pour acceder a l outil</p>
     <div class="login-field">
       <label>Ton prenom ou identifiant</label>
@@ -226,7 +365,7 @@ tr.sel td{background:#f0f8f3}
 </div>
 
 <div class="topbar">
-  <h1>&#128722; NOF &mdash; Cockpit E-commerce</h1>
+  <h1>&#128722; UrbanElectroStore &mdash; Cockpit E-commerce</h1>
   <span id="sync-indicator" onclick="manualSync()" title="Cliquer pour synchroniser maintenant"
     style="font-size:11px;font-weight:500;padding:3px 10px;border-radius:20px;cursor:pointer;background:#e8f0fb;color:#0c3d6e;display:inline-flex;align-items:center;gap:4px">&#9729; Cloud</span>
   <div class="topr">
@@ -808,7 +947,7 @@ tr.sel td{background:#f0f8f3}
       <div class="form-row" style="margin-top:.5rem">
         <div class="form-group" style="flex:1;min-width:200px">
           <label>URL de ta boutique</label>
-          <input type="text" id="wc-url" placeholder="https://NOF.com" style="width:100%">
+          <input type="text" id="wc-url" placeholder="https://urbanelectrostore.com" style="width:100%">
         </div>
       </div>
       <div class="form-row">
@@ -1254,12 +1393,12 @@ function saveProducts() {
 }
 
 function resetProductsToDefault() {
-  if (!confirm("Reinitialiser le catalogue aux " + DEFAULT_PRODUCTS.length + " produits d origine ? Tous tes produits importes seront supprimes.")) return;
+  if (!confirm("Reinitialiser aux " + DEFAULT_PRODUCTS.length + " produits d origine ? Tes imports seront supprimes.")) return;
   PRODUCTS = DEFAULT_PRODUCTS.slice();
   saveProducts();
   renderCatTabs(); render(); renderMarg(); populateCtProducts();
   updateSelPanel();
-  alert("Catalogue reinitialise.");
+  toastOK("Catalogue reinitialise");
 }
 
 // ============================================================
@@ -1494,9 +1633,12 @@ function sv(id) {
   for (var i = 0; i < PRODUCTS.length; i++) if (PRODUCTS[i][0] === id) { row = PRODUCTS[i]; break; }
   var s  = calcScore(row);
   var el = document.getElementById("sc" + id);
-  if (el) el.innerHTML = s !== null
-    ? "<span class='" + (s>=75?"sh":s>=55?"sm":"sl") + "'>" + s + "</span>"
-    : "<span style='color:var(--mut)'>--</span>";
+  if (el) {
+    el.innerHTML = s !== null
+      ? "<span class='" + (s>=75?"sh":s>=55?"sm":"sl") + "'>" + s + "</span>"
+      : "<span style='color:var(--mut)'>--</span>";
+    if (s !== null) animateScore(el.firstChild);
+  }
   updateStats();
 }
 
@@ -1574,6 +1716,8 @@ function showMain(t) {
   if (t === "woocommerce")   initWooTab();
   if (t === "translator")    initTranslatorTab();
   if (t === "admin")         renderAdminPanel();
+  // Update bottom nav active state
+  if (typeof updateBNActiveFromTab === "function") updateBNActiveFromTab();
 }
 function sendToAds() { showMain("ads"); }
 function toggleNet(btn) {
@@ -1683,7 +1827,7 @@ function safeJSON(raw) {
 // ============================================================
 async function generateAds() {
   var sel = Array.from(selIds);
-  if (!sel.length) { alert("Selectionne au moins un produit."); return; }
+  if (!sel.length) { toastWarn("Selectionne au moins un produit"); return; }
   var prods = sel.map(function(id){ for(var i=0;i<PRODUCTS.length;i++) if(PRODUCTS[i][0]===id) return PRODUCTS[i]; return null; }).filter(Boolean);
   var nets  = Array.from(activeNets);
   var lang  = (document.getElementById("ads-lang")||{}).value || "fr";
@@ -1786,7 +1930,7 @@ function clearAds() { genAds={}; document.getElementById("ads-results").innerHTM
 // ============================================================
 async function autoScore() {
   var unseq = PRODUCTS.filter(function(r){ return !calcScore(r); }).slice(0,10);
-  if (!unseq.length) { alert("Tous les produits ont deja un score manuel!"); return; }
+  if (!unseq.length) { toastInfo("Tous les produits ont deja un score manuel"); return; }
   var ok = confirm("L IA va estimer les scores organiques pour " + unseq.length + " produits non scores. Continuer?");
   if (!ok) return;
   var prompt = "Tu es expert e-commerce France. Pour chaque produit, estime les metriques organiques (echelle 1-5):\n"
@@ -1804,9 +1948,9 @@ async function autoScore() {
       });
       persist("userScores", userScores);
       render();
-      alert("Scores estimes par l IA pour " + data.scores.length + " produits. Tu peux les ajuster manuellement.");
+      toastOK("Scores IA estimes pour " + data.scores.length + " produits");
     }
-  } catch(e) { alert("Erreur: " + e.message); }
+  } catch(e) { toastErr("Erreur: " + e.message); }
 }
 
 // ============================================================
@@ -1965,7 +2109,7 @@ function addCampaign() {
   var revenue = parseFloat((document.getElementById("c-revenue")||{}).value) || 0;
   var note    = (document.getElementById("c-note")||{}).value  || "";
   var date    = (document.getElementById("c-date")||{}).value  || new Date().toISOString().slice(0,10);
-  if (!product || !spend) { alert("Remplis au moins le produit et le budget depense."); return; }
+  if (!product || !spend) { toastWarn("Remplis le produit et le budget"); return; }
   campaigns.push({id:Date.now(), product:product, network:network, date:date, spend:spend, clicks:clicks, orders:orders, revenue:revenue, note:note});
   persist("campaigns", campaigns);
   renderCampaigns();
@@ -2104,7 +2248,7 @@ function renderContent(raw, type, r) {
 }
 function copyText(id) {
   var el = document.getElementById(id); if(!el) return;
-  if (navigator.clipboard) navigator.clipboard.writeText(el.textContent).then(function(){ alert("Copie!"); });
+  if (navigator.clipboard) navigator.clipboard.writeText(el.textContent).then(function(){ toastOK("Copie dans le presse-papier"); });
 }
 
 // ============================================================
@@ -2276,14 +2420,14 @@ function guessCat(t, n) {
 
 function confirmImport() {
   if (!pendingImport.length) {
-    alert("Aucun nouveau produit a importer (tous deja presents ou fichier vide).");
+    toastWarn("Aucun nouveau produit — tous deja presents");
     closeImport(); return;
   }
   PRODUCTS = PRODUCTS.concat(pendingImport);
   closeImport();
   saveProducts();
   renderCatTabs(); render(); renderMarg(); populateCtProducts();
-  alert(pendingImport.length + " produit(s) importe(s) sans doublon.");
+  toastOK(pendingImport.length + " produit(s) importe(s) sans doublon");
   pendingImport = [];
 }
 
@@ -2297,7 +2441,7 @@ function exportScoring() {
 }
 
 function exportAds() {
-  if (!Object.keys(genAds).length) { alert("Genere d abord des ads."); return; }
+  if (!Object.keys(genAds).length) { toastWarn("Genere d abord des ads dans l onglet Generateur"); return; }
   var rows = [["Produit","Categorie","Prix","Reseau","Contenu"]];
   Object.values(genAds).forEach(function(item){
     item.nets.forEach(function(net){
@@ -2324,7 +2468,7 @@ function loadChartJS(cb) {
   var s = document.createElement("script");
   s.src = "https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js";
   s.onload = function() { cb(); };
-  s.onerror = function() { alert("Impossible de charger Chart.js. Verifie ta connexion."); };
+  s.onerror = function() { toastInfo("Impossible de charger Chart.js. Verifie ta connexion."); };
   document.head.appendChild(s);
 }
 var chartInst = {};
@@ -2633,7 +2777,7 @@ function renderGeoResult(data, row) {
 
 function exportGeoCSV(dataStr, productName) {
   var data;
-  try { data = JSON.parse(dataStr); } catch(e) { alert("Erreur export: donnees invalides"); return; }
+  try { data = JSON.parse(dataStr); } catch(e) { toastErr("Erreur export: donnees invalides"); return; }
   var rows=[["Rang","Zone","Pays","Score","Potentiel","Canaux","CPC estime","Conseil"]];
   (data.zones||[]).forEach(function(z){
     rows.push([z.rang,"\""+z.zone+"\"","\""+z.pays+"\"",z.score,"\""+z.potentiel+"\"","\""+(z.canaux||[]).join(",")+"\"",(z.cpc_estime||""),"\""+( z.conseil_ciblage||"")+"\""]);
@@ -2673,7 +2817,7 @@ async function runSpyAnalysis() {
   if (chGoogle) channels.push("Google Shopping + Search");
   if (chTiktok) channels.push("TikTok");
   if (chYt)     channels.push("YouTube");
-  if (!channels.length) { alert("Selectionne au moins un canal."); return; }
+  if (!channels.length) { toastInfo("Selectionne au moins un canal."); return; }
   var row = null;
   for (var i = 0; i < PRODUCTS.length; i++) if (PRODUCTS[i][0] === pid) { row = PRODUCTS[i]; break; }
   if (!row) return;
@@ -2946,7 +3090,7 @@ function clearSpy() {
 }
 
 function exportSpyCSV() {
-  if (!lastSpyData) { alert("Lance une analyse d abord."); return; }
+  if (!lastSpyData) { toastWarn("Lance une analyse d abord"); return; }
   var d    = lastSpyData.data;
   var prod = lastSpyData.product;
   var rows = [["Produit","Section","Element","Detail"]];
@@ -3473,7 +3617,7 @@ function renderKeywords(data, row, net) {
 function copyKWList(arrStr) {
   var arr; try { arr = JSON.parse(arrStr); } catch(e){ return; }
   var txt = arr.join("\n");
-  if(navigator.clipboard) navigator.clipboard.writeText(txt).then(function(){ alert("Liste copiee (" + arr.length + " mots-cles)!"); });
+  if(navigator.clipboard) navigator.clipboard.writeText(txt).then(function(){ toastOK("Liste copiee — " + arr.length + " mots-cles"); });
 }
 
 // --- MEILLEURE HEURE ---
@@ -3706,7 +3850,7 @@ function renderGuideAds(data, row, level, budgetM) {
 }
 
 function exportGuideAds() {
-  if (!lastGuideData) { alert("Genere un guide d abord."); return; }
+  if (!lastGuideData) { toastWarn("Genere un guide d abord"); return; }
   var d = lastGuideData.data;
   var r = lastGuideData.product;
   var lines = ["GUIDE ADS PERSONNALISE — " + r[1],
@@ -3762,7 +3906,7 @@ function saveWooCredentials() {
   var url    = ((document.getElementById("wc-url")||{}).value    || "").trim().replace(/\/$/, "");
   var key    = ((document.getElementById("wc-key")||{}).value    || "").trim();
   var secret = ((document.getElementById("wc-secret")||{}).value || "").trim();
-  if (!url || !key || !secret) { alert("Remplis les 3 champs."); return; }
+  if (!url || !key || !secret) { toastWarn("Remplis les 3 champs"); return; }
   wcConfig = {url: url, key: key, secret: secret};
   localStorage.setItem(getUserKey("wc_config"), JSON.stringify(wcConfig));
   updateWcStatus();
@@ -3881,6 +4025,7 @@ async function importWooProducts() {
     saveProducts();
     renderCatTabs(); render();
     if (loadEl) loadEl.style.display = "none";
+    toastOK({title: imported.length + " produits importes", msg: "Total: " + PRODUCTS.length + " produits"});
     if (resEl) resEl.innerHTML = "<div class='al ag'>"
       + "<b>Import reussi!</b><br>"
       + imported.length + " nouveau(x) produit(s) ajoute(s)<br>"
@@ -4071,23 +4216,23 @@ async function runTranslator() {
   var langs      = getActiveLangs();
   var network    = (document.getElementById("tr-network")||{}).value || "meta";
   var cultural   = (document.getElementById("tr-cultural")||{}).value || "full";
-  if (!langs.length) { alert("Selectionne au moins une langue cible."); return; }
+  if (!langs.length) { toastWarn("Selectionne au moins une langue"); return; }
   var sourceText = "";
   var productName = "";
   var productData = null;
   if (isManual) {
     sourceText  = ((document.getElementById("tr-manual-text")||{}).value || "").trim();
     productName = ((document.getElementById("tr-manual-product")||{}).value || "Produit").trim();
-    if (!sourceText) { alert("Colle le texte de ton ad a traduire."); return; }
+    if (!sourceText) { toastInfo("Colle le texte de ton ad a traduire."); return; }
   } else {
-    var sel = document.getElementById("tr-product-sel"); if (!sel) { alert("Aucun produit selectionne."); return; }
+    var sel = document.getElementById("tr-product-sel"); if (!sel) { toastInfo("Aucun produit selectionne."); return; }
     var pid = sel.value;
     var item = genAds[pid];
-    if (!item) { alert("Aucune ad generee pour ce produit. Va dans Generateur Ads."); return; }
+    if (!item) { toastInfo("Aucune ad generee pour ce produit. Va dans Generateur Ads."); return; }
     productName = item.product[1];
     productData = item.data;
     var netData = productData[network] || productData[Object.keys(productData)[0]];
-    if (!netData) { alert("Pas de donnee pour ce reseau."); return; }
+    if (!netData) { toastInfo("Pas de donnee pour ce reseau."); return; }
     if (netData.ads && netData.ads.length) {
       sourceText = "VARIATIONS:\n" + netData.ads.map(function(a){
         return "Variation " + a.var + ":\nAccroche: " + a.accroche + "\nTexte: " + a.texte + "\nCTA: " + a.cta;
@@ -4207,7 +4352,7 @@ function copyTranslation(btn) {
 }
 
 function exportTranslations() {
-  if (!lastTranslations) { alert("Traduis d abord des ads."); return; }
+  if (!lastTranslations) { toastWarn("Traduis d abord des ads"); return; }
   var rows = [["Produit","Reseau","Langue","Code","Variation","Accroche","Texte","CTA","Note culturelle"]];
   lastTranslations.results.forEach(function(item) {
     if (!item.ok || !item.data.traductions) return;
@@ -4292,9 +4437,9 @@ function deduplicateProducts() {
 function runDeduplication() {
   var removed = deduplicateProducts();
   if (removed === 0) {
-    alert("Aucun doublon detecte! Tous tes " + PRODUCTS.length + " produits sont uniques.");
+    toastInfo("Aucun doublon detecte. " + PRODUCTS.length + " produits uniques");
   } else {
-    alert(removed + " doublon(s) supprime(s). Catalogue: " + PRODUCTS.length + " produits uniques.");
+    toastOK(removed + " doublon(s) supprime(s). Catalogue: " + PRODUCTS.length + " produits");
   }
 }
 
@@ -4580,7 +4725,7 @@ async function testJBConnection() {
 
 async function pushUsersToJB() {
   saveJBConfig();
-  if (!ACCESS.jbBinId || !ACCESS.jbKey) { alert("Configure d abord JSONBin.io."); return; }
+  if (!ACCESS.jbBinId || !ACCESS.jbKey) { toastInfo("Configure JSONBin.io dans l onglet Admin"); return; }
   try {
     var resp = await fetch("https://api.jsonbin.io/v3/b/" + ACCESS.jbBinId, {
       method: "PUT",
@@ -4590,8 +4735,8 @@ async function pushUsersToJB() {
     if (resp.ok) {
       var el = document.getElementById("jb-test-result");
       if (el) { el.textContent = "Utilisateurs synchronises avec JSONBin."; el.style.color = "#085041"; }
-    } else { alert("Erreur lors de la sync JSONBin."); }
-  } catch(e) { alert("Erreur: " + e.message); }
+    } else { toastErr("Erreur lors de la sync JSONBin"); }
+  } catch(e) { toastErr("Erreur: " + e.message); }
 }
 
 async function pushLogToJB() {
@@ -4619,7 +4764,7 @@ function addUser() {
   var code   = ((document.getElementById("new-user-code")||{}).value||"").trim().toUpperCase();
   var expiry = (document.getElementById("new-user-expiry")||{}).value || "";
   var role   = (document.getElementById("new-user-role")||{}).value || "viewer";
-  if (!name || !code) { alert("Prenom et code sont obligatoires."); return; }
+  if (!name || !code) { toastWarn("Prenom et code sont obligatoires"); return; }
   // Check duplicate
   for (var i = 0; i < ACCESS.users.length; i++) {
     if (ACCESS.users[i].name.toLowerCase() === name.toLowerCase()) {
@@ -4634,7 +4779,7 @@ function addUser() {
   el = document.getElementById("new-user-name"); if(el) el.value = "";
   el = document.getElementById("new-user-code"); if(el) el.value = "";
   renderAdminPanel();
-  alert("Utilisateur " + name + " ajoute! Code: " + code + "\nPartage ces informations: Prenom: " + name + " | Code: " + code + (expiry?" | Expire le: "+expiry:""));
+  toastInfo("Utilisateur " + name + " ajoute! Code: " + code + "\nPartage ces informations: Prenom: " + name + " | Code: " + code + (expiry?" | Expire le: "+expiry:""));
 }
 
 function toggleUserAccess(idx) {
@@ -4656,11 +4801,11 @@ function deleteUser(idx) {
 function copyInvite(idx) {
   var u = ACCESS.users[idx];
   if (!u) return;
-  var msg = "Bonjour " + u.name + ",\n\nTu as acces au Cockpit E-commerce NOF.\n\n"
+  var msg = "Bonjour " + u.name + ",\n\nTu as acces au Cockpit E-commerce UrbanElectroStore.\n\n"
     + "Lien : " + window.location.href.split("?")[0] + "\nPrenom : " + u.name + "\nCode : " + u.code
     + (u.expiry ? "\nAcces valable jusqu au : " + u.expiry : "")
     + "\n\nBonne utilisation !";
-  if (navigator.clipboard) navigator.clipboard.writeText(msg).then(function(){ alert("Message d invitation copie !"); });
+  if (navigator.clipboard) navigator.clipboard.writeText(msg).then(function(){ toastOK("Message d invitation copie"); });
 }
 
 function logAccess(name, action) {
@@ -4905,7 +5050,7 @@ function persistLocalOnly(key, data) {
 // ---- MANUAL SYNC BUTTON ----
 async function manualSync() {
   if (!ACCESS.jbBinId || !ACCESS.jbKey) {
-    alert("Configure JSONBin.io dans l onglet Admin Acces pour activer la synchronisation cloud.");
+    toastInfo("Configure JSONBin.io dans l onglet Admin Acces pour activer la synchronisation cloud.");
     return;
   }
   showSyncStatus("syncing");
@@ -4919,7 +5064,7 @@ async function manualSync() {
     }
   } catch(e) {
     showSyncStatus("error");
-    alert("Erreur de synchronisation: " + e.message);
+    toastErr("Erreur de synchronisation: " + e.message);
   }
 }
 
@@ -4935,7 +5080,7 @@ async function loadFromCloud() {
     setTimeout(function(){ showSyncStatus("idle"); }, 3000);
   } else {
     showSyncStatus("error");
-    alert("Impossible de charger depuis le cloud. Verifie la connexion JSONBin.");
+    toastInfo("Impossible de charger depuis le cloud. Verifie la connexion JSONBin.");
   }
 }
 
@@ -4972,6 +5117,222 @@ function accessAdminFromTopbar() {
   }
 }
 
+
+// ============================================================
+// TOAST SYSTEM — replaces all alert()
+// ============================================================
+var toastQueue = [];
+var toastTimer = {};
+
+function toast(msg, type, duration) {
+  if (!type) type = "default";
+  if (!duration) duration = 3500;
+  var icons = {
+    success: "ti-circle-check",
+    error:   "ti-circle-x",
+    warning: "ti-alert-triangle",
+    info:    "ti-info-circle",
+    default: "ti-bell"
+  };
+  var container = document.getElementById("toast-container");
+  if (!container) { console.log("[Toast]", msg); return; }
+  var id = "t" + Date.now() + Math.random().toString(36).slice(2,5);
+  var el  = document.createElement("div");
+  el.className  = "toast-item " + type;
+  el.id         = id;
+  el.style.cssText = "position:relative";
+  // Parse msg — supports {title, msg} or plain string
+  var titleHTML = "", msgHTML = "";
+  if (typeof msg === "object" && msg.title) {
+    titleHTML = "<div class='toast-title'>" + msg.title + "</div>";
+    msgHTML   = msg.msg ? "<div class='toast-msg'>" + msg.msg + "</div>" : "";
+  } else {
+    titleHTML = "<div class='toast-title'>" + msg + "</div>";
+  }
+  el.innerHTML = "<i class='ti " + (icons[type]||icons.default) + " toast-icon' aria-hidden='true'></i>"
+    + "<div class='toast-body'>" + titleHTML + msgHTML + "</div>"
+    + "<span class='toast-close' onclick='dismissToast(\"" + id + "\")' aria-label='Fermer'>&#x2715;</span>"
+    + "<div class='toast-progress' id='tp-" + id + "'></div>";
+  container.appendChild(el);
+  // Animate in
+  requestAnimationFrame(function() {
+    requestAnimationFrame(function() {
+      el.classList.add("show");
+    });
+  });
+  // Progress bar
+  var progress = document.getElementById("tp-" + id);
+  if (progress) {
+    progress.style.transition = "width " + duration + "ms linear";
+    progress.style.width = "100%";
+    requestAnimationFrame(function() {
+      requestAnimationFrame(function() {
+        if (progress) progress.style.width = "0%";
+      });
+    });
+  }
+  // Auto dismiss
+  toastTimer[id] = setTimeout(function() { dismissToast(id); }, duration);
+  el.onclick = function(e) {
+    if (!e.target.classList.contains("toast-close")) dismissToast(id);
+  };
+  // Limit stack to 4
+  var items = container.querySelectorAll(".toast-item");
+  if (items.length > 4) dismissToast(items[0].id);
+}
+
+function dismissToast(id) {
+  clearTimeout(toastTimer[id]);
+  var el = document.getElementById(id);
+  if (!el) return;
+  el.classList.remove("show");
+  el.classList.add("hide");
+  setTimeout(function() { if (el.parentNode) el.parentNode.removeChild(el); }, 250);
+}
+
+// Convenience shortcuts
+function toastOK(msg)   { toast(msg, "success"); }
+function toastErr(msg)  { toast(msg, "error", 5000); }
+function toastWarn(msg) { toast(msg, "warning", 4500); }
+function toastInfo(msg) { toast(msg, "info"); }
+function toastLoad(msg) { toast(msg, "default", 10000); return Date.now(); }
+
+// ============================================================
+// BOTTOM NAVIGATION — mobile
+// ============================================================
+var BN_MAIN = ["scoring","ads","marge","tendances"];
+
+var BN_MORE_TABS = [
+  {id:"saisonnal",  icon:"ti-calendar",        label:"Saison"},
+  {id:"perf",       icon:"ti-chart-line",       label:"Perf"},
+  {id:"contenu",    icon:"ti-pencil",           label:"Contenu"},
+  {id:"rapport",    icon:"ti-file-text",        label:"Rapport"},
+  {id:"dashboard",  icon:"ti-layout-dashboard", label:"Dashboard"},
+  {id:"checklist",  icon:"ti-check",            label:"Checklist"},
+  {id:"geo",        icon:"ti-map-pin",          label:"Geo"},
+  {id:"spy",        icon:"ti-eye",              label:"Espion"},
+  {id:"calculateurs",icon:"ti-calculator",      label:"Calcul"},
+  {id:"guidads",    icon:"ti-target",           label:"Guide"},
+  {id:"woocommerce",icon:"ti-shopping-cart",    label:"Woo"},
+  {id:"translator", icon:"ti-language",         label:"Traduct"}
+];
+
+function initBottomNav() {
+  // Build the bottom sheet grid
+  var grid = document.getElementById("bs-grid");
+  if (!grid) return;
+  grid.innerHTML = BN_MORE_TABS.map(function(t){
+    return "<button class='bs-item' data-tab='" + t.id + "' onclick=\"selectMoreTab('" + t.id + "')\">"
+      + "<i class='ti " + t.icon + "' aria-hidden='true'></i>"
+      + "<span>" + t.label + "</span>"
+      + "</button>";
+  }).join("");
+  // Admin tab if admin
+  if (ACCESS && ACCESS.isAdmin) {
+    grid.innerHTML += "<button class='bs-item' data-tab='admin' onclick=\"selectMoreTab('admin')\">"
+      + "<i class='ti ti-lock' aria-hidden='true'></i><span>Admin</span></button>";
+  }
+  updateBNActiveFromTab();
+}
+
+function setBNActive(btn) {
+  document.querySelectorAll(".bn-item").forEach(function(b){ b.classList.remove("on"); });
+  if (btn) btn.classList.add("on");
+}
+
+function updateBNActiveFromTab() {
+  var current = document.querySelector(".panel.on");
+  if (!current) return;
+  var tabId = current.id.replace("tab-","");
+  // Check bottom nav
+  var bnBtn = document.querySelector(".bn-item[data-tab='" + tabId + "']");
+  document.querySelectorAll(".bn-item").forEach(function(b){ b.classList.remove("on"); });
+  if (bnBtn) {
+    bnBtn.classList.add("on");
+  } else {
+    // It's a "more" tab — highlight the more button
+    var moreBtn = document.querySelector(".bn-item[data-tab='__more']");
+    if (moreBtn) moreBtn.classList.add("on");
+  }
+  // Update bottom sheet item
+  document.querySelectorAll(".bs-item").forEach(function(b){
+    b.classList.toggle("on", b.dataset.tab === tabId);
+  });
+}
+
+function openBottomSheet() {
+  var overlay = document.getElementById("bottom-sheet-overlay");
+  var sheet   = document.getElementById("bottom-sheet");
+  if (!overlay || !sheet) return;
+  overlay.style.display = "block";
+  sheet.style.display   = "block";
+  requestAnimationFrame(function(){
+    requestAnimationFrame(function(){
+      overlay.classList.add("show");
+      sheet.classList.add("show");
+    });
+  });
+}
+
+function closeBottomSheet() {
+  var overlay = document.getElementById("bottom-sheet-overlay");
+  var sheet   = document.getElementById("bottom-sheet");
+  if (!overlay || !sheet) return;
+  overlay.classList.remove("show");
+  sheet.classList.remove("show");
+  setTimeout(function(){
+    overlay.style.display = "none";
+    sheet.style.display   = "none";
+  }, 300);
+}
+
+function selectMoreTab(tabId) {
+  closeBottomSheet();
+  setTimeout(function(){
+    showMain(tabId);
+    updateBNActiveFromTab();
+  }, 150);
+}
+
+// ============================================================
+// SCORE ANIMATION — pop when score changes
+// ============================================================
+function animateScore(el) {
+  if (!el) return;
+  el.classList.remove("score-pop");
+  void el.offsetWidth;
+  el.classList.add("score-pop");
+  setTimeout(function(){ el.classList.remove("score-pop"); }, 400);
+}
+
+// ============================================================
+// KEYBOARD SHORTCUTS
+// ============================================================
+document.addEventListener("keydown", function(e) {
+  // Ctrl+K — focus search
+  if ((e.ctrlKey || e.metaKey) && e.key === "k") {
+    e.preventDefault();
+    var srch = document.getElementById("srch");
+    if (srch) { showMain("scoring"); srch.focus(); srch.select(); }
+    return;
+  }
+  // Ctrl+S — manual cloud sync
+  if ((e.ctrlKey || e.metaKey) && e.key === "s") {
+    e.preventDefault();
+    manualSync();
+    return;
+  }
+  // Escape — dismiss toasts / close bottom sheet
+  if (e.key === "Escape") {
+    closeBottomSheet();
+    var items = document.querySelectorAll(".toast-item");
+    if (items.length) dismissToast(items[items.length-1].id);
+    return;
+  }
+  // Ctrl+Shift+A — admin (already handled elsewhere)
+});
+
+
 // INIT -- EN DERNIER
 // ============================================================
 initAccessControl();
@@ -4989,6 +5350,8 @@ populateTendancesProducts();
 initWooTab();
 buildReport();
 document.getElementById("c-date").value = new Date().toISOString().slice(0,10);
+// Show bottom nav only after login (hideLockScreen calls initBottomNav)
+// Pre-build sheet for when login screen closes
 
 
 
@@ -5077,11 +5440,11 @@ function clearPWACache() {
     navigator.serviceWorker.controller.postMessage({type: "CLEAR_CACHE"});
     navigator.serviceWorker.addEventListener("message", function(e) {
       if (e.data && e.data.type === "CACHE_CLEARED") {
-        alert("Cache PWA vide. La prochaine ouverture rechargera tous les fichiers.");
+        toastOK("Cache PWA vide — rechargement au prochain lancement");
       }
     }, {once: true});
   } else {
-    alert("Service Worker non actif. Rechargez la page.");
+    toastWarn("Service Worker non actif. Rechargez la page");
   }
 }
 
