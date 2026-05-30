@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>NOF — Cockpit E-commerce</title>
-<meta name="description" content="Scoring produits, generateur d ads IA et geo-ciblage pour NOF">
+<title>UrbanElectroStore — Cockpit E-commerce</title>
+<meta name="description" content="Scoring produits, generateur d ads IA et geo-ciblage pour UrbanElectroStore">
 <meta name="theme-color" content="#18180f">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -339,7 +339,7 @@ th{position:sticky;top:0;z-index:1}
 <div class="login-overlay" id="login-overlay">
   <div class="login-box" id="login-box-user">
     <div class="logo">🛍</div>
-    <h2>NOF — Cockpit</h2>
+    <h2>UrbanElectroStore — Cockpit</h2>
     <p class="sub">Entre tes identifiants pour acceder a l outil</p>
     <div class="login-field">
       <label>Ton prenom ou identifiant</label>
@@ -383,7 +383,7 @@ th{position:sticky;top:0;z-index:1}
 </div>
 
 <div class="topbar">
-  <h1>&#128722; NOF &mdash; Cockpit E-commerce</h1>
+  <h1>&#128722; UrbanElectroStore &mdash; Cockpit E-commerce</h1>
   <span id="sync-indicator" onclick="manualSync()" title="Cliquer pour synchroniser maintenant"
     style="font-size:11px;font-weight:500;padding:3px 10px;border-radius:20px;cursor:pointer;background:#e8f0fb;color:#0c3d6e;display:inline-flex;align-items:center;gap:4px">&#9729; Cloud</span>
   <div class="topr">
@@ -966,7 +966,7 @@ th{position:sticky;top:0;z-index:1}
       <div class="form-row" style="margin-top:.5rem">
         <div class="form-group" style="flex:1;min-width:200px">
           <label>URL de ta boutique</label>
-          <input type="text" id="wc-url" placeholder="https://NOF.com" style="width:100%">
+          <input type="text" id="wc-url" placeholder="https://urbanelectrostore.com" style="width:100%">
         </div>
       </div>
       <div class="form-row">
@@ -4932,7 +4932,7 @@ function deleteUser(idx) {
 function copyInvite(idx) {
   var u = ACCESS.users[idx];
   if (!u) return;
-  var msg = "Bonjour " + u.name + ",\n\nTu as acces au Cockpit E-commerce NOF.\n\n"
+  var msg = "Bonjour " + u.name + ",\n\nTu as acces au Cockpit E-commerce UrbanElectroStore.\n\n"
     + "Lien : " + window.location.href.split("?")[0] + "\nPrenom : " + u.name + "\nCode : " + u.code
     + (u.expiry ? "\nAcces valable jusqu au : " + u.expiry : "")
     + "\n\nBonne utilisation !";
@@ -5563,8 +5563,11 @@ function buildIntegCard(integ, idx, isSuggested) {
       + "</div>"
     + "</div>"
     + (integ.desc ? "<div style='font-size:11.5px;color:var(--mut);margin-bottom:.35rem'>" + integ.desc + "</div>" : "")
-    + "<div style='font-size:11px;color:" + col + ";overflow:hidden;text-overflow:ellipsis;white-space:nowrap'>"
-      + integ.url.replace(/^https?:\/\//, "").split("/")[0]
+    + "<div style='display:flex;align-items:center;gap:5px;margin-top:.15rem'>"
+      + "<div style='font-size:11px;color:" + col + ";overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1'>"
+        + integ.url.replace(/^https?:\/\//, "").split("/")[0]
+      + "</div>"
+      + (isIframeBlocked(integ.url) ? "<span title='S ouvre dans un nouvel onglet' style='font-size:10px;color:var(--mut);flex-shrink:0'>&#8599; nouvel onglet</span>" : "<span style='font-size:10px;color:var(--grn);flex-shrink:0'>&#128196; integre</span>")
     + "</div>"
     + "</div>";
 }
@@ -5594,49 +5597,132 @@ function addSuggested(sStr) {
   toastOK(s.name + " ajoute aux integrations");
 }
 
-// Open integration in iframe
+// Domains known to block iframes (X-Frame-Options: DENY/SAMEORIGIN)
+var IFRAME_BLOCKED_DOMAINS = [
+  "google.com","google.fr","google.be","googleapis.com",
+  "facebook.com","instagram.com","twitter.com","x.com",
+  "linkedin.com","amazon.com","amazon.fr","apple.com",
+  "notion.so","notion.com",
+  "shopify.com","etsy.com","ebay.com","leboncoin.fr",
+  "paypal.com","stripe.com","coinbase.com",
+  "dropbox.com","slack.com","discord.com",
+  "youtube.com","netflix.com","twitch.tv",
+  "github.com","gitlab.com","bitbucket.org"
+];
+
+function isIframeBlocked(url) {
+  var u = url.toLowerCase();
+  return IFRAME_BLOCKED_DOMAINS.some(function(d){ return u.indexOf(d) >= 0; });
+}
+
 function openInteg(idx) {
   loadIntegrations();
   var integ = integrations[idx];
   if (!integ) return;
 
-  // Check if URL can be iframed (some domains block it)
-  var blocked = ["google.com","facebook.com","instagram.com","twitter.com","x.com","linkedin.com","amazon","apple.com"];
-  var urlLower = integ.url.toLowerCase();
-  var isBlocked = blocked.some(function(d){ return urlLower.indexOf(d) >= 0; });
-
-  var viewer    = document.getElementById("integ-viewer");
-  var iframe    = document.getElementById("integ-iframe");
-  var titleEl   = document.getElementById("integ-viewer-title");
-  var extLink   = document.getElementById("integ-viewer-extlink");
-  var sugg      = document.getElementById("integ-suggestions");
-  var gallery   = document.getElementById("integ-gallery");
-
-  if (isBlocked) {
-    // Open in new tab with explanation
-    toastInfo({title: integ.name + " s ouvre dans un nouvel onglet", msg: "Ce site bloque l affichage en iframe."});
-    window.open(integ.url, "_blank");
-    return;
-  }
+  var viewer  = document.getElementById("integ-viewer");
+  var iframe  = document.getElementById("integ-iframe");
+  var titleEl = document.getElementById("integ-viewer-title");
+  var extLink = document.getElementById("integ-viewer-extlink");
+  var sugg    = document.getElementById("integ-suggestions");
+  var gallery = document.getElementById("integ-gallery");
 
   if (titleEl) titleEl.innerHTML = (integ.icon || "🔗") + " " + integ.name;
   if (extLink) extLink.href = integ.url;
-  if (iframe)  iframe.src  = integ.url;
-  if (viewer)  { viewer.style.display = "block"; viewer.scrollIntoView({behavior:"smooth",block:"start"}); }
-  if (sugg)    sugg.style.display   = "none";
+  if (sugg)    sugg.style.display = "none";
   if (gallery) gallery.style.marginBottom = ".5rem";
 
-  // Store last opened
+  if (isIframeBlocked(integ.url)) {
+    // Show elegant fallback instead of blank iframe
+    showIframeFallback(integ, viewer, iframe);
+  } else {
+    // Try to load in iframe with error detection
+    if (iframe) {
+      iframe.style.display = "block";
+      iframe.src = "about:blank";
+      // Show loading state
+      var iframeParent = iframe.parentNode;
+      showIframeLoading(integ, iframeParent, iframe);
+      iframe.onload = function() {
+        var loadingEl = document.getElementById("iframe-loading");
+        if (loadingEl) loadingEl.remove();
+        // Try to detect if page is actually blocked (won't always work cross-origin)
+        try {
+          var doc = iframe.contentDocument || iframe.contentWindow.document;
+          if (!doc || doc.body.innerHTML === "") {
+            showIframeFallback(integ, viewer, iframe);
+          }
+        } catch(e) {
+          // Cross-origin — assume it loaded fine
+        }
+      };
+      iframe.onerror = function() {
+        showIframeFallback(integ, viewer, iframe);
+      };
+      setTimeout(function() {
+        if (iframe) iframe.src = integ.url;
+      }, 50);
+    }
+  }
+
+  if (viewer) {
+    viewer.style.display = "block";
+    viewer.scrollIntoView({behavior:"smooth", block:"start"});
+  }
   try { localStorage.setItem("last_integ", idx); } catch(e) {}
 }
 
+function showIframeLoading(integ, parent, iframe) {
+  var existing = document.getElementById("iframe-loading");
+  if (existing) existing.remove();
+  var el = document.createElement("div");
+  el.id = "iframe-loading";
+  el.style.cssText = "position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;background:var(--bg);gap:12px;z-index:2";
+  el.innerHTML = "<div class='spin' style='width:20px;height:20px'></div>"
+    + "<div style='font-size:12px;color:var(--mut)'>Chargement de " + integ.name + "...</div>";
+  if (parent) parent.style.position = "relative";
+  if (iframe) iframe.insertAdjacentElement("beforebegin", el);
+}
+
+function showIframeFallback(integ, viewer, iframe) {
+  if (iframe) iframe.style.display = "none";
+  var existing = document.getElementById("iframe-fallback");
+  if (existing) existing.remove();
+  var loadingEl = document.getElementById("iframe-loading");
+  if (loadingEl) loadingEl.remove();
+  var col = integ.color || "#085041";
+  var el  = document.createElement("div");
+  el.id   = "iframe-fallback";
+  el.style.cssText = "display:flex;flex-direction:column;align-items:center;justify-content:center;padding:3rem 2rem;text-align:center;min-height:300px;background:var(--bg)";
+  el.innerHTML = "<div style='font-size:48px;margin-bottom:.75rem'>" + (integ.icon || "🔗") + "</div>"
+    + "<div style='font-size:16px;font-weight:600;margin-bottom:.4rem'>" + integ.name + "</div>"
+    + "<div style='font-size:13px;color:var(--mut);margin-bottom:1.25rem;max-width:380px;line-height:1.6'>"
+      + "Ce site bloque l affichage en iframe pour des raisons de securite (politique X-Frame-Options). "
+      + "Clique le bouton ci-dessous pour l ouvrir dans un nouvel onglet."
+    + "</div>"
+    + "<a href='" + integ.url + "' target='_blank' onclick='toastInfo(\"" + integ.name + " ouvert\")' "
+      + "style='display:inline-flex;align-items:center;gap:8px;padding:10px 20px;border-radius:9px;background:" + col + ";color:#fff;font-size:13px;font-weight:500;text-decoration:none;transition:opacity .15s' "
+    + "<a href='" + integ.url + "' target='_blank' class='integ-open-btn' style='display:inline-flex;align-items:center;gap:8px;padding:10px 20px;border-radius:9px;background:" + col + ";color:#fff;font-size:13px;font-weight:500;text-decoration:none'>Ouvrir " + integ.name + " &#8599;</a>"
+    + "<div style='margin-top:1rem;font-size:11px;color:var(--mut)'>"
+      + "<a href='https://www.google.com/search?q=" + encodeURIComponent(integ.name + " alternative embed") + "' target='_blank' style='color:var(--mut)'>Chercher une version embeddable</a>"
+    + "</div>";
+  if (viewer) {
+    var iframeParent = iframe ? iframe.parentNode : viewer.querySelector("div:last-child");
+    if (iframeParent) iframeParent.appendChild(el);
+  }
+}
+
 function closeIntegViewer() {
-  var viewer = document.getElementById("integ-viewer");
-  var iframe = document.getElementById("integ-iframe");
-  var sugg   = document.getElementById("integ-suggestions");
-  if (viewer) viewer.style.display = "none";
-  if (iframe) iframe.src = "about:blank";
-  if (sugg)   sugg.style.display = "";
+  var viewer   = document.getElementById("integ-viewer");
+  var iframe   = document.getElementById("integ-iframe");
+  var sugg     = document.getElementById("integ-suggestions");
+  var fallback = document.getElementById("iframe-fallback");
+  var loading  = document.getElementById("iframe-loading");
+  if (viewer)   viewer.style.display = "none";
+  if (iframe)   { iframe.style.display = "block"; iframe.src = "about:blank"; }
+  if (sugg)     sugg.style.display = "";
+  if (fallback) fallback.remove();
+  if (loading)  loading.remove();
 }
 
 // Add new integration from modal
