@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>NOF — Cockpit E-commerce</title>
-<meta name="description" content="Scoring produits, generateur d ads IA et geo-ciblage pour NOF">
+<title>UrbanElectroStore — Cockpit E-commerce</title>
+<meta name="description" content="Scoring produits, generateur d ads IA et geo-ciblage pour UrbanElectroStore">
 <meta name="theme-color" content="#18180f">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -302,6 +302,14 @@ th{position:sticky;top:0;z-index:1}
   #sync-indicator{display:none}
 }
 
+
+/* ===== INTEGRATIONS ===== */
+#integ-iframe{border:none;display:block;background:var(--bg)}
+#integ-viewer{border-radius:var(--r);overflow:hidden;box-shadow:var(--shadow-md)}
+@media(max-width:640px){
+  #integ-iframe{height:calc(100vh - 180px);min-height:350px}
+}
+
 </style>
 </head>
 <body>
@@ -331,7 +339,7 @@ th{position:sticky;top:0;z-index:1}
 <div class="login-overlay" id="login-overlay">
   <div class="login-box" id="login-box-user">
     <div class="logo">🛍</div>
-    <h2>NOF — Cockpit</h2>
+    <h2>UrbanElectroStore — Cockpit</h2>
     <p class="sub">Entre tes identifiants pour acceder a l outil</p>
     <div class="login-field">
       <label>Ton prenom ou identifiant</label>
@@ -375,7 +383,7 @@ th{position:sticky;top:0;z-index:1}
 </div>
 
 <div class="topbar">
-  <h1>&#128722; NOF &mdash; Cockpit E-commerce</h1>
+  <h1>&#128722; UrbanElectroStore &mdash; Cockpit E-commerce</h1>
   <span id="sync-indicator" onclick="manualSync()" title="Cliquer pour synchroniser maintenant"
     style="font-size:11px;font-weight:500;padding:3px 10px;border-radius:20px;cursor:pointer;background:#e8f0fb;color:#0c3d6e;display:inline-flex;align-items:center;gap:4px">&#9729; Cloud</span>
   <div class="topr">
@@ -407,6 +415,7 @@ th{position:sticky;top:0;z-index:1}
   <button class="mtab" onclick="showMain('guidads')">&#127919; Guide Ads</button>
   <button class="mtab" onclick="showMain('woocommerce')">&#128722; WooCommerce</button>
   <button class="mtab" onclick="showMain('translator')">&#127760; Traducteur</button>
+  <button class="mtab" id="mtab-integ" onclick="showMain('integrations')">&#128279; Intégrations</button>
   <button class="mtab" id="mtab-admin" style="display:none" onclick="showMain('admin')">&#128274; Admin Acces</button>
 </div>
 
@@ -957,7 +966,7 @@ th{position:sticky;top:0;z-index:1}
       <div class="form-row" style="margin-top:.5rem">
         <div class="form-group" style="flex:1;min-width:200px">
           <label>URL de ta boutique</label>
-          <input type="text" id="wc-url" placeholder="https://NOF.com" style="width:100%">
+          <input type="text" id="wc-url" placeholder="https://urbanelectrostore.com" style="width:100%">
         </div>
       </div>
       <div class="form-row">
@@ -1191,6 +1200,90 @@ CTA : Voir l offre" style="width:100%;height:130px;padding:7px 9px;border:1px so
   <div class="adm-panel">
     <h3>Journal des acces (dernieres connexions)</h3>
     <div id="access-logs" style="font-size:12px;color:var(--mut)">Aucun log disponible.</div>
+  </div>
+</div>
+
+
+<!-- TAB INTEGRATIONS -->
+<div class="panel" id="tab-integrations">
+  <div style="margin-top:.5rem;margin-bottom:.65rem;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px">
+    <div class="al ai" style="flex:1;min-width:200px;margin-bottom:0">Connecte n importe quel outil externe et ouvre le directement dans le Cockpit, sans quitter l application.</div>
+    <button class="btn bg" onclick="openAddIntegModal()">+ Ajouter un outil</button>
+  </div>
+
+  <!-- Integrations gallery -->
+  <div id="integ-gallery" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px;margin-bottom:.75rem"></div>
+
+  <!-- Iframe viewer -->
+  <div id="integ-viewer" style="display:none;position:relative;border:1px solid var(--bord);border-radius:var(--r);overflow:hidden;background:var(--sur)">
+    <div style="display:flex;align-items:center;gap:8px;padding:.5rem .85rem;border-bottom:1px solid var(--bord);background:var(--bg)">
+      <span id="integ-viewer-title" style="font-size:13px;font-weight:500;flex:1"></span>
+      <a id="integ-viewer-extlink" href="#" target="_blank" class="btn bsm" style="font-size:11px">&#8599; Ouvrir dans nouvel onglet</a>
+      <button class="btn bsm" onclick="closeIntegViewer()" style="font-size:11px">&#x2715; Fermer</button>
+    </div>
+    <iframe id="integ-iframe"
+      style="width:100%;height:calc(100vh - 220px);min-height:500px;border:none;display:block"
+      sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-top-navigation"
+      loading="lazy"
+      title="Outil integre">
+    </iframe>
+  </div>
+
+  <!-- Suggested integrations -->
+  <div id="integ-suggestions">
+    <div style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.4px;color:var(--mut);margin-bottom:.5rem">Outils suggeres</div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:8px" id="integ-suggested-grid"></div>
+  </div>
+</div>
+
+<!-- MODAL AJOUT INTEGRATION -->
+<div class="mbg" id="integ-modal" style="display:none" onclick="if(event.target===this)closeAddIntegModal()">
+  <div class="modal" style="max-width:520px">
+    <h2>Ajouter un outil</h2>
+    <p style="font-size:12px;color:var(--mut);margin-bottom:.85rem">Entre les informations de l outil a integrer dans le Cockpit.</p>
+    <div class="form-row">
+      <div class="form-group" style="flex:1">
+        <label>Nom de l outil *</label>
+        <input type="text" id="integ-name" placeholder="ex: Google Analytics" style="width:100%">
+      </div>
+      <div class="form-group">
+        <label>Icone (emoji)</label>
+        <input type="text" id="integ-icon" placeholder="ex: &#128200;" style="width:70px;text-align:center;font-size:18px">
+      </div>
+    </div>
+    <div class="form-group" style="margin-bottom:.6rem">
+      <label>URL de l outil *</label>
+      <input type="url" id="integ-url" placeholder="https://analytics.google.com" style="width:100%">
+    </div>
+    <div class="form-row">
+      <div class="form-group" style="flex:1">
+        <label>Description</label>
+        <input type="text" id="integ-desc" placeholder="ex: Suivi du trafic" style="width:100%">
+      </div>
+      <div class="form-group">
+        <label>Couleur</label>
+        <input type="color" id="integ-color" value="#085041" style="width:50px;height:34px;border:1px solid var(--bord2);border-radius:7px;cursor:pointer;padding:2px">
+      </div>
+    </div>
+    <div class="form-group" style="margin-bottom:.75rem">
+      <label>Categorie</label>
+      <select id="integ-cat" style="width:100%">
+        <option value="analytics">Analytics</option>
+        <option value="ads">Publicite</option>
+        <option value="ecommerce">E-commerce</option>
+        <option value="design">Design</option>
+        <option value="productivity">Productivite</option>
+        <option value="finance">Finance</option>
+        <option value="other">Autre</option>
+      </select>
+    </div>
+    <div style="background:var(--bg);border-radius:var(--r);padding:.55rem .75rem;margin-bottom:.75rem;font-size:11.5px;color:var(--mut)">
+      &#9888;&#65039; Certains outils (Google, Facebook) bloquent les iframes. Dans ce cas, l outil s ouvrira dans un nouvel onglet automatiquement.
+    </div>
+    <div class="mbts">
+      <button class="btn" onclick="closeAddIntegModal()">Annuler</button>
+      <button class="btn bg" onclick="addIntegration()">Ajouter</button>
+    </div>
   </div>
 </div>
 
@@ -1721,7 +1814,7 @@ function updateSelPanel() {
 // ============================================================
 // NAVIGATION
 // ============================================================
-var TAB_IDS = ["scoring","ads","marge","saisonnal","perf","contenu","rapport","dashboard","checklist","geo","spy","tendances","calculateurs","guidads","woocommerce","translator","admin"];
+var TAB_IDS = ["scoring","ads","marge","saisonnal","perf","contenu","rapport","dashboard","checklist","geo","spy","tendances","calculateurs","guidads","woocommerce","translator","integrations","admin"];
 function showMain(t) {
   document.querySelectorAll(".mtab").forEach(function(b, i){
     var isOn = TAB_IDS[i] === t;
@@ -1753,6 +1846,7 @@ function showMain(t) {
   if (t === "woocommerce")   initWooTab();
   if (t === "translator")    initTranslatorTab();
   if (t === "admin")         renderAdminPanel();
+  if (t === "integrations")  renderIntegrations();
   // Update bottom nav active state
   if (typeof updateBNActiveFromTab === "function") updateBNActiveFromTab();
 }
@@ -4838,7 +4932,7 @@ function deleteUser(idx) {
 function copyInvite(idx) {
   var u = ACCESS.users[idx];
   if (!u) return;
-  var msg = "Bonjour " + u.name + ",\n\nTu as acces au Cockpit E-commerce NOF.\n\n"
+  var msg = "Bonjour " + u.name + ",\n\nTu as acces au Cockpit E-commerce UrbanElectroStore.\n\n"
     + "Lien : " + window.location.href.split("?")[0] + "\nPrenom : " + u.name + "\nCode : " + u.code
     + (u.expiry ? "\nAcces valable jusqu au : " + u.expiry : "")
     + "\n\nBonne utilisation !";
@@ -5002,11 +5096,13 @@ async function pushAllDataToJB() {
   existingData.logs    = ACCESS.logs.slice(-100);
   existingData.updated = new Date().toISOString();
   // Save current user's full data
+  loadIntegrations();
   existingData.data[userKey] = {
-    products:  PRODUCTS,
-    scores:    userScores,
-    margins:   margins,
-    campaigns: campaigns
+    products:     PRODUCTS,
+    scores:       userScores,
+    margins:      margins,
+    campaigns:    campaigns,
+    integrations: integrations
   };
 
   var resp = await fetch("https://api.jsonbin.io/v3/b/" + ACCESS.jbBinId, {
@@ -5251,7 +5347,8 @@ var BN_MORE_TABS = [
   {id:"calculateurs",icon:"ti-calculator",      label:"Calcul"},
   {id:"guidads",    icon:"ti-target",           label:"Guide"},
   {id:"woocommerce",icon:"ti-shopping-cart",    label:"Woo"},
-  {id:"translator", icon:"ti-language",         label:"Traduct"}
+  {id:"translator", icon:"ti-language",         label:"Traduct"},
+  {id:"integrations",icon:"ti-puzzle",          label:"Outils"}
 ];
 
 function initBottomNav() {
@@ -5368,6 +5465,235 @@ document.addEventListener("keydown", function(e) {
   }
   // Ctrl+Shift+A — admin (already handled elsewhere)
 });
+
+
+
+// ============================================================
+// INTEGRATIONS SYSTEM
+// ============================================================
+var integrations = [];
+
+var INTEG_SUGGESTED = [
+  {name:"Meta Ads Library", icon:"📘", url:"https://www.facebook.com/ads/library", desc:"Espionner les pubs concurrentes", cat:"ads",        color:"#1877f2"},
+  {name:"Google Analytics", icon:"📊", url:"https://analytics.google.com",         desc:"Trafic et conversions",         cat:"analytics",   color:"#E37400"},
+  {name:"Google Search Console",icon:"🔍",url:"https://search.google.com/search-console",desc:"SEO et impressions",     cat:"analytics",   color:"#4285F4"},
+  {name:"Canva",             icon:"🎨", url:"https://www.canva.com",                desc:"Creer des visuels ads",         cat:"design",      color:"#00C4CC"},
+  {name:"Semrush",           icon:"🔎", url:"https://www.semrush.com",              desc:"Mots-cles et concurrents",      cat:"analytics",   color:"#FF642D"},
+  {name:"Klaviyo",           icon:"📧", url:"https://www.klaviyo.com",              desc:"Email marketing",               cat:"ecommerce",   color:"#09A100"},
+  {name:"Notion",            icon:"📝", url:"https://www.notion.so",               desc:"Notes et planification",        cat:"productivity", color:"#000000"},
+  {name:"Google Sheets",     icon:"📗", url:"https://sheets.google.com",           desc:"Tableaux et analyses",          cat:"productivity", color:"#0F9D58"},
+  {name:"Idealo",            icon:"🏷️", url:"https://www.idealo.fr",               desc:"Comparateur de prix",           cat:"ecommerce",   color:"#FF6600"},
+  {name:"Ahrefs",            icon:"🕵️", url:"https://app.ahrefs.com",              desc:"SEO et backlinks",              cat:"analytics",   color:"#F97532"},
+  {name:"Zapier",            icon:"⚡", url:"https://zapier.com/app",              desc:"Automatisations",               cat:"productivity", color:"#FF4A00"},
+  {name:"Hotjar",            icon:"🔥", url:"https://insights.hotjar.com",         desc:"Heatmaps visiteurs",            cat:"analytics",   color:"#FD3A5C"}
+];
+
+var CAT_LABELS = {
+  analytics:"Analytics", ads:"Publicite", ecommerce:"E-commerce",
+  design:"Design", productivity:"Productivite", finance:"Finance", other:"Autre"
+};
+
+// Load integrations from localStorage
+function loadIntegrations() {
+  try {
+    var saved = localStorage.getItem(getUserKey("integrations"));
+    integrations = saved ? JSON.parse(saved) : [];
+  } catch(e) { integrations = []; }
+}
+
+function saveIntegrations() {
+  try { localStorage.setItem(getUserKey("integrations"), JSON.stringify(integrations)); } catch(e) {}
+  scheduleSync();
+}
+
+// Render the integrations gallery
+function renderIntegrations() {
+  loadIntegrations();
+  var gallery = document.getElementById("integ-gallery");
+  var sugg    = document.getElementById("integ-suggested-grid");
+  var sugBox  = document.getElementById("integ-suggestions");
+  if (!gallery) return;
+
+  if (!integrations.length) {
+    gallery.innerHTML = "<div style='grid-column:1/-1;text-align:center;padding:2rem;color:var(--mut);font-size:12px'>"
+      + "<div style='font-size:28px;margin-bottom:.5rem'>&#128279;</div>"
+      + "<div style='font-weight:500;margin-bottom:.25rem'>Aucun outil connecte</div>"
+      + "<div>Clique sur <b>+ Ajouter un outil</b> ou choisis un outil suggere ci-dessous.</div>"
+      + "</div>";
+  } else {
+    gallery.innerHTML = integrations.map(function(integ, i) {
+      return buildIntegCard(integ, i, false);
+    }).join("");
+    // Hide suggestions if user has tools
+    if (sugBox && integrations.length > 0) sugBox.style.marginTop = ".75rem";
+  }
+
+  // Always show suggestions (not yet added)
+  if (sugg) {
+    var notAdded = INTEG_SUGGESTED.filter(function(s) {
+      return !integrations.some(function(u) { return u.url === s.url; });
+    });
+    if (!notAdded.length) {
+      if (sugBox) sugBox.style.display = "none";
+    } else {
+      if (sugBox) sugBox.style.display = "";
+      sugg.innerHTML = notAdded.map(function(s) {
+        return buildSuggestedCard(s);
+      }).join("");
+    }
+  }
+}
+
+function buildIntegCard(integ, idx, isSuggested) {
+  var col = integ.color || "#085041";
+  var catLabel = CAT_LABELS[integ.cat] || integ.cat || "";
+  return "<div class='card-section' style='cursor:pointer;border-top:3px solid " + col + ";border-radius:0 0 var(--r) var(--r);transition:box-shadow .15s' "
+    + "onclick='openInteg(" + idx + ")' "
+    + "onmouseover=\"this.style.boxShadow='0 4px 16px rgba(0,0,0,.08)'\" "
+    + "onmouseout=\"this.style.boxShadow=''\">"
+    + "<div style='display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:.4rem'>"
+      + "<div style='display:flex;align-items:center;gap:8px'>"
+        + "<span style='font-size:22px;line-height:1'>" + (integ.icon || "🔗") + "</span>"
+        + "<div><div style='font-size:13px;font-weight:500'>" + integ.name + "</div>"
+          + "<div style='font-size:10px;color:var(--mut)'>" + catLabel + "</div></div>"
+      + "</div>"
+      + "<div style='display:flex;gap:4px'>"
+        + "<a href='" + integ.url + "' target='_blank' onclick='event.stopPropagation()' class='btn bsm' title='Ouvrir dans nouvel onglet' style='font-size:10px'>&#8599;</a>"
+        + "<button class='btn bsm' onclick='event.stopPropagation();removeInteg(" + idx + ")' style='color:#7a1a1a;font-size:10px' title='Supprimer'>&#128465;</button>"
+      + "</div>"
+    + "</div>"
+    + (integ.desc ? "<div style='font-size:11.5px;color:var(--mut);margin-bottom:.35rem'>" + integ.desc + "</div>" : "")
+    + "<div style='font-size:11px;color:" + col + ";overflow:hidden;text-overflow:ellipsis;white-space:nowrap'>"
+      + integ.url.replace(/^https?:\/\//, "").split("/")[0]
+    + "</div>"
+    + "</div>";
+}
+
+function buildSuggestedCard(s) {
+  var col = s.color || "#085041";
+  return "<div style='background:var(--sur);border:0.5px solid var(--bord);border-radius:var(--r);padding:.65rem .8rem;display:flex;align-items:center;gap:8px;cursor:pointer;transition:all .15s' "
+    + "onclick='addSuggested(" + JSON.stringify(JSON.stringify(s)) + ")' "
+    + "onmouseover=\"this.style.borderColor='" + col + "';this.style.boxShadow='0 2px 8px rgba(0,0,0,.07)'\" "
+    + "onmouseout=\"this.style.borderColor='';this.style.boxShadow=''\">"
+    + "<span style='font-size=20px'>" + s.icon + "</span>"
+    + "<div style='flex:1;min-width:0'>"
+      + "<div style='font-size:12px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis'>" + s.name + "</div>"
+      + "<div style='font-size:10px;color:var(--mut)'>" + s.desc + "</div>"
+    + "</div>"
+    + "<span style='font-size:16px;color:var(--mut)'>+</span>"
+    + "</div>";
+}
+
+function addSuggested(sStr) {
+  var s;
+  try { s = JSON.parse(sStr); } catch(e) { return; }
+  loadIntegrations();
+  integrations.push(s);
+  saveIntegrations();
+  renderIntegrations();
+  toastOK(s.name + " ajoute aux integrations");
+}
+
+// Open integration in iframe
+function openInteg(idx) {
+  loadIntegrations();
+  var integ = integrations[idx];
+  if (!integ) return;
+
+  // Check if URL can be iframed (some domains block it)
+  var blocked = ["google.com","facebook.com","instagram.com","twitter.com","x.com","linkedin.com","amazon","apple.com"];
+  var urlLower = integ.url.toLowerCase();
+  var isBlocked = blocked.some(function(d){ return urlLower.indexOf(d) >= 0; });
+
+  var viewer    = document.getElementById("integ-viewer");
+  var iframe    = document.getElementById("integ-iframe");
+  var titleEl   = document.getElementById("integ-viewer-title");
+  var extLink   = document.getElementById("integ-viewer-extlink");
+  var sugg      = document.getElementById("integ-suggestions");
+  var gallery   = document.getElementById("integ-gallery");
+
+  if (isBlocked) {
+    // Open in new tab with explanation
+    toastInfo({title: integ.name + " s ouvre dans un nouvel onglet", msg: "Ce site bloque l affichage en iframe."});
+    window.open(integ.url, "_blank");
+    return;
+  }
+
+  if (titleEl) titleEl.innerHTML = (integ.icon || "🔗") + " " + integ.name;
+  if (extLink) extLink.href = integ.url;
+  if (iframe)  iframe.src  = integ.url;
+  if (viewer)  { viewer.style.display = "block"; viewer.scrollIntoView({behavior:"smooth",block:"start"}); }
+  if (sugg)    sugg.style.display   = "none";
+  if (gallery) gallery.style.marginBottom = ".5rem";
+
+  // Store last opened
+  try { localStorage.setItem("last_integ", idx); } catch(e) {}
+}
+
+function closeIntegViewer() {
+  var viewer = document.getElementById("integ-viewer");
+  var iframe = document.getElementById("integ-iframe");
+  var sugg   = document.getElementById("integ-suggestions");
+  if (viewer) viewer.style.display = "none";
+  if (iframe) iframe.src = "about:blank";
+  if (sugg)   sugg.style.display = "";
+}
+
+// Add new integration from modal
+function addIntegration() {
+  var name  = (document.getElementById("integ-name")||{}).value.trim();
+  var url   = (document.getElementById("integ-url")||{}).value.trim();
+  var icon  = (document.getElementById("integ-icon")||{}).value.trim() || "🔗";
+  var desc  = (document.getElementById("integ-desc")||{}).value.trim();
+  var color = (document.getElementById("integ-color")||{}).value || "#085041";
+  var cat   = (document.getElementById("integ-cat")||{}).value || "other";
+
+  if (!name || !url) { toastWarn("Le nom et l URL sont obligatoires"); return; }
+  if (!url.startsWith("http")) url = "https://" + url;
+
+  loadIntegrations();
+  integrations.push({name:name, url:url, icon:icon, desc:desc, color:color, cat:cat, added:new Date().toISOString()});
+  saveIntegrations();
+  closeAddIntegModal();
+  renderIntegrations();
+  toastOK(name + " ajoute aux integrations");
+}
+
+function removeInteg(idx) {
+  loadIntegrations();
+  if (idx < 0 || idx >= integrations.length) return;
+  var name = integrations[idx].name;
+  if (!confirm("Supprimer " + name + " des integrations ?")) return;
+  integrations.splice(idx, 1);
+  saveIntegrations();
+  closeIntegViewer();
+  renderIntegrations();
+  toastOK(name + " supprime");
+}
+
+function openAddIntegModal() {
+  // Reset form
+  ["integ-name","integ-url","integ-icon","integ-desc"].forEach(function(id){
+    var el = document.getElementById(id); if(el) el.value = "";
+  });
+  var col = document.getElementById("integ-color"); if(col) col.value = "#085041";
+  var cat = document.getElementById("integ-cat"); if(cat) cat.value = "other";
+  document.getElementById("integ-modal").style.display = "flex";
+  setTimeout(function(){ var el=document.getElementById("integ-name"); if(el)el.focus(); }, 100);
+}
+function closeAddIntegModal() {
+  document.getElementById("integ-modal").style.display = "none";
+}
+
+// Enter key on modal
+document.addEventListener("keydown", function(e) {
+  if (e.key === "Enter" && document.getElementById("integ-modal").style.display !== "none") {
+    addIntegration();
+  }
+});
+
+// Also add integrations key to perUserKeys (update getUserKey)
+// done at perUserKeys array definition
 
 
 // INIT -- EN DERNIER
