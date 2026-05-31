@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>NOF — Cockpit E-commerce</title>
-<meta name="description" content="Scoring produits, generateur d ads IA et geo-ciblage pour NOF">
+<title>UrbanElectroStore — Cockpit E-commerce</title>
+<meta name="description" content="Scoring produits, generateur d ads IA et geo-ciblage pour UrbanElectroStore">
 <meta name="theme-color" content="#18180f">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -339,7 +339,7 @@ th{position:sticky;top:0;z-index:1}
 <div class="login-overlay" id="login-overlay">
   <div class="login-box" id="login-box-user">
     <div class="logo">🛍</div>
-    <h2>NOF — Cockpit</h2>
+    <h2>UrbanElectroStore — Cockpit</h2>
     <p class="sub">Entre tes identifiants pour acceder a l outil</p>
     <div class="login-field">
       <label>Ton prenom ou identifiant</label>
@@ -383,7 +383,7 @@ th{position:sticky;top:0;z-index:1}
 </div>
 
 <div class="topbar">
-  <h1>&#128722; NOF &mdash; Cockpit E-commerce</h1>
+  <h1>&#128722; UrbanElectroStore &mdash; Cockpit E-commerce</h1>
   <span id="sync-indicator" onclick="manualSync()" title="Cliquer pour synchroniser maintenant"
     style="font-size:11px;font-weight:500;padding:3px 10px;border-radius:20px;cursor:pointer;background:#e8f0fb;color:#0c3d6e;display:inline-flex;align-items:center;gap:4px">&#9729; Cloud</span>
   <div class="topr">
@@ -402,6 +402,7 @@ th{position:sticky;top:0;z-index:1}
 <div class="maintabs" id="maintabs">
   <button class="mtab on" onclick="showMain('scoring')">&#128202; Produits</button>
   <button class="mtab" onclick="showMain('ads')">&#127919; Ads</button>
+  <button class="mtab" id="mtab-metaads" onclick="showMain('metaads')" style="background:linear-gradient(90deg,#1877f222,transparent);border-color:#1877f244;color:#1877f2;font-weight:500">&#128640; Meta Ads</button>
   <button class="mtab" onclick="showMain('marge')">&#128176; Marge &amp; ROI</button>
   <button class="mtab" onclick="showMain('saisonnal')">&#128197; Saisonnalite</button>
   <button class="mtab" onclick="showMain('perf')">&#128200; Performance</button>
@@ -416,7 +417,6 @@ th{position:sticky;top:0;z-index:1}
   <button class="mtab" onclick="showMain('guidads')">&#127919; Guide Ads</button>
   <button class="mtab" onclick="showMain('woocommerce')">&#128722; WooCommerce</button>
   <button class="mtab" onclick="showMain('translator')">&#127760; Traducteur</button>
-  <button class="mtab" id="mtab-metaads" onclick="showMain('metaads')">&#128640; Meta Ads Agent</button>
   <button class="mtab" id="mtab-integ" onclick="showMain('integrations')">&#128279; Intégrations</button>
   <button class="mtab" id="mtab-admin" style="display:none" onclick="showMain('admin')">&#128274; Admin Acces</button>
 </div>
@@ -968,7 +968,7 @@ th{position:sticky;top:0;z-index:1}
       <div class="form-row" style="margin-top:.5rem">
         <div class="form-group" style="flex:1;min-width:200px">
           <label>URL de ta boutique</label>
-          <input type="text" id="wc-url" placeholder="https://NOF.com" style="width:100%">
+          <input type="text" id="wc-url" placeholder="https://urbanelectrostore.com" style="width:100%">
         </div>
       </div>
       <div class="form-row">
@@ -1428,6 +1428,78 @@ CTA : Voir l offre" style="width:100%;height:130px;padding:7px 9px;border:1px so
     Selectionne un produit et clique <b>Generer les ads</b> pour obtenir des publicites 100% conformes Meta Ads.
   </div>
 
+  <!-- META API CONFIG -->
+  <div id="ma-api-section" class="card-section" style="margin-bottom:.75rem;border-top:3px solid #1877f2;border-radius:0 0 var(--r) var(--r)">
+    <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:.6rem">
+      <h3 style="color:#1877f2">&#128279; Connexion API Meta Marketing</h3>
+      <div style="display:flex;gap:6px">
+        <button class="btn" id="ma-api-toggle" onclick="toggleMetaApiConfig()" style="font-size:11px">Configurer</button>
+        <button class="btn" onclick="testMetaConnection()" style="font-size:11px">Tester</button>
+      </div>
+    </div>
+    <div id="ma-api-status" style="font-size:12px;color:var(--mut)">Non configure — entre tes identifiants Meta pour creer des pubs directement.</div>
+
+    <div id="ma-api-config" style="display:none;margin-top:.65rem">
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:8px;margin-bottom:.55rem">
+        <div class="form-group">
+          <label>Access Token (Marketing API)</label>
+          <input type="password" id="meta-access-token" placeholder="EAAxxxxx..." style="width:100%;font-family:monospace;font-size:11px">
+        </div>
+        <div class="form-group">
+          <label>Ad Account ID</label>
+          <input type="text" id="meta-ad-account" placeholder="act_123456789" style="width:100%;font-family:monospace">
+        </div>
+        <div class="form-group">
+          <label>Page Facebook ID</label>
+          <input type="text" id="meta-page-id" placeholder="123456789" style="width:100%;font-family:monospace">
+        </div>
+        <div class="form-group">
+          <label>Pixel ID (optionnel)</label>
+          <input type="text" id="meta-pixel-id" placeholder="123456789" style="width:100%;font-family:monospace">
+        </div>
+      </div>
+      <div style="display:flex;gap:7px;flex-wrap:wrap;margin-bottom:.5rem">
+        <button class="btn bg" onclick="saveMetaConfig()">Sauvegarder</button>
+        <a href="https://developers.facebook.com/tools/explorer/" target="_blank" class="btn" style="font-size:11px">Obtenir un Access Token &#8599;</a>
+      </div>
+      <div style="font-size:11px;color:var(--mut);line-height:1.7;background:var(--bg);border-radius:7px;padding:.5rem .7rem">
+        <b>Permissions requises sur ton token :</b> ads_management, ads_read, pages_read_engagement, business_management<br>
+        <b>Comment obtenir le token :</b> developers.facebook.com → Graph API Explorer → Generer un token → coche les permissions ci-dessus
+      </div>
+    </div>
+  </div>
+
+  <!-- CREER LA PUB DANS META -->
+  <div id="ma-create-section" style="display:none;margin-bottom:.75rem">
+    <div class="card-section" style="border-top:3px solid #1877f2;border-radius:0 0 var(--r) var(--r)">
+      <h3 style="color:#1877f2;margin-bottom:.6rem">&#128640; Creer la pub dans Meta Ads Manager</h3>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:8px;margin-bottom:.6rem">
+        <div class="form-group">
+          <label>Budget quotidien (EUR)</label>
+          <input type="number" id="meta-daily-budget" value="20" min="1" step="1" style="width:120px">
+        </div>
+        <div class="form-group">
+          <label>Date de debut</label>
+          <input type="date" id="meta-start-date" style="width:160px">
+        </div>
+        <div class="form-group">
+          <label>Date de fin (optionnel)</label>
+          <input type="date" id="meta-end-date" style="width:160px">
+        </div>
+        <div class="form-group">
+          <label>URL de destination</label>
+          <input type="url" id="meta-dest-url" placeholder="https://urbanelectrostore.com/produit/..." style="width:100%">
+        </div>
+      </div>
+      <div style="display:flex;gap:7px;flex-wrap:wrap">
+        <button class="btn" id="meta-fetch-img-btn" onclick="fetchWooImage()" style="font-size:12px">&#128247; Recuperer la photo WooCommerce</button>
+        <button class="btn bg" id="meta-publish-btn" onclick="createMetaAd()" style="font-size:12px;background:#1877f2;color:#fff;border-color:transparent">&#128640; Creer le brouillon dans Meta</button>
+      </div>
+      <div id="ma-woo-img-preview" style="margin-top:.55rem"></div>
+      <div id="ma-publish-progress" style="margin-top:.5rem"></div>
+    </div>
+  </div>
+
   <!-- Règles Meta rappel -->
   <div id="ma-rules" class="card-section" style="margin-top:.75rem;border-left:3px solid #1877f2;border-radius:0 var(--r) var(--r) 0">
     <h3 style="color:#1877f2;margin-bottom:.5rem">Regles Meta Ads — rappel des contraintes cles</h3>
@@ -1700,6 +1772,7 @@ var pendingImport = [];
 // Load persisted data
 function loadUserApiKeys() {
   // Load API keys for the current user — fully isolated
+  loadMetaConfig();
   var prov = localStorage.getItem(getUserKey("ai_provider")) || "groq";
   curProvider = prov;
   apiKey      = localStorage.getItem(getUserKey("api_key_" + prov)) || "";
@@ -1776,7 +1849,7 @@ function loadUserData() {
 
 function getUserKey(key) {
   // Keys that are per-user (namespaced with username)
-  var perUserKeys = ["userScores", "margins", "campaigns", "products_catalogue"];
+  var perUserKeys = ["userScores", "margins", "campaigns", "products_catalogue","meta_config"];
   if (perUserKeys.indexOf(key) >= 0) {
     var user = ACCESS && ACCESS.currentUser ? ACCESS.currentUser.name : "guest";
     return key + "__" + user.toLowerCase().replace(/[^a-z0-9]/g, "_");
@@ -1968,7 +2041,7 @@ function updateSelPanel() {
 // ============================================================
 // NAVIGATION
 // ============================================================
-var TAB_IDS = ["scoring","ads","marge","saisonnal","perf","contenu","rapport","dashboard","checklist","geo","spy","tendances","calculateurs","guidads","woocommerce","translator","integrations","metaads","admin"];
+var TAB_IDS = ["scoring","ads","metaads","marge","saisonnal","perf","contenu","rapport","dashboard","checklist","geo","spy","tendances","calculateurs","guidads","woocommerce","translator","integrations","admin"];
 function showMain(t) {
   document.querySelectorAll(".mtab").forEach(function(b, i){
     var isOn = TAB_IDS[i] === t;
@@ -2729,7 +2802,7 @@ function exportScoring() {
 
 // ============================================================
 // EXPORT WOOCOMMERCE CSV — mappage complet 64 colonnes
-// Basé sur le format réel du fichier product-export d NOF
+// Basé sur le format réel du fichier product-export d UrbanElectroStore
 // ============================================================
 function exportWooCSV() {
   // Mapping catégories cockpit → catégories WooCommerce réelles
@@ -2789,7 +2862,7 @@ function exportWooCSV() {
   ];
 
   var now = new Date().toISOString().replace("T"," ").slice(0,19);
-  var baseUrl = "https://NOF.com";
+  var baseUrl = "https://urbanelectrostore.com";
 
   var rows = PRODUCTS.map(function(r, i) {
     var d      = userScores[r[0]] || {};
@@ -2825,10 +2898,10 @@ function exportWooCSV() {
     var focuskw = name.split(" ").slice(0,4).join(" ").toLowerCase();
 
     // meta:_yoast_wpseo_title — titre SEO
-    var seoTitle = name + " | NOF";
+    var seoTitle = name + " | UrbanElectroStore";
 
     // meta:_yoast_wpseo_metadesc — meta description
-    var metadesc = "Achetez " + name + " au meilleur prix sur NOF";
+    var metadesc = "Achetez " + name + " au meilleur prix sur UrbanElectroStore";
     if (r[7] === "win" && r[6]) metadesc += " - " + price + " EUR vs " + r[6] + " ailleurs";
     metadesc += ".";
 
@@ -5114,7 +5187,8 @@ function doLogout() {
   PRODUCTS = []; selIds = new Set();
   genAds = {}; lastSpyData = null; lastGuideData = null; lastTranslations = null;
   // Clear API keys and WooCommerce config from memory
-  apiKey = ""; curProvider = "groq"; wcConfig = {};
+  apiKey = ""; curProvider = "groq"; wcConfig = {}; metaConfig = {};
+  metaWooImageUrl = null; metaWooImageHash = null;
   updateApiBar();
   ACCESS.currentUser = null; ACCESS.isAdmin = false;
   // Hide logout button
@@ -5269,7 +5343,7 @@ function deleteUser(idx) {
 function copyInvite(idx) {
   var u = ACCESS.users[idx];
   if (!u) return;
-  var msg = "Bonjour " + u.name + ",\n\nTu as acces au Cockpit E-commerce NOF.\n\n"
+  var msg = "Bonjour " + u.name + ",\n\nTu as acces au Cockpit E-commerce UrbanElectroStore.\n\n"
     + "Lien : " + window.location.href.split("?")[0] + "\nPrenom : " + u.name + "\nCode : " + u.code
     + (u.expiry ? "\nAcces valable jusqu au : " + u.expiry : "")
     + "\n\nBonne utilisation !";
@@ -5439,7 +5513,8 @@ async function pushAllDataToJB() {
     scores:       userScores,
     margins:      margins,
     campaigns:    campaigns,
-    integrations: integrations
+    integrations: integrations,
+    meta_config:  {adAccount: metaConfig.adAccount, pageId: metaConfig.pageId, pixelId: metaConfig.pixelId}
   };
 
   var resp = await fetch("https://api.jsonbin.io/v3/b/" + ACCESS.jbBinId, {
@@ -6411,7 +6486,7 @@ function renderFeedPreview(ad, cta, ctaLabel, row) {
   return "<div style='max-width:280px;border:0.5px solid var(--bord2);border-radius:10px;overflow:hidden;background:#fff;font-family:Arial,sans-serif'>"
     + "<div style='display:flex;align-items:center;gap:7px;padding:8px 10px'>"
       + "<div style='width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#1877f2,#42b0ff);flex-shrink:0'></div>"
-      + "<div><div style='font-size:12px;font-weight:600;color:#1a1a1a'>NOF</div>"
+      + "<div><div style='font-size:12px;font-weight:600;color:#1a1a1a'>UrbanElectroStore</div>"
         + "<div style='font-size:10px;color:#8a8a8a'>Sponsorisé · &#127758;</div></div>"
     + "</div>"
     + "<div style='padding:0 10px 6px;font-size:12px;color:#1a1a1a;line-height:1.5'>" + (ad.primary_text||"").slice(0,80) + (ad.primary_text&&ad.primary_text.length>80?"…":"") + "</div>"
@@ -6554,6 +6629,339 @@ function exportMetaAds() {
   }
   dl("\uFEFF"+rows.join("\n"), "meta_ads_"+r[1].slice(0,20).replace(/\s/g,"_")+"_"+new Date().toISOString().slice(0,10)+".csv");
   toastOK("Export CSV Meta Ads pret");
+}
+
+
+
+// ============================================================
+// META MARKETING API — création directe de pubs
+// ============================================================
+var metaConfig = {};
+var metaWooImageUrl = null;
+var metaWooImageHash = null;
+var lastMetaAdResult = null;
+
+// ---- INIT ----
+function loadMetaConfig() {
+  try {
+    var saved = JSON.parse(localStorage.getItem(getUserKey("meta_config")) || "{}");
+    metaConfig = saved;
+    updateMetaApiStatus();
+  } catch(e) {}
+}
+
+function saveMetaConfig() {
+  metaConfig.accessToken = (document.getElementById("meta-access-token")||{}).value.trim();
+  metaConfig.adAccount   = (document.getElementById("meta-ad-account")||{}).value.trim();
+  metaConfig.pageId      = (document.getElementById("meta-page-id")||{}).value.trim();
+  metaConfig.pixelId     = (document.getElementById("meta-pixel-id")||{}).value.trim();
+  if (!metaConfig.accessToken || !metaConfig.adAccount || !metaConfig.pageId) {
+    toastWarn("Access Token, Ad Account ID et Page ID sont obligatoires"); return;
+  }
+  if (!metaConfig.adAccount.startsWith("act_")) {
+    metaConfig.adAccount = "act_" + metaConfig.adAccount.replace("act_","");
+  }
+  localStorage.setItem(getUserKey("meta_config"), JSON.stringify(metaConfig));
+  toastOK("Configuration Meta sauvegardee");
+  updateMetaApiStatus();
+}
+
+function toggleMetaApiConfig() {
+  var el = document.getElementById("ma-api-config");
+  if (!el) return;
+  var show = el.style.display === "none";
+  el.style.display = show ? "block" : "none";
+  // Pre-fill fields
+  if (show) {
+    if (document.getElementById("meta-access-token")) document.getElementById("meta-access-token").value = metaConfig.accessToken || "";
+    if (document.getElementById("meta-ad-account"))   document.getElementById("meta-ad-account").value   = metaConfig.adAccount   || "";
+    if (document.getElementById("meta-page-id"))      document.getElementById("meta-page-id").value      = metaConfig.pageId      || "";
+    if (document.getElementById("meta-pixel-id"))     document.getElementById("meta-pixel-id").value     = metaConfig.pixelId     || "";
+  }
+}
+
+function updateMetaApiStatus() {
+  var st  = document.getElementById("ma-api-status");
+  var sec = document.getElementById("ma-create-section");
+  var tgl = document.getElementById("ma-api-toggle");
+  if (!st) return;
+  var configured = metaConfig.accessToken && metaConfig.adAccount && metaConfig.pageId;
+  if (configured) {
+    st.innerHTML = "<span style='color:#085041;font-weight:500'>&#9989; Meta API configuree</span>"
+      + " — Compte: <b>" + metaConfig.adAccount + "</b>"
+      + " | Page: <b>" + metaConfig.pageId + "</b>"
+      + " <span onclick='toggleMetaApiConfig()' style='text-decoration:underline;cursor:pointer;color:var(--mut);font-weight:400;font-size:11px'>Modifier</span>";
+    if (sec) sec.style.display = "";
+    if (tgl) tgl.style.display = "none";
+    // Set default start date
+    var sDate = document.getElementById("meta-start-date");
+    if (sDate && !sDate.value) sDate.value = new Date().toISOString().slice(0,10);
+  } else {
+    st.innerHTML = "Non configure — clique sur <b>Configurer</b> pour entrer tes identifiants Meta.";
+    if (sec) sec.style.display = "none";
+    if (tgl) tgl.style.display = "";
+  }
+}
+
+// ---- GRAPH API HELPER ----
+async function graphAPI(endpoint, method, params) {
+  if (!metaConfig.accessToken) throw new Error("Access Token Meta non configure");
+  var base  = "https://graph.facebook.com/v19.0";
+  var token = "&access_token=" + encodeURIComponent(metaConfig.accessToken);
+  var url   = base + endpoint;
+  var options = {method: method || "GET"};
+  if (method === "POST") {
+    options.headers = {"Content-Type": "application/json"};
+    if (params) options.body = JSON.stringify(Object.assign({}, params, {access_token: metaConfig.accessToken}));
+  } else if (method === "GET") {
+    url += (endpoint.includes("?")?"&":"?") + "access_token=" + encodeURIComponent(metaConfig.accessToken);
+    if (params) url += "&" + Object.keys(params).map(function(k){ return encodeURIComponent(k)+"="+encodeURIComponent(params[k]); }).join("&");
+  }
+  var resp = await fetch(url, options);
+  var data = await resp.json();
+  if (data.error) throw new Error(data.error.message + " (code " + data.error.code + ")");
+  return data;
+}
+
+// ---- TEST CONNEXION ----
+async function testMetaConnection() {
+  if (!metaConfig.accessToken) {
+    toastWarn("Configure d abord ton Access Token Meta"); return;
+  }
+  var st = document.getElementById("ma-api-status");
+  if (st) st.innerHTML = "<span style='color:var(--mut)'>Test en cours...</span>";
+  try {
+    var me = await graphAPI("/me", "GET", {fields:"id,name"});
+    var account = await graphAPI("/" + metaConfig.adAccount, "GET", {fields:"id,name,currency,account_status"});
+    var statusLabel = {1:"Actif",2:"Desactive",3:"Suspendu",7:"Pending Review",9:"En cours de verification"};
+    toastOK({title:"Meta connecte — " + (me.name||me.id), msg:"Compte Ads: " + (account.name||account.id) + " (" + (statusLabel[account.account_status]||account.account_status) + ")"});
+    updateMetaApiStatus();
+  } catch(e) {
+    toastErr("Erreur Meta API: " + e.message);
+    if (st) st.innerHTML = "<span style='color:#7a1a1a'>Erreur: " + e.message + "</span>";
+  }
+}
+
+// ---- FETCH WOOCOMMERCE IMAGE ----
+async function fetchWooImage() {
+  var sel = document.getElementById("ma-product");
+  if (!sel) return;
+  var pid = parseInt(sel.value);
+  var row = PRODUCTS.find(function(r){ return r[0]===pid; });
+  if (!row) { toastWarn("Selectionne un produit"); return; }
+  var prevEl   = document.getElementById("ma-woo-img-preview");
+  var urlInput = document.getElementById("meta-dest-url");
+  if (prevEl) prevEl.innerHTML = "<div class='loading' style='display:flex'><div class='spin'></div> Recherche de l image sur WooCommerce...</div>";
+  try {
+    if (!wcConfig || !wcConfig.url || !wcConfig.key) throw new Error("Configure WooCommerce d abord dans l onglet WooCommerce");
+    // Search WooCommerce products by name
+    var auth   = btoa(wcConfig.key + ":" + wcConfig.secret);
+    var search = encodeURIComponent(row[1].slice(0,30));
+    var resp   = await fetch(wcConfig.url + "/wp-json/wc/v3/products?search=" + search + "&per_page=5", {
+      headers: {"Authorization": "Basic " + auth}
+    });
+    if (!resp.ok) throw new Error("WooCommerce API: " + resp.status);
+    var products = await resp.json();
+    if (!products.length) throw new Error("Produit non trouve sur WooCommerce");
+    var wooProduct = products[0];
+    var images     = wooProduct.images || [];
+    if (!images.length) throw new Error("Aucune image pour ce produit sur WooCommerce");
+    // Use first image
+    metaWooImageUrl = images[0].src;
+    // Set destination URL
+    if (urlInput && wooProduct.permalink) urlInput.value = wooProduct.permalink;
+    // Show preview with all available images
+    if (prevEl) {
+      prevEl.innerHTML = "<div style='margin-top:.5rem'>"
+        + "<div style='font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.3px;color:var(--mut);margin-bottom:.35rem'>"
+          + images.length + " photo(s) disponible(s) — selectionne celle a utiliser</div>"
+        + "<div style='display:flex;gap:8px;flex-wrap:wrap'>"
+        + images.map(function(img, i){
+            return "<div onclick='selectMetaImage(\"" + img.src.replace(/"/g,"&quot;") + "\",this)' "
+              + "style='border:2px solid " + (i===0?"#1877f2":"var(--bord)") + ";border-radius:8px;overflow:hidden;cursor:pointer;transition:border-color .15s;flex-shrink:0'>"
+              + "<img src='" + img.src + "' style='width:80px;height:80px;object-fit:cover;display:block'>"
+              + "</div>";
+          }).join("")
+        + "</div>"
+        + "<div style='font-size:11.5px;color:var(--grn);margin-top:.4rem'>&#9989; Image selectionnee: <span id='meta-img-url-label'>" + metaWooImageUrl.split("/").pop().slice(0,40) + "</span></div>"
+        + "</div>";
+    }
+    toastOK({title: images.length + " photo(s) trouvees", msg: wooProduct.name.slice(0,40)});
+  } catch(e) {
+    if (prevEl) prevEl.innerHTML = "<div class='al ao' style='margin-top:.4rem'>Erreur: " + e.message + "</div>"
+      + "<div style='font-size:11px;color:var(--mut);margin-top:.3rem'>Tu peux aussi entrer l URL de l image manuellement ci-dessous.</div>"
+      + "<div class='form-group' style='margin-top:.35rem'><label>URL image manuelle</label><input type='url' id='meta-img-url-manual' placeholder='https://urbanelectrostore.com/...image.jpg' style='width:100%' oninput='metaWooImageUrl=this.value'></div>";
+    toastWarn("WooCommerce: " + e.message);
+  }
+}
+
+function selectMetaImage(url, el) {
+  metaWooImageUrl = url;
+  // Update selection border
+  var parent = el.parentNode;
+  parent.querySelectorAll("div[onclick]").forEach(function(d){ d.style.borderColor = "var(--bord)"; });
+  el.style.borderColor = "#1877f2";
+  var label = document.getElementById("meta-img-url-label");
+  if (label) label.textContent = url.split("/").pop().slice(0,40);
+  toastInfo("Image selectionnee");
+}
+
+// ---- CREATE META AD ----
+async function createMetaAd() {
+  if (!metaConfig.accessToken || !metaConfig.adAccount || !metaConfig.pageId) {
+    toastWarn("Configure d abord l API Meta"); return;
+  }
+  if (!metaAdsResults) {
+    toastWarn("Genere d abord les textes publicitaires avec le bouton Generer les ads"); return;
+  }
+  if (!metaWooImageUrl) {
+    toastWarn("Recupere d abord la photo produit WooCommerce"); return;
+  }
+
+  var r          = metaAdsResults.product;
+  var f          = metaAdsResults.data.formats || {};
+  var feed       = f.feed;
+  if (!feed) { toastWarn("Genere le format Feed pour creer la pub"); return; }
+
+  var budget     = parseInt((document.getElementById("meta-daily-budget")||{}).value||"20") * 100; // en centimes
+  var startDate  = (document.getElementById("meta-start-date")||{}).value;
+  var endDate    = (document.getElementById("meta-end-date")||{}).value;
+  var destUrl    = (document.getElementById("meta-dest-url")||{}).value || wcConfig.url || "https://urbanelectrostore.com";
+  var objective  = metaAdsResults.objective || "OUTCOME_SALES";
+  var cta        = metaAdsResults.cta || "SHOP_NOW";
+
+  var prog = document.getElementById("ma-publish-progress");
+  var btn  = document.getElementById("meta-publish-btn");
+  if (btn) btn.disabled = true;
+
+  var META_OBJECTIVES = {conversion:"OUTCOME_SALES",traffic:"OUTCOME_TRAFFIC",awareness:"OUTCOME_AWARENESS",catalog:"OUTCOME_SALES",engagement:"OUTCOME_ENGAGEMENT"};
+  var objApi = META_OBJECTIVES[objective] || "OUTCOME_SALES";
+
+  function step(msg, pct) {
+    if (!prog) return;
+    prog.innerHTML = "<div style='margin-bottom:.35rem;font-size:12px;color:var(--txt)'><b>Etape en cours :</b> " + msg + "</div>"
+      + "<div style='height:6px;background:var(--bg);border-radius:3px;overflow:hidden'>"
+        + "<div style='height:100%;background:#1877f2;width:" + pct + "%;transition:width .4s'></div></div>"
+      + "<div style='font-size:10px;color:var(--mut);margin-top:3px'>" + pct + "%</div>";
+  }
+
+  try {
+    // STEP 1 — Upload image
+    step("Upload de l image dans Meta...", 15);
+    var imgResp = await graphAPI("/" + metaConfig.adAccount + "/adimages", "POST", {url: metaWooImageUrl});
+    var imgHash = null;
+    if (imgResp.images) {
+      var keys = Object.keys(imgResp.images);
+      if (keys.length) imgHash = imgResp.images[keys[0]].hash;
+    }
+    if (!imgHash) throw new Error("Impossible d uploader l image vers Meta");
+    metaWooImageHash = imgHash;
+
+    // STEP 2 — Create campaign
+    step("Creation de la campagne...", 35);
+    var campaign = await graphAPI("/" + metaConfig.adAccount + "/campaigns", "POST", {
+      name:      "[Cockpit] " + r[1].slice(0,30) + " — " + new Date().toLocaleDateString("fr-FR"),
+      objective: objApi,
+      status:    "PAUSED",
+      special_ad_categories: []
+    });
+    var campaignId = campaign.id;
+    if (!campaignId) throw new Error("Erreur creation campagne");
+
+    // STEP 3 — Create ad set
+    step("Configuration de l ensemble de pubs...", 55);
+    var adSetParams = {
+      name:             "[Cockpit] " + r[1].slice(0,25) + " — AdSet",
+      campaign_id:      campaignId,
+      daily_budget:     budget,
+      bid_strategy:     "LOWEST_COST_WITHOUT_CAP",
+      billing_event:    "IMPRESSIONS",
+      optimization_goal: objApi === "OUTCOME_SALES" ? "OFFSITE_CONVERSIONS" : "LINK_CLICKS",
+      targeting:        {geo_locations:{countries:["FR"]}, age_min:18, age_max:65},
+      status:           "PAUSED"
+    };
+    if (startDate)                           adSetParams.start_time = new Date(startDate).toISOString();
+    if (endDate)                             adSetParams.end_time   = new Date(endDate).toISOString();
+    if (metaConfig.pixelId && objApi==="OUTCOME_SALES") {
+      adSetParams.promoted_object = {pixel_id: metaConfig.pixelId, custom_event_type: "PURCHASE"};
+    }
+    var adSet = await graphAPI("/" + metaConfig.adAccount + "/adsets", "POST", adSetParams);
+    var adSetId = adSet.id;
+    if (!adSetId) throw new Error("Erreur creation ensemble de pubs");
+
+    // STEP 4 — Create creative
+    step("Creation du visuel publicitaire...", 72);
+    var primaryText = (feed.primary_text||"").slice(0,125);
+    var headline    = (feed.headline||r[1]).slice(0,40);
+    var description = (feed.description||"").slice(0,30);
+    var creative = await graphAPI("/" + metaConfig.adAccount + "/adcreatives", "POST", {
+      name: "[Cockpit] Creative — " + r[1].slice(0,30),
+      object_story_spec: {
+        page_id: metaConfig.pageId,
+        link_data: {
+          image_hash:  imgHash,
+          link:        destUrl,
+          message:     primaryText,
+          name:        headline,
+          description: description,
+          call_to_action: {type: cta, value: {link: destUrl}}
+        }
+      }
+    });
+    var creativeId = creative.id;
+    if (!creativeId) throw new Error("Erreur creation du visuel");
+
+    // STEP 5 — Create ad
+    step("Creation de la publicite...", 88);
+    var ad = await graphAPI("/" + metaConfig.adAccount + "/ads", "POST", {
+      name:        "[Cockpit] " + r[1].slice(0,30),
+      adset_id:    adSetId,
+      creative:    {creative_id: creativeId},
+      status:      "PAUSED"
+    });
+    var adId = ad.id;
+    if (!adId) throw new Error("Erreur creation de la pub");
+
+    // SUCCESS
+    step("Publication terminee!", 100);
+    lastMetaAdResult = {campaignId, adSetId, creativeId, adId, product: r};
+    if (btn) btn.disabled = false;
+
+    var adsManagerUrl = "https://adsmanager.facebook.com/adsmanager/manage/campaigns?act=" + metaConfig.adAccount.replace("act_","");
+    if (prog) prog.innerHTML = "<div style='padding:.65rem .85rem;background:#e8f4ee;border-radius:9px;border:1px solid #9FE1CB;margin-top:.35rem'>"
+      + "<div style='font-size:13px;font-weight:600;color:#085041;margin-bottom:.35rem'>&#127881; Publicite creee avec succes !</div>"
+      + "<div style='font-size:12px;color:#04342C;line-height:1.8;margin-bottom:.5rem'>"
+        + "&#128247; Image uploadee<br>"
+        + "&#128640; Campagne creee (statut : En pause)<br>"
+        + "&#127919; Ensemble de pubs configure<br>"
+        + "&#127759; Ciblage : France, 18-65 ans<br>"
+        + "&#128196; Pub creee en brouillon — prete a activer"
+      + "</div>"
+      + "<div style='display:flex;gap:7px;flex-wrap:wrap'>"
+        + "<a href='" + adsManagerUrl + "' target='_blank' style='display:inline-flex;align-items:center;gap:6px;padding:7px 14px;background:#1877f2;color:#fff;border-radius:8px;font-size:12px;font-weight:500;text-decoration:none'>Ouvrir dans Ads Manager &#8599;</a>"
+        + "<button class='btn' onclick='copyMetaIds()' style='font-size:11px'>Copier les IDs</button>"
+      + "</div>"
+      + "</div>";
+    toastOK({title:"Pub creee dans Meta Ads !", msg:"Campagne en pause — active-la dans Ads Manager"});
+  } catch(e) {
+    if (btn) btn.disabled = false;
+    if (prog) prog.innerHTML = "<div class='al ao' style='margin-top:.35rem'><b>Erreur:</b> " + e.message
+      + "<br><span style='font-size:11px;color:var(--mut)'>Verifie ton Access Token et les permissions (ads_management requis).</span></div>";
+    toastErr("Erreur Meta API: " + e.message);
+  }
+}
+
+function copyMetaIds() {
+  if (!lastMetaAdResult) return;
+  var txt = "Campaign ID: " + lastMetaAdResult.campaignId + "\nAdSet ID: " + lastMetaAdResult.adSetId + "\nCreative ID: " + lastMetaAdResult.creativeId + "\nAd ID: " + lastMetaAdResult.adId;
+  if (navigator.clipboard) navigator.clipboard.writeText(txt).then(function(){ toastOK("IDs copies"); });
+}
+
+// Init Meta config when tab opens — hook into initMetaAdsAgent
+var _origInitMetaAdsAgent = typeof initMetaAdsAgent === "function" ? initMetaAdsAgent : null;
+function initMetaAdsAgent() {
+  if (_origInitMetaAdsAgent) _origInitMetaAdsAgent();
+  loadMetaConfig();
 }
 
 
