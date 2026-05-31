@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>NOF — Cockpit E-commerce</title>
-<meta name="description" content="Scoring produits, generateur d ads IA et geo-ciblage pour NOF">
+<title>UrbanElectroStore — Cockpit E-commerce</title>
+<meta name="description" content="Scoring produits, generateur d ads IA et geo-ciblage pour UrbanElectroStore">
 <meta name="theme-color" content="#18180f">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -339,7 +339,7 @@ th{position:sticky;top:0;z-index:1}
 <div class="login-overlay" id="login-overlay">
   <div class="login-box" id="login-box-user">
     <div class="logo">🛍</div>
-    <h2>NOF — Cockpit</h2>
+    <h2>UrbanElectroStore — Cockpit</h2>
     <p class="sub">Entre tes identifiants pour acceder a l outil</p>
     <div class="login-field">
       <label>Ton prenom ou identifiant</label>
@@ -383,7 +383,7 @@ th{position:sticky;top:0;z-index:1}
 </div>
 
 <div class="topbar">
-  <h1>&#128722; NOF &mdash; Cockpit E-commerce</h1>
+  <h1>&#128722; UrbanElectroStore &mdash; Cockpit E-commerce</h1>
   <span id="sync-indicator" onclick="manualSync()" title="Cliquer pour synchroniser maintenant"
     style="font-size:11px;font-weight:500;padding:3px 10px;border-radius:20px;cursor:pointer;background:#e8f0fb;color:#0c3d6e;display:inline-flex;align-items:center;gap:4px">&#9729; Cloud</span>
   <div class="topr">
@@ -968,7 +968,7 @@ th{position:sticky;top:0;z-index:1}
       <div class="form-row" style="margin-top:.5rem">
         <div class="form-group" style="flex:1;min-width:200px">
           <label>URL de ta boutique</label>
-          <input type="text" id="wc-url" placeholder="https://NOF.com" style="width:100%">
+          <input type="text" id="wc-url" placeholder="https://urbanelectrostore.com" style="width:100%">
         </div>
       </div>
       <div class="form-row">
@@ -1458,13 +1458,44 @@ CTA : Voir l offre" style="width:100%;height:130px;padding:7px 9px;border:1px so
           <input type="text" id="meta-pixel-id" placeholder="123456789" style="width:100%;font-family:monospace">
         </div>
       </div>
-      <div style="display:flex;gap:7px;flex-wrap:wrap;margin-bottom:.5rem">
+      <div style="display:flex;gap:7px;flex-wrap:wrap;margin-bottom:.55rem">
         <button class="btn bg" onclick="saveMetaConfig()">Sauvegarder</button>
-        <a href="https://developers.facebook.com/tools/explorer/" target="_blank" class="btn" style="font-size:11px">Obtenir un Access Token &#8599;</a>
+        <button class="btn" onclick="testMetaConnection()" style="font-size:11px">Tester</button>
+        <a href="https://developers.facebook.com/tools/explorer/" target="_blank" class="btn" style="font-size:11px">Graph API Explorer &#8599;</a>
       </div>
-      <div style="font-size:11px;color:var(--mut);line-height:1.7;background:var(--bg);border-radius:7px;padding:.5rem .7rem">
-        <b>Permissions requises sur ton token :</b> ads_management, ads_read, pages_read_engagement, business_management<br>
-        <b>Comment obtenir le token :</b> developers.facebook.com → Graph API Explorer → Generer un token → coche les permissions ci-dessus
+
+      <!-- Token longue duree -->
+      <div style="background:var(--bg);border-radius:8px;padding:.6rem .8rem;margin-bottom:.5rem;border:0.5px solid var(--bord2)">
+        <div style="font-size:11.5px;font-weight:500;margin-bottom:.3rem">&#128274; Prolonger le token (60 jours)</div>
+        <div style="font-size:11px;color:var(--mut);margin-bottom:.4rem">Token Graph Explorer = 1-2h seulement. Entre App ID + Secret pour obtenir 60 jours.</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:.4rem">
+          <div class="form-group">
+            <label>App ID</label>
+            <input type="text" id="meta-app-id" placeholder="123456789" style="width:100%;font-family:monospace">
+          </div>
+          <div class="form-group">
+            <label>App Secret</label>
+            <input type="password" id="meta-app-secret" placeholder="abcdef123..." style="width:100%;font-family:monospace">
+          </div>
+        </div>
+        <button class="btn bd" id="meta-exchange-btn" onclick="exchangeLongLivedToken()" style="font-size:11px">Prolonger le token</button>
+        <div style="font-size:10px;color:var(--mut);margin-top:.3rem">App ID + Secret : developers.facebook.com → ton app → Tableau de bord → Informations de base</div>
+      </div>
+
+      <!-- Erreur code 3 -->
+      <div style="background:#fef3e2;border-radius:8px;padding:.55rem .75rem;margin-bottom:.45rem;border:0.5px solid #f0d9a0">
+        <div style="font-size:11.5px;font-weight:600;color:#7a4a00;margin-bottom:.3rem">&#9888; Erreur code 3 ? Passe l app en mode Live</div>
+        <div style="font-size:11px;color:#7a4a00;line-height:1.8">
+          1. <a href="https://developers.facebook.com/apps/" target="_blank" style="color:#7a4a00;font-weight:600;text-decoration:underline">developers.facebook.com/apps</a> → ton app Marketing API<br>
+          2. En haut de la page : passe de <b>Developpement</b> a <b>Live</b><br>
+          3. Regenere un token dans Graph API Explorer<br>
+          4. Sauvegarde et reteste
+        </div>
+      </div>
+
+      <div style="font-size:11px;color:var(--mut);line-height:1.7;background:var(--bg);border-radius:7px;padding:.45rem .65rem">
+        <b>Permissions :</b> ads_management, ads_read, pages_read_engagement, business_management, pages_show_list<br>
+        <b>Token expiration :</b> <span id="meta-token-expiry">inconnue — prolonge le token ci-dessus</span>
       </div>
     </div>
   </div>
@@ -1488,7 +1519,7 @@ CTA : Voir l offre" style="width:100%;height:130px;padding:7px 9px;border:1px so
         </div>
         <div class="form-group">
           <label>URL de destination</label>
-          <input type="url" id="meta-dest-url" placeholder="https://NOF.com/produit/..." style="width:100%">
+          <input type="url" id="meta-dest-url" placeholder="https://urbanelectrostore.com/produit/..." style="width:100%">
         </div>
       </div>
       <div style="display:flex;gap:7px;flex-wrap:wrap">
@@ -2802,7 +2833,7 @@ function exportScoring() {
 
 // ============================================================
 // EXPORT WOOCOMMERCE CSV — mappage complet 64 colonnes
-// Basé sur le format réel du fichier product-export d NOF
+// Basé sur le format réel du fichier product-export d UrbanElectroStore
 // ============================================================
 function exportWooCSV() {
   // Mapping catégories cockpit → catégories WooCommerce réelles
@@ -2862,7 +2893,7 @@ function exportWooCSV() {
   ];
 
   var now = new Date().toISOString().replace("T"," ").slice(0,19);
-  var baseUrl = "https://NOF.com";
+  var baseUrl = "https://urbanelectrostore.com";
 
   var rows = PRODUCTS.map(function(r, i) {
     var d      = userScores[r[0]] || {};
@@ -2898,10 +2929,10 @@ function exportWooCSV() {
     var focuskw = name.split(" ").slice(0,4).join(" ").toLowerCase();
 
     // meta:_yoast_wpseo_title — titre SEO
-    var seoTitle = name + " | NOF";
+    var seoTitle = name + " | UrbanElectroStore";
 
     // meta:_yoast_wpseo_metadesc — meta description
-    var metadesc = "Achetez " + name + " au meilleur prix sur NOF";
+    var metadesc = "Achetez " + name + " au meilleur prix sur UrbanElectroStore";
     if (r[7] === "win" && r[6]) metadesc += " - " + price + " EUR vs " + r[6] + " ailleurs";
     metadesc += ".";
 
@@ -5343,7 +5374,7 @@ function deleteUser(idx) {
 function copyInvite(idx) {
   var u = ACCESS.users[idx];
   if (!u) return;
-  var msg = "Bonjour " + u.name + ",\n\nTu as acces au Cockpit E-commerce NOF.\n\n"
+  var msg = "Bonjour " + u.name + ",\n\nTu as acces au Cockpit E-commerce UrbanElectroStore.\n\n"
     + "Lien : " + window.location.href.split("?")[0] + "\nPrenom : " + u.name + "\nCode : " + u.code
     + (u.expiry ? "\nAcces valable jusqu au : " + u.expiry : "")
     + "\n\nBonne utilisation !";
@@ -6498,7 +6529,7 @@ function renderFeedPreview(ad, cta, ctaLabel, row) {
   return "<div style='max-width:280px;border:0.5px solid var(--bord2);border-radius:10px;overflow:hidden;background:#fff;font-family:Arial,sans-serif'>"
     + "<div style='display:flex;align-items:center;gap:7px;padding:8px 10px'>"
       + "<div style='width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#1877f2,#42b0ff);flex-shrink:0'></div>"
-      + "<div><div style='font-size:12px;font-weight:600;color:#1a1a1a'>NOF</div>"
+      + "<div><div style='font-size:12px;font-weight:600;color:#1a1a1a'>UrbanElectroStore</div>"
         + "<div style='font-size:10px;color:#8a8a8a'>Sponsorisé · &#127758;</div></div>"
     + "</div>"
     + "<div style='padding:0 10px 6px;font-size:12px;color:#1a1a1a;line-height:1.5'>" + (ad.primary_text||"").slice(0,80) + (ad.primary_text&&ad.primary_text.length>80?"…":"") + "</div>"
@@ -6699,10 +6730,21 @@ function updateMetaApiStatus() {
   if (!st) return;
   var configured = metaConfig.accessToken && metaConfig.adAccount && metaConfig.pageId;
   if (configured) {
+    var expiryStr = "";
+    if (metaConfig.tokenExpiry) {
+      var exp = new Date(metaConfig.tokenExpiry);
+      var daysLeft = Math.ceil((exp - new Date()) / 86400000);
+      var expColor = daysLeft < 5 ? "#7a1a1a" : daysLeft < 15 ? "#7a4a00" : "#085041";
+      expiryStr = " | <span style='color:" + expColor + "'>Token: " + daysLeft + "j restants</span>";
+    }
     st.innerHTML = "<span style='color:#085041;font-weight:500'>&#9989; Meta API configuree</span>"
       + " — Compte: <b>" + metaConfig.adAccount + "</b>"
       + " | Page: <b>" + metaConfig.pageId + "</b>"
+      + expiryStr
       + " <span onclick='toggleMetaApiConfig()' style='text-decoration:underline;cursor:pointer;color:var(--mut);font-weight:400;font-size:11px'>Modifier</span>";
+    // Update expiry display in config panel
+    var expEl = document.getElementById("meta-token-expiry");
+    if (expEl) expEl.textContent = metaConfig.tokenExpiry ? new Date(metaConfig.tokenExpiry).toLocaleDateString("fr-FR") : "inconnue (token court — prolonge-le)";
     if (sec) sec.style.display = "";
     if (tgl) tgl.style.display = "none";
     // Set default start date
@@ -6712,6 +6754,40 @@ function updateMetaApiStatus() {
     st.innerHTML = "Non configure — clique sur <b>Configurer</b> pour entrer tes identifiants Meta.";
     if (sec) sec.style.display = "none";
     if (tgl) tgl.style.display = "";
+  }
+}
+
+// ---- LONG-LIVED TOKEN EXCHANGE ----
+async function exchangeLongLivedToken() {
+  if (!metaConfig.accessToken) { toastWarn("Entre d abord un Access Token"); return; }
+  var appId     = (document.getElementById("meta-app-id")||{}).value.trim();
+  var appSecret = (document.getElementById("meta-app-secret")||{}).value.trim();
+  if (!appId || !appSecret) { toastWarn("Entre ton App ID et App Secret pour prolonger le token"); return; }
+  var btn = document.getElementById("meta-exchange-btn");
+  if (btn) { btn.textContent = "Echange en cours..."; btn.disabled = true; }
+  try {
+    var url = "https://graph.facebook.com/v19.0/oauth/access_token"
+      + "?grant_type=fb_exchange_token"
+      + "&client_id=" + encodeURIComponent(appId)
+      + "&client_secret=" + encodeURIComponent(appSecret)
+      + "&fb_exchange_token=" + encodeURIComponent(metaConfig.accessToken);
+    var resp = await fetch(url);
+    var data = await resp.json();
+    if (data.error) throw new Error(data.error.message);
+    metaConfig.accessToken = data.access_token;
+    // Update field
+    var inp = document.getElementById("meta-access-token");
+    if (inp) inp.value = data.access_token;
+    // Calculate expiry (~60 days)
+    var expiry = new Date(); expiry.setDate(expiry.getDate() + 60);
+    metaConfig.tokenExpiry = expiry.toISOString();
+    localStorage.setItem(getUserKey("meta_config"), JSON.stringify(metaConfig));
+    toastOK({title: "Token prolonge avec succes!", msg: "Valable 60 jours jusqu au " + expiry.toLocaleDateString("fr-FR")});
+    updateMetaApiStatus();
+  } catch(e) {
+    toastErr("Erreur echange token: " + e.message);
+  } finally {
+    if (btn) { btn.textContent = "Prolonger le token (60 jours)"; btn.disabled = false; }
   }
 }
 
@@ -6802,7 +6878,7 @@ async function fetchWooImage() {
   } catch(e) {
     if (prevEl) prevEl.innerHTML = "<div class='al ao' style='margin-top:.4rem'>Erreur: " + e.message + "</div>"
       + "<div style='font-size:11px;color:var(--mut);margin-top:.3rem'>Tu peux aussi entrer l URL de l image manuellement ci-dessous.</div>"
-      + "<div class='form-group' style='margin-top:.35rem'><label>URL image manuelle</label><input type='url' id='meta-img-url-manual' placeholder='https://NOF.com/...image.jpg' style='width:100%' oninput='metaWooImageUrl=this.value'></div>";
+      + "<div class='form-group' style='margin-top:.35rem'><label>URL image manuelle</label><input type='url' id='meta-img-url-manual' placeholder='https://urbanelectrostore.com/...image.jpg' style='width:100%' oninput='metaWooImageUrl=this.value'></div>";
     toastWarn("WooCommerce: " + e.message);
   }
 }
@@ -6838,7 +6914,7 @@ async function createMetaAd() {
   var budget     = parseInt((document.getElementById("meta-daily-budget")||{}).value||"20") * 100; // en centimes
   var startDate  = (document.getElementById("meta-start-date")||{}).value;
   var endDate    = (document.getElementById("meta-end-date")||{}).value;
-  var destUrl    = (document.getElementById("meta-dest-url")||{}).value || wcConfig.url || "https://NOF.com";
+  var destUrl    = (document.getElementById("meta-dest-url")||{}).value || wcConfig.url || "https://urbanelectrostore.com";
   var objective  = metaAdsResults.objective || "OUTCOME_SALES";
   var cta        = metaAdsResults.cta || "SHOP_NOW";
 
@@ -6957,9 +7033,32 @@ async function createMetaAd() {
     toastOK({title:"Pub creee dans Meta Ads !", msg:"Campagne en pause — active-la dans Ads Manager"});
   } catch(e) {
     if (btn) btn.disabled = false;
-    if (prog) prog.innerHTML = "<div class='al ao' style='margin-top:.35rem'><b>Erreur:</b> " + e.message
-      + "<br><span style='font-size:11px;color:var(--mut)'>Verifie ton Access Token et les permissions (ads_management requis).</span></div>";
-    toastErr("Erreur Meta API: " + e.message);
+    var errMsg = e.message || "";
+    var errGuide = "";
+    if (errMsg.indexOf("code 3") >= 0 || errMsg.indexOf("(#3)") >= 0) {
+      errGuide = "<div style='margin-top:.5rem;padding:.5rem .7rem;background:#fef3e2;border-radius:7px;font-size:12px;color:#7a4a00;line-height:1.8'>"
+        + "<b>Solution pour l erreur code 3 :</b><br>"
+        + "1. Va sur <a href='https://developers.facebook.com/apps/' target='_blank' style='color:#7a4a00;font-weight:600'>developers.facebook.com/apps</a><br>"
+        + "2. Selectionne ton app Marketing API<br>"
+        + "3. En haut : passe le mode de <b>Developpement</b> a <b>Live</b><br>"
+        + "4. Ou verifie que ton compte est bien <b>Administrateur</b> de l app<br>"
+        + "5. Regenere un nouveau token apres le changement"
+        + "</div>";
+    } else if (errMsg.indexOf("code 190") >= 0 || errMsg.toLowerCase().indexOf("token") >= 0) {
+      errGuide = "<div style='margin-top:.5rem;padding:.5rem .7rem;background:#fef3e2;border-radius:7px;font-size:12px;color:#7a4a00;line-height:1.8'>"
+        + "<b>Token expire ou invalide :</b><br>"
+        + "Ton token a expire (tokens courts = 1-2h). Clique <b>Prolonger le token (60 jours)</b> ci-dessus ou regenere un nouveau token dans Graph API Explorer."
+        + "</div>";
+    } else if (errMsg.indexOf("code 200") >= 0 || errMsg.indexOf("permission") >= 0) {
+      errGuide = "<div style='margin-top:.5rem;padding:.5rem .7rem;background:#fef3e2;border-radius:7px;font-size:12px;color:#7a4a00;line-height:1.8'>"
+        + "<b>Permission manquante :</b><br>"
+        + "Regenere ton token dans Graph API Explorer avec les permissions : ads_management, ads_read, pages_read_engagement, business_management, pages_show_list."
+        + "</div>";
+    } else {
+      errGuide = "<div style='margin-top:.4rem;font-size:11px;color:var(--mut)'>Verifie ton Access Token et que l app est en mode Live.</div>";
+    }
+    if (prog) prog.innerHTML = "<div class='al ao' style='margin-top:.35rem'><b>Erreur:</b> " + errMsg + errGuide + "</div>";
+    toastErr("Erreur Meta: " + errMsg.slice(0,60));
   }
 }
 
