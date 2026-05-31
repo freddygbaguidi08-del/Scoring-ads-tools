@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>NOF — Cockpit E-commerce</title>
-<meta name="description" content="Scoring produits, generateur d ads IA et geo-ciblage pour NOF">
+<title>UrbanElectroStore — Cockpit E-commerce</title>
+<meta name="description" content="Scoring produits, generateur d ads IA et geo-ciblage pour UrbanElectroStore">
 <meta name="theme-color" content="#18180f">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -339,7 +339,7 @@ th{position:sticky;top:0;z-index:1}
 <div class="login-overlay" id="login-overlay">
   <div class="login-box" id="login-box-user">
     <div class="logo">🛍</div>
-    <h2>NOF — Cockpit</h2>
+    <h2>UrbanElectroStore — Cockpit</h2>
     <p class="sub">Entre tes identifiants pour acceder a l outil</p>
     <div class="login-field">
       <label>Ton prenom ou identifiant</label>
@@ -383,13 +383,14 @@ th{position:sticky;top:0;z-index:1}
 </div>
 
 <div class="topbar">
-  <h1>&#128722; NOF &mdash; Cockpit E-commerce</h1>
+  <h1>&#128722; UrbanElectroStore &mdash; Cockpit E-commerce</h1>
   <span id="sync-indicator" onclick="manualSync()" title="Cliquer pour synchroniser maintenant"
     style="font-size:11px;font-weight:500;padding:3px 10px;border-radius:20px;cursor:pointer;background:#e8f0fb;color:#0c3d6e;display:inline-flex;align-items:center;gap:4px">&#9729; Cloud</span>
   <div class="topr">
     <button class="btn bb" onclick="loadFromCloud()" title="Charger depuis le cloud">&#9729; Charger cloud</button>
     <button class="btn" onclick="openImport()">&#8679; Importer</button>
     <button class="btn bg" onclick="exportScoring()">&#8681; Scoring CSV</button>
+    <button class="btn bd" onclick="exportWooCSV()" title="Exporter au format WooCommerce officiel pour import direct">&#128722; Export WooCommerce</button>
     <button class="btn" onclick="runDeduplication()">&#128683; Dedoublonner</button>
     <button class="btn" onclick="resetProductsToDefault()" style="color:#7a1a1a">&#8635; Reset</button>
     <button class="btn" onclick="printReport()">&#128438; Rapport</button>
@@ -415,6 +416,7 @@ th{position:sticky;top:0;z-index:1}
   <button class="mtab" onclick="showMain('guidads')">&#127919; Guide Ads</button>
   <button class="mtab" onclick="showMain('woocommerce')">&#128722; WooCommerce</button>
   <button class="mtab" onclick="showMain('translator')">&#127760; Traducteur</button>
+  <button class="mtab" id="mtab-metaads" onclick="showMain('metaads')">&#128640; Meta Ads Agent</button>
   <button class="mtab" id="mtab-integ" onclick="showMain('integrations')">&#128279; Intégrations</button>
   <button class="mtab" id="mtab-admin" style="display:none" onclick="showMain('admin')">&#128274; Admin Acces</button>
 </div>
@@ -966,7 +968,7 @@ th{position:sticky;top:0;z-index:1}
       <div class="form-row" style="margin-top:.5rem">
         <div class="form-group" style="flex:1;min-width:200px">
           <label>URL de ta boutique</label>
-          <input type="text" id="wc-url" placeholder="https://NOF.com" style="width:100%">
+          <input type="text" id="wc-url" placeholder="https://urbanelectrostore.com" style="width:100%">
         </div>
       </div>
       <div class="form-row">
@@ -1006,6 +1008,16 @@ th{position:sticky;top:0;z-index:1}
   <div id="wc-loading" style="display:none" class="loading"><div class="spin"></div><span id="wc-msg">Connexion en cours...</span></div>
   <div id="wc-result"></div>
   <div style="margin-top:.75rem">
+    <div class="card-section" style="border-left:3px solid #1D9E75;border-radius:0 var(--r) var(--r) 0">
+      <h3 style="margin-bottom:.4rem">Export CSV vers WooCommerce</h3>
+      <div style="font-size:12px;color:var(--txt);margin-bottom:.5rem;line-height:1.7">
+        Exporte tes produits dans le format officiel WooCommerce (colonnes <b>Name</b>, <b>Regular price</b>, <b>Short description</b>, <b>Categories</b>, <b>SKU</b>...). Importe ensuite dans WooCommerce &rarr; Produits &rarr; Importer.
+      </div>
+      <div style="display:flex;gap:7px;flex-wrap:wrap">
+        <button class="btn bg" onclick="exportWooCSV()">&#8681; Exporter CSV WooCommerce</button>
+        <a href="https://woo.com/document/product-csv-importer-exporter/" target="_blank" class="btn" style="font-size:11px">Guide officiel WooCommerce &#8599;</a>
+      </div>
+    </div>
     <div class="card-section">
       <h3>Comment creer les cles API WooCommerce</h3>
       <ol style="padding-left:1.1rem;font-size:12px;line-height:2;color:var(--txt)">
@@ -1218,7 +1230,7 @@ CTA : Voir l offre" style="width:100%;height:130px;padding:7px 9px;border:1px so
   <div id="integ-viewer" style="display:none;position:relative;border:1px solid var(--bord);border-radius:var(--r);overflow:hidden;background:var(--sur)">
     <div style="display:flex;align-items:center;gap:8px;padding:.5rem .85rem;border-bottom:1px solid var(--bord);background:var(--bg)">
       <span id="integ-viewer-title" style="font-size:13px;font-weight:500;flex:1"></span>
-      <a id="integ-viewer-extlink" href="#" target="_blank" class="btn bsm" style="font-size:11px">&#8599; Ouvrir dans nouvel onglet</a>
+      <a id="integ-viewer-extlink" href="#" target="_blank" class="btn bg bsm" style="font-size:11px">&#8599; Ouvrir dans nouvel onglet</a>
       <button class="btn bsm" onclick="closeIntegViewer()" style="font-size:11px">&#x2715; Fermer</button>
     </div>
     <iframe id="integ-iframe"
@@ -1287,6 +1299,148 @@ CTA : Voir l offre" style="width:100%;height:130px;padding:7px 9px;border:1px so
   </div>
 </div>
 
+
+<!-- TAB META ADS AGENT -->
+<div class="panel" id="tab-metaads">
+
+  <!-- Header -->
+  <div style="display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-top:.5rem;margin-bottom:.85rem">
+    <div>
+      <div style="font-size:15px;font-weight:600;margin-bottom:.2rem">&#128640; Meta Ads Agent</div>
+      <div style="font-size:12px;color:var(--mut)">Cree des publicites conformes aux regles Meta Ads. Textes verifies, formats corrects, politique respectee.</div>
+    </div>
+    <div style="display:flex;gap:6px;flex-wrap:wrap">
+      <button class="btn" onclick="exportMetaAds()" id="meta-export-btn" style="display:none">&#8681; Exporter CSV</button>
+      <button class="btn bg" onclick="runMetaAdsAgent()">&#128640; Generer les ads</button>
+    </div>
+  </div>
+
+  <!-- Config -->
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:10px;margin-bottom:.75rem">
+
+    <!-- Produit + Objectif -->
+    <div class="card-section">
+      <h3 style="margin-bottom:.55rem">Produit & Objectif</h3>
+      <div class="form-group" style="margin-bottom:.5rem">
+        <label>Produit a promouvoir</label>
+        <select id="ma-product" style="width:100%" onchange="onMetaProductChange()"></select>
+      </div>
+      <div class="form-group" style="margin-bottom:.5rem">
+        <label>Objectif de campagne</label>
+        <select id="ma-objective" style="width:100%">
+          <option value="traffic">Trafic — Attirer des visiteurs sur la boutique</option>
+          <option value="conversion" selected>Conversions — Generer des achats</option>
+          <option value="awareness">Notoriete — Faire connaitre la marque</option>
+          <option value="catalog">Catalogue — Produit dynamique (retargeting)</option>
+          <option value="engagement">Engagement — Likes, commentaires, partages</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Audience cible</label>
+        <select id="ma-audience" style="width:100%">
+          <option value="cold">Audience froide — Nouveaux clients</option>
+          <option value="warm">Audience chaude — Visiteurs du site</option>
+          <option value="retargeting">Retargeting — Panier abandonne</option>
+          <option value="lookalike">Lookalike — Similaire aux acheteurs</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Formats -->
+    <div class="card-section">
+      <h3 style="margin-bottom:.55rem">Formats a generer</h3>
+      <div style="display:flex;flex-direction:column;gap:6px">
+        <label style="display:flex;align-items:center;gap:8px;font-size:12px;cursor:pointer;padding:.3rem .5rem;border-radius:6px;background:var(--bg)">
+          <input type="checkbox" id="ma-f-feed" checked>
+          <span>&#128444; <b>Feed</b> (1:1) — Texte 125 cars + Titre 40 cars</span>
+        </label>
+        <label style="display:flex;align-items:center;gap:8px;font-size:12px;cursor:pointer;padding:.3rem .5rem;border-radius:6px;background:var(--bg)">
+          <input type="checkbox" id="ma-f-story" checked>
+          <span>&#9654; <b>Stories/Reels</b> (9:16) — Texte court 125 cars</span>
+        </label>
+        <label style="display:flex;align-items:center;gap:8px;font-size:12px;cursor:pointer;padding:.3rem .5rem;border-radius:6px;background:var(--bg)">
+          <input type="checkbox" id="ma-f-carousel">
+          <span>&#128247; <b>Carrousel</b> — 2-10 cartes avec titres 40 cars</span>
+        </label>
+        <label style="display:flex;align-items:center;gap:8px;font-size:12px;cursor:pointer;padding:.3rem .5rem;border-radius:6px;background:var(--bg)">
+          <input type="checkbox" id="ma-f-video">
+          <span>&#127916; <b>Video</b> — Script 60s + sous-titres</span>
+        </label>
+      </div>
+      <div class="form-group" style="margin-top:.55rem">
+        <label>CTA (bouton d action)</label>
+        <select id="ma-cta" style="width:100%">
+          <option value="SHOP_NOW">Acheter maintenant</option>
+          <option value="LEARN_MORE">En savoir plus</option>
+          <option value="GET_OFFER">Obtenir l offre</option>
+          <option value="ORDER_NOW">Commander</option>
+          <option value="SIGN_UP">S inscrire</option>
+          <option value="CONTACT_US">Nous contacter</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Ton & Conformite -->
+    <div class="card-section">
+      <h3 style="margin-bottom:.55rem">Ton & Conformite Meta</h3>
+      <div class="form-group" style="margin-bottom:.5rem">
+        <label>Ton de la publicite</label>
+        <select id="ma-tone" style="width:100%">
+          <option value="urgency">Urgence (offre limitee)</option>
+          <option value="benefit" selected>Benefices produit</option>
+          <option value="social_proof">Preuve sociale</option>
+          <option value="problem_solution">Probleme → Solution</option>
+          <option value="storytelling">Storytelling</option>
+          <option value="comparison">Comparaison prix</option>
+        </select>
+      </div>
+      <div class="form-group" style="margin-bottom:.5rem">
+        <label>Langue</label>
+        <select id="ma-lang" style="width:100%">
+          <option value="fr">Francais</option>
+          <option value="en">Anglais</option>
+          <option value="fr_be">Francais Belgique</option>
+          <option value="fr_ch">Francais Suisse</option>
+        </select>
+      </div>
+      <div style="background:#fef3e2;border-radius:7px;padding:.5rem .7rem;font-size:11px;color:#7a4a00;line-height:1.7">
+        <b>&#9989; Regles Meta appliquees :</b><br>
+        Pas de claims sante, pas de before/after, pas de contenu trompeur, pas de discrimination, 
+        texte image &lt;20%, pas de majuscules excessives, CTA conforme.
+      </div>
+    </div>
+  </div>
+
+  <!-- Apercu produit selectionne -->
+  <div id="ma-product-info" style="display:none;margin-bottom:.65rem"></div>
+
+  <!-- Loading -->
+  <div id="ma-loading" style="display:none" class="loading">
+    <div class="spin"></div>
+    <span id="ma-loading-msg">Generation des ads Meta en cours...</span>
+  </div>
+
+  <!-- Resultats -->
+  <div id="ma-result"></div>
+
+  <!-- Empty state -->
+  <div id="ma-empty" class="ads-empty" style="margin-top:.5rem">
+    Selectionne un produit et clique <b>Generer les ads</b> pour obtenir des publicites 100% conformes Meta Ads.
+  </div>
+
+  <!-- Règles Meta rappel -->
+  <div id="ma-rules" class="card-section" style="margin-top:.75rem;border-left:3px solid #1877f2;border-radius:0 var(--r) var(--r) 0">
+    <h3 style="color:#1877f2;margin-bottom:.5rem">Regles Meta Ads — rappel des contraintes cles</h3>
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:8px;font-size:11.5px">
+      <div><b>Texte principal</b><br>Max 125 caracteres recommandes (plus = tronque)<br>Pas de ALL CAPS excessifs<br>Pas de fautes deliberees</div>
+      <div><b>Titre (Headline)</b><br>Max 40 caracteres<br>Pas de ponctuation clickbait<br>Doit correspondre au visuel</div>
+      <div><b>Description</b><br>Max 30 caracteres<br>Complementaire au titre<br>Optionnel mais recommande</div>
+      <div><b>Contenu interdit</b><br>Claims sante/medicaux<br>Before/after comparaisons corps<br>Ciblage discriminatoire<br>Fausses promesses de gain</div>
+      <div><b>Visuel</b><br>Texte &lt;20% de l image<br>Ratio 1:1 / 4:5 / 9:16<br>Pas d images choquantes<br>Pas de clickbait visuel</div>
+      <div><b>URL & Landing page</b><br>URL fonctionnelle obligatoire<br>Meme produit que l ad<br>Politique confidentialite requise</div>
+    </div>
+  </div>
+</div>
 <div class="mbg" id="imp-modal" style="display:none" onclick="if(event.target===this)closeImport()">
   <div class="modal">
     <h2>Importer des produits</h2>
@@ -1814,7 +1968,7 @@ function updateSelPanel() {
 // ============================================================
 // NAVIGATION
 // ============================================================
-var TAB_IDS = ["scoring","ads","marge","saisonnal","perf","contenu","rapport","dashboard","checklist","geo","spy","tendances","calculateurs","guidads","woocommerce","translator","integrations","admin"];
+var TAB_IDS = ["scoring","ads","marge","saisonnal","perf","contenu","rapport","dashboard","checklist","geo","spy","tendances","calculateurs","guidads","woocommerce","translator","integrations","metaads","admin"];
 function showMain(t) {
   document.querySelectorAll(".mtab").forEach(function(b, i){
     var isOn = TAB_IDS[i] === t;
@@ -1847,6 +2001,7 @@ function showMain(t) {
   if (t === "translator")    initTranslatorTab();
   if (t === "admin")         renderAdminPanel();
   if (t === "integrations")  renderIntegrations();
+  if (t === "metaads")       initMetaAdsAgent();
   // Update bottom nav active state
   if (typeof updateBNActiveFromTab === "function") updateBNActiveFromTab();
 }
@@ -2563,12 +2718,194 @@ function confirmImport() {
 }
 
 function exportScoring() {
+  // Export interne (scoring cockpit)
   var h = "ID,Produit,Categorie,Prix,Potentiel,Concurrent,Prix_concurrent,Avantage,Ads_intensite,CTR,Panier,Ventes,Social,Score,Statut,Priorite";
   var rows = PRODUCTS.map(function(r){
     var s = calcScore(r), d = userScores[r[0]] || {}, st = statusOf(s);
     return [r[0],"\""+r[1]+"\"",r[2],r[3],r[4],"\""+r[5]+"\"",r[6],r[7],r[8],d.ctr||"",d.pan||"",d.ven||"",d.soc||"",s||"",st[0],Math.round(calcPrio(r))].join(",");
   });
   dl([h].concat(rows).join("\n"), "scoring_" + new Date().toISOString().slice(0,10) + ".csv");
+}
+
+// ============================================================
+// EXPORT WOOCOMMERCE CSV — mappage complet 64 colonnes
+// Basé sur le format réel du fichier product-export d UrbanElectroStore
+// ============================================================
+function exportWooCSV() {
+  // Mapping catégories cockpit → catégories WooCommerce réelles
+  var CAT_MAP = {
+    "Velo electrique":    "Mobilite > Velo",
+    "Trottinette":        "Mobilite|Mobilite > Trottinette",
+    "Robot tondeuse":     "MOTOCULTURE & JARDIN > MOTOCULTURE > TONDEUSES ROBOTS",
+    "Tondeuse":           "MOTOCULTURE & JARDIN > MOTOCULTURE > TONDEUSES THERMIQUES",
+    "Barbecue":           "MOTOCULTURE & JARDIN > JARDIN > BARBECUE",
+    "PC et Mac":          "Informatique telephonie",
+    "TV":                 "TV",
+    "Machine a cafe":     "Petit menager > Machine a cafe",
+    "Aspirateur":         "Petit menager > Nettoyage Maison",
+    "Electromenager":     "Electromenager",
+    "Chauffage":          "Chauffage climatisation > Chauffage|Chauffage climatisation"
+  };
+
+  function woocat(cat) {
+    return CAT_MAP[cat] || cat;
+  }
+
+  function slug(name) {
+    return (name || "").toLowerCase()
+      .replace(/[àáâãäå]/g,"a").replace(/[èéêë]/g,"e")
+      .replace(/[ìíîï]/g,"i").replace(/[òóôõö]/g,"o")
+      .replace(/[ùúûü]/g,"u").replace(/[ç]/g,"c")
+      .replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"");
+  }
+
+  function esc(v) {
+    if (v === null || v === undefined) return "";
+    var s = String(v).replace(/"/g, '""');
+    return '"' + s + '"';
+  }
+
+  // 64 colonnes — ordre exact du fichier exporté WooCommerce
+  var HEADERS = [
+    "post_title","post_name","post_parent","ID","post_content","post_excerpt",
+    "post_status","post_password","menu_order","post_date","post_author",
+    "comment_status","sku","parent_sku","children","downloadable","virtual",
+    "stock","regular_price","sale_price","weight","length","width","height",
+    "tax_class","visibility","stock_status","backorders","sold_individually",
+    "low_stock_amount","manage_stock","tax_status","upsell_ids","crosssell_ids",
+    "purchase_note","sale_price_dates_from","sale_price_dates_to",
+    "download_limit","download_expiry","product_url","button_text",
+    "images","downloadable_files","product_page_url",
+    "meta:total_sales","meta:_global_unique_id","meta:_yoast_wpseo_focuskw",
+    "meta:_yoast_wpseo_canonical","meta:_yoast_wpseo_bctitle",
+    "meta:_yoast_wpseo_meta-robots-adv","meta:_yoast_wpseo_is_cornerstone",
+    "meta:_yoast_wpseo_metadesc","meta:_yoast_wpseo_linkdex",
+    "meta:_yoast_wpseo_estimated-reading-time-minutes",
+    "meta:_yoast_wpseo_content_score","meta:_yoast_wpseo_title",
+    "meta:_yoast_wpseo_metakeywords",
+    "tax:product_brand","tax:product_type","tax:product_visibility",
+    "tax:product_cat","tax:product_tag","tax:product_shipping_class",
+    "tax:pos_product_visibility"
+  ];
+
+  var now = new Date().toISOString().replace("T"," ").slice(0,19);
+  var baseUrl = "https://urbanelectrostore.com";
+
+  var rows = PRODUCTS.map(function(r, i) {
+    var d      = userScores[r[0]] || {};
+    var m      = margins[r[0]]    || {};
+    var score  = calcScore(r);
+    var st     = statusOf(score);
+    var sku    = "UES-" + String(r[0]).padStart(4,"0");
+    var name   = r[1];
+    var cat    = r[2];
+    var price  = r[3];
+    var saleP  = m.salePrice || "";
+    var postSlug = slug(name);
+    var pageUrl  = baseUrl + "/produit/" + postSlug + "/";
+
+    // post_content — description technique détaillée
+    var content = name + ". ";
+    content += "Categorie : " + cat + ". ";
+    content += "Prix : " + price + " EUR. ";
+    if (r[5] && r[6]) content += "Concurrent : " + r[5] + " a " + r[6] + ". ";
+    if (r[7] === "win") content += "Notre prix est plus avantageux. ";
+    if (d.ctr)  content += "Performance CTR : " + d.ctr + "/5. ";
+    if (d.ven)  content += "Volume de ventes : " + d.ven + "/5. ";
+    if (score)  content += "Score publicite : " + score + "/100. ";
+    if (m.cost) content += "Marge estimee : " + Math.round(((price - m.cost)/price)*100) + "%. ";
+
+    // post_excerpt — résumé court
+    var excerpt = name;
+    if (r[5] && r[6] && r[7] === "win") {
+      excerpt += " - Moins cher que " + r[5] + " (" + r[6] + ")";
+    }
+
+    // meta:_yoast_wpseo_focuskw — mot clé SEO principal
+    var focuskw = name.split(" ").slice(0,4).join(" ").toLowerCase();
+
+    // meta:_yoast_wpseo_title — titre SEO
+    var seoTitle = name + " | UrbanElectroStore";
+
+    // meta:_yoast_wpseo_metadesc — meta description
+    var metadesc = "Achetez " + name + " au meilleur prix sur UrbanElectroStore";
+    if (r[7] === "win" && r[6]) metadesc += " - " + price + " EUR vs " + r[6] + " ailleurs";
+    metadesc += ".";
+
+    // Construire la ligne avec les 64 colonnes dans l ordre exact
+    var cols = [
+      esc(name),           // post_title ← CLÉ
+      esc(postSlug),       // post_name
+      "",                  // post_parent
+      "",                  // ID (vide = nouveau)
+      esc(content),        // post_content ← CLÉ
+      esc(excerpt),        // post_excerpt ← CLÉ
+      "Publie",            // post_status (sans accent pour éviter l'erreur)
+      "",                  // post_password
+      String(i),           // menu_order
+      esc(now),            // post_date
+      "1",                 // post_author
+      "open",              // comment_status
+      esc(sku),            // sku
+      "",                  // parent_sku
+      "",                  // children
+      "no",                // downloadable
+      "no",                // virtual
+      "",                  // stock
+      String(price),       // regular_price ← CLÉ
+      String(saleP),       // sale_price
+      "",                  // weight
+      "",                  // length
+      "",                  // width
+      "",                  // height
+      "",                  // tax_class
+      "visible",           // visibility
+      "instock",           // stock_status ← CLÉ
+      "no",                // backorders
+      "no",                // sold_individually
+      "",                  // low_stock_amount
+      "no",                // manage_stock
+      "taxable",           // tax_status ← CLÉ
+      "",                  // upsell_ids
+      "",                  // crosssell_ids
+      "",                  // purchase_note
+      "",                  // sale_price_dates_from
+      "",                  // sale_price_dates_to
+      "'-1",               // download_limit
+      "'-1",               // download_expiry
+      "",                  // product_url
+      "",                  // button_text
+      "",                  // images
+      "",                  // downloadable_files
+      esc(pageUrl),        // product_page_url
+      "0",                 // meta:total_sales
+      "",                  // meta:_global_unique_id
+      esc(focuskw),        // meta:_yoast_wpseo_focuskw
+      esc(pageUrl),        // meta:_yoast_wpseo_canonical
+      "",                  // meta:_yoast_wpseo_bctitle
+      "",                  // meta:_yoast_wpseo_meta-robots-adv
+      "0",                 // meta:_yoast_wpseo_is_cornerstone
+      esc(metadesc),       // meta:_yoast_wpseo_metadesc
+      score ? String(score) : "", // meta:_yoast_wpseo_linkdex
+      "1",                 // meta:_yoast_wpseo_estimated-reading-time-minutes
+      score >= 75 ? "90" : score >= 55 ? "70" : "50", // meta:_yoast_wpseo_content_score
+      esc(seoTitle),       // meta:_yoast_wpseo_title
+      "",                  // meta:_yoast_wpseo_metakeywords
+      "",                  // tax:product_brand
+      "simple",            // tax:product_type ← CLÉ
+      "visible, search result", // tax:product_visibility
+      esc(woocat(cat)),    // tax:product_cat ← CLÉ
+      "",                  // tax:product_tag
+      "",                  // tax:product_shipping_class
+      ""                   // tax:pos_product_visibility
+    ];
+    return cols.join(",");
+  });
+
+  var csv = [HEADERS.join(",")].concat(rows).join("\n");
+  var bom = "\uFEFF"; // BOM UTF-8 pour WooCommerce / Excel
+  dl(bom + csv, "woocommerce_import_" + new Date().toISOString().slice(0,10) + ".csv");
+  toastOK({title: PRODUCTS.length + " produits exportes", msg: "Format 100% compatible WooCommerce (64 colonnes)"});
 }
 
 function exportAds() {
@@ -4932,7 +5269,7 @@ function deleteUser(idx) {
 function copyInvite(idx) {
   var u = ACCESS.users[idx];
   if (!u) return;
-  var msg = "Bonjour " + u.name + ",\n\nTu as acces au Cockpit E-commerce NOF.\n\n"
+  var msg = "Bonjour " + u.name + ",\n\nTu as acces au Cockpit E-commerce UrbanElectroStore.\n\n"
     + "Lien : " + window.location.href.split("?")[0] + "\nPrenom : " + u.name + "\nCode : " + u.code
     + (u.expiry ? "\nAcces valable jusqu au : " + u.expiry : "")
     + "\n\nBonne utilisation !";
@@ -5348,7 +5685,8 @@ var BN_MORE_TABS = [
   {id:"guidads",    icon:"ti-target",           label:"Guide"},
   {id:"woocommerce",icon:"ti-shopping-cart",    label:"Woo"},
   {id:"translator", icon:"ti-language",         label:"Traduct"},
-  {id:"integrations",icon:"ti-puzzle",          label:"Outils"}
+  {id:"integrations",icon:"ti-puzzle",          label:"Outils"},
+  {id:"metaads",     icon:"ti-brand-meta",      label:"Meta Ads"}
 ];
 
 function initBottomNav() {
@@ -5567,7 +5905,7 @@ function buildIntegCard(integ, idx, isSuggested) {
       + "<div style='font-size:11px;color:" + col + ";overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1'>"
         + integ.url.replace(/^https?:\/\//, "").split("/")[0]
       + "</div>"
-      + (isIframeBlocked(integ.url) ? "<span title='S ouvre dans un nouvel onglet' style='font-size:10px;color:var(--mut);flex-shrink:0'>&#8599; nouvel onglet</span>" : "<span style='font-size:10px;color:var(--grn);flex-shrink:0'>&#128196; integre</span>")
+      + "<span style='font-size:10px;color:var(--mut);flex-shrink:0'>Cliquer pour ouvrir</span>" 
     + "</div>"
     + "</div>";
 }
@@ -5597,22 +5935,19 @@ function addSuggested(sStr) {
   toastOK(s.name + " ajoute aux integrations");
 }
 
-// Domains known to block iframes (X-Frame-Options: DENY/SAMEORIGIN)
-var IFRAME_BLOCKED_DOMAINS = [
-  "google.com","google.fr","google.be","googleapis.com",
-  "facebook.com","instagram.com","twitter.com","x.com",
-  "linkedin.com","amazon.com","amazon.fr","apple.com",
-  "notion.so","notion.com",
-  "shopify.com","etsy.com","ebay.com","leboncoin.fr",
-  "paypal.com","stripe.com","coinbase.com",
-  "dropbox.com","slack.com","discord.com",
-  "youtube.com","netflix.com","twitch.tv",
-  "github.com","gitlab.com","bitbucket.org"
+// Only block the absolute must-not-embed (legal/auth reasons)
+// For everything else we try the iframe and let the user decide
+var IFRAME_HARD_BLOCKED = [
+  "accounts.google.com",
+  "login.microsoftonline.com",
+  "appleid.apple.com",
+  "paypal.com/signin",
+  "stripe.com/login"
 ];
 
 function isIframeBlocked(url) {
-  var u = url.toLowerCase();
-  return IFRAME_BLOCKED_DOMAINS.some(function(d){ return u.indexOf(d) >= 0; });
+  var u = (url || "").toLowerCase();
+  return IFRAME_HARD_BLOCKED.some(function(d){ return u.indexOf(d) >= 0; });
 }
 
 function openInteg(idx) {
@@ -5620,10 +5955,19 @@ function openInteg(idx) {
   var integ = integrations[idx];
   if (!integ) return;
 
+  // Clean previous state
+  var fallback = document.getElementById("iframe-fallback");
+  var loading  = document.getElementById("iframe-loading");
+  if (fallback) fallback.remove();
+  if (loading)  loading.remove();
+  var helper = document.getElementById("iframe-helper");
+  if (helper) helper.remove();
+
   var viewer  = document.getElementById("integ-viewer");
   var iframe  = document.getElementById("integ-iframe");
   var titleEl = document.getElementById("integ-viewer-title");
   var extLink = document.getElementById("integ-viewer-extlink");
+  var warnBtn = document.getElementById("integ-viewer-warn");
   var sugg    = document.getElementById("integ-suggestions");
   var gallery = document.getElementById("integ-gallery");
 
@@ -5632,56 +5976,65 @@ function openInteg(idx) {
   if (sugg)    sugg.style.display = "none";
   if (gallery) gallery.style.marginBottom = ".5rem";
 
+  // Hard-blocked (login pages etc) → direct new tab
   if (isIframeBlocked(integ.url)) {
-    // Show elegant fallback instead of blank iframe
-    showIframeFallback(integ, viewer, iframe);
-  } else {
-    // Try to load in iframe with error detection
-    if (iframe) {
-      iframe.style.display = "block";
-      iframe.src = "about:blank";
-      // Show loading state
-      var iframeParent = iframe.parentNode;
-      showIframeLoading(integ, iframeParent, iframe);
-      iframe.onload = function() {
-        var loadingEl = document.getElementById("iframe-loading");
-        if (loadingEl) loadingEl.remove();
-        // Try to detect if page is actually blocked (won't always work cross-origin)
-        try {
-          var doc = iframe.contentDocument || iframe.contentWindow.document;
-          if (!doc || doc.body.innerHTML === "") {
-            showIframeFallback(integ, viewer, iframe);
-          }
-        } catch(e) {
-          // Cross-origin — assume it loaded fine
-        }
-      };
-      iframe.onerror = function() {
-        showIframeFallback(integ, viewer, iframe);
-      };
-      setTimeout(function() {
-        if (iframe) iframe.src = integ.url;
-      }, 50);
-    }
+    toastInfo({title: integ.name + " s ouvre dans un nouvel onglet", msg: "Page de connexion — ne peut pas etre integree."});
+    window.open(integ.url, "_blank");
+    return;
+  }
+
+  // For everything else: load in iframe + show loading overlay
+  if (iframe) {
+    iframe.style.display = "block";
+    iframe.src = "about:blank";
+    showIframeLoading(integ, iframe);
+    iframe.onload = function() {
+      var loadingEl = document.getElementById("iframe-loading");
+      if (loadingEl) loadingEl.remove();
+      // Show the "not loading?" helper bar
+      showIframeHelper(integ);
+    };
   }
 
   if (viewer) {
     viewer.style.display = "block";
     viewer.scrollIntoView({behavior:"smooth", block:"start"});
   }
+
+  // Set src after a tick so onload fires correctly
+  setTimeout(function() { if (iframe) iframe.src = integ.url; }, 80);
   try { localStorage.setItem("last_integ", idx); } catch(e) {}
 }
 
-function showIframeLoading(integ, parent, iframe) {
+function showIframeLoading(integ, iframe) {
   var existing = document.getElementById("iframe-loading");
   if (existing) existing.remove();
   var el = document.createElement("div");
   el.id = "iframe-loading";
-  el.style.cssText = "position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;background:var(--bg);gap:12px;z-index:2";
+  el.style.cssText = "display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:3rem;min-height:200px;background:var(--bg)";
   el.innerHTML = "<div class='spin' style='width:20px;height:20px'></div>"
-    + "<div style='font-size:12px;color:var(--mut)'>Chargement de " + integ.name + "...</div>";
-  if (parent) parent.style.position = "relative";
-  if (iframe) iframe.insertAdjacentElement("beforebegin", el);
+    + "<div style='font-size:13px;color:var(--mut)'>Chargement de <b>" + integ.name + "</b>...</div>";
+  if (iframe && iframe.parentNode) iframe.insertAdjacentElement("beforebegin", el);
+  // Fallback: remove after 8 seconds no matter what
+  setTimeout(function() {
+    var l = document.getElementById("iframe-loading");
+    if (l) l.remove();
+    showIframeHelper(integ);
+  }, 8000);
+}
+
+function showIframeHelper(integ) {
+  var existing = document.getElementById("iframe-helper");
+  if (existing) return; // already shown
+  var iframe = document.getElementById("integ-iframe");
+  if (!iframe) return;
+  var el = document.createElement("div");
+  el.id = "iframe-helper";
+  el.style.cssText = "display:flex;align-items:center;gap:10px;padding:8px 12px;background:#fef3e2;border-top:1px solid #f0d9a0;font-size:12px;color:#7a4a00;flex-wrap:wrap";
+  el.innerHTML = "<span>&#9888;&#65039; Si l outil ne s affiche pas :</span>"
+    + "<a href='" + integ.url + "' target='_blank' style='font-weight:600;color:#7a4a00;text-decoration:underline;cursor:pointer'>Ouvrir dans un nouvel onglet &#8599;</a>"
+    + "<button onclick='dismissIframeHelper()' style='margin-left:auto;background:transparent;border:none;cursor:pointer;color:#7a4a00;font-size:16px;line-height:1'>&#x2715;</button>";
+  if (iframe.parentNode) iframe.insertAdjacentElement("afterend", el);
 }
 
 function showIframeFallback(integ, viewer, iframe) {
@@ -5712,6 +6065,11 @@ function showIframeFallback(integ, viewer, iframe) {
   }
 }
 
+function dismissIframeHelper() {
+  var el = document.getElementById("iframe-helper");
+  if (el) el.remove();
+}
+
 function closeIntegViewer() {
   var viewer   = document.getElementById("integ-viewer");
   var iframe   = document.getElementById("integ-iframe");
@@ -5723,6 +6081,8 @@ function closeIntegViewer() {
   if (sugg)     sugg.style.display = "";
   if (fallback) fallback.remove();
   if (loading)  loading.remove();
+  var helper = document.getElementById("iframe-helper");
+  if (helper) helper.remove();
 }
 
 // Add new integration from modal
@@ -5782,6 +6142,421 @@ document.addEventListener("keydown", function(e) {
 // done at perUserKeys array definition
 
 
+
+// ============================================================
+// META ADS AGENT
+// ============================================================
+var metaAdsResults = null;
+
+// Limits officiels Meta Ads
+var META_LIMITS = {
+  primary_text:  125,
+  headline:      40,
+  description:   30,
+  carousel_title: 40,
+  carousel_desc:  20
+};
+
+// Mots/expressions interdits ou à risque Meta
+var META_BANNED_PATTERNS = [
+  /perd[sz]? \d+ kg/i, /avant.?apr[eè]s/i, /garantie? (100%|totale)/i,
+  /cliquez? ici/i, /URGENT/i, /GRATUIT/i, /vous avez gagne/i,
+  /cure?/i, /gu[eé]ris/i, /remede/i, /m[ée]decin/i
+];
+
+function initMetaAdsAgent() {
+  var sel = document.getElementById("ma-product");
+  if (!sel) return;
+  // Sort by priority
+  var sorted = PRODUCTS.slice().sort(function(a,b){ return calcPrio(b)-calcPrio(a); });
+  sel.innerHTML = sorted.map(function(r){
+    var s = calcScore(r);
+    return "<option value='" + r[0] + "'>" + r[1] + " — " + fp(r[3]) + " (" + (s||"?") + "/100)</option>";
+  }).join("");
+  onMetaProductChange();
+}
+
+function onMetaProductChange() {
+  var sel = document.getElementById("ma-product"); if(!sel) return;
+  var pid = parseInt(sel.value);
+  var row = PRODUCTS.find(function(r){ return r[0]===pid; });
+  if (!row) return;
+  var infoEl = document.getElementById("ma-product-info");
+  if (!infoEl) return;
+  var score = calcScore(row);
+  var m     = margins[row[0]] || {};
+  var margin = m.cost ? Math.round(((row[3]-m.cost)/row[3])*100) : null;
+  infoEl.style.display = "";
+  infoEl.innerHTML = "<div style='display:flex;align-items:center;flex-wrap:wrap;gap:8px;padding:.55rem .75rem;"
+    + "background:var(--gnbg);border-radius:var(--r);border:0.5px solid #9FE1CB'>"
+    + "<span style='font-size:18px'>" + (row[2]||"") + "</span>"
+    + "<div style='flex:1;min-width:160px'>"
+      + "<div style='font-size:12.5px;font-weight:600'>" + row[1] + "</div>"
+      + "<div style='font-size:11px;color:var(--mut)'>" + fp(row[3])
+        + (row[5]?" · Concurrent: "+row[5]+" "+row[6]:"")
+        + (margin?" · Marge: "+margin+"%":"")
+      + "</div>"
+    + "</div>"
+    + "<span class='bdg' style='background:#e8f4ee;color:#085041'>Score: " + (score||"?") + "/100</span>"
+    + (row[7]==="win" ? "<span class='bdg' style='background:#E6F1FB;color:#042C53'>Prix avantageux</span>" : "")
+    + "</div>";
+}
+
+function checkMetaCompliance(text) {
+  var issues = [];
+  if (!text) return issues;
+  if ((text.match(/[A-Z]/g)||[]).length > text.length * 0.3) issues.push("Trop de majuscules");
+  META_BANNED_PATTERNS.forEach(function(p){ if(p.test(text)) issues.push("Expression interdite detectee"); });
+  if (/!{2,}/.test(text)) issues.push("Trop de points d exclamation");
+  if (/avant.?apr[eè]s/i.test(text)) issues.push("Comparaison avant/apres interdite");
+  return issues;
+}
+
+function truncateWithWarning(text, limit, label) {
+  if (!text) return {text:"", warning:false};
+  var clean = text.trim();
+  if (clean.length <= limit) return {text:clean, warning:false};
+  return {text:clean.slice(0,limit-3)+"...", warning:true, original:clean};
+}
+
+async function runMetaAdsAgent() {
+  var sel = document.getElementById("ma-product"); if(!sel) return;
+  var pid = parseInt(sel.value);
+  var row = PRODUCTS.find(function(r){ return r[0]===pid; });
+  if (!row) { toastWarn("Selectionne un produit"); return; }
+
+  var objective = (document.getElementById("ma-objective")||{}).value || "conversion";
+  var audience  = (document.getElementById("ma-audience")||{}).value  || "cold";
+  var tone      = (document.getElementById("ma-tone")||{}).value      || "benefit";
+  var lang      = (document.getElementById("ma-lang")||{}).value      || "fr";
+  var cta       = (document.getElementById("ma-cta")||{}).value       || "SHOP_NOW";
+  var doFeed    = document.getElementById("ma-f-feed")?.checked;
+  var doStory   = document.getElementById("ma-f-story")?.checked;
+  var doCarousel= document.getElementById("ma-f-carousel")?.checked;
+  var doVideo   = document.getElementById("ma-f-video")?.checked;
+
+  if (!doFeed && !doStory && !doCarousel && !doVideo) {
+    toastWarn("Selectionne au moins un format"); return;
+  }
+
+  var m = margins[pid] || {};
+  var score = calcScore(row);
+  var margin = m.cost ? Math.round(((row[3]-m.cost)/row[3])*100) : null;
+
+  var loadEl = document.getElementById("ma-loading");
+  var resEl  = document.getElementById("ma-result");
+  var empEl  = document.getElementById("ma-empty");
+  var msgEl  = document.getElementById("ma-loading-msg");
+  if(loadEl) loadEl.style.display="flex";
+  if(resEl)  resEl.innerHTML="";
+  if(empEl)  empEl.style.display="none";
+
+  var objLabels = {traffic:"Trafic",conversion:"Conversions",awareness:"Notoriete",catalog:"Catalogue",engagement:"Engagement"};
+  var audLabels = {cold:"audience froide (nouveaux clients)",warm:"audience chaude (visiteurs du site)",retargeting:"retargeting (panier abandonne)",lookalike:"lookalike (similaire aux acheteurs)"};
+  var toneLabels = {urgency:"urgence et offre limitee",benefit:"mise en avant des benefices produit",social_proof:"preuve sociale et temoignages",problem_solution:"probleme → solution",storytelling:"storytelling et emotion",comparison:"comparaison de prix"};
+  var langLabels = {fr:"francais",en:"anglais",fr_be:"francais belge",fr_ch:"francais suisse"};
+
+  var formats = [];
+  if (doFeed)     formats.push("feed");
+  if (doStory)    formats.push("story");
+  if (doCarousel) formats.push("carousel");
+  if (doVideo)    formats.push("video");
+
+  var schema = '{"formats":{';
+  if (doFeed) schema += '"feed":{"primary_text":"string (max 125 chars, no ALL CAPS, no banned claims)","headline":"string (max 40 chars)","description":"string (max 30 chars)","hook":"string (first 3 words that stop the scroll)","variations":[{"primary_text":"string","headline":"string","description":"string"}]}';
+  if (doStory) schema += (doFeed?",":"") + '"story":{"primary_text":"string (max 125 chars, punchy for vertical format)","headline":"string (max 40 chars)","hook_visuel":"string (describe the first visual second)","text_overlay":"string (max 5 words for overlay on video)"}';
+  if (doCarousel) schema += (doFeed||doStory?",":"") + '"carousel":{"intro_text":"string (max 125 chars)","cards":[{"title":"string (max 40 chars)","description":"string (max 20 chars)","image_suggestion":"string"}]}';
+  if (doVideo) schema += (doFeed||doStory||doCarousel?",":"") + '"video":{"duration_seconds":30,"hook_0_3s":"string (first 3 seconds — must stop scroll)","problem_3_10s":"string","solution_10_20s":"string","cta_20_30s":"string","subtitles":["line1","line2","line3","line4"],"thumbnail_text":"string (max 5 words)"}';
+  schema += '},"compliance_notes":["note1","note2"],"targeting_suggestions":{"interests":["int1","int2","int3"],"behaviors":["beh1","beh2"],"age_range":"25-54","placements":["Facebook Feed","Instagram Feed","Instagram Stories","Reels"]},"budget_recommendation":{"daily_min":"20 EUR","daily_recommended":"50 EUR","test_duration":"7 jours","kpi_target":"string"}}';
+
+  var prompt = "Tu es un expert en publicite Meta Ads (Facebook + Instagram) certifie Meta Blueprint.\n\n"
+    + "PRODUIT : " + row[1] + "\n"
+    + "CATEGORIE : " + row[2] + "\n"
+    + "PRIX : " + row[3] + " EUR\n"
+    + (row[5]&&row[6] ? "CONCURRENT : " + row[5] + " a " + row[6] + "\n" : "")
+    + (row[7]==="win" ? "AVANTAGE PRIX : Notre prix est plus bas que le concurrent\n" : "")
+    + (score ? "SCORE ADS : " + score + "/100\n" : "")
+    + (margin ? "MARGE : " + margin + "%\n" : "")
+    + "\nOBJECTIF CAMPAGNE : " + (objLabels[objective]||objective) + "\n"
+    + "AUDIENCE : " + (audLabels[audience]||audience) + "\n"
+    + "TON : " + (toneLabels[tone]||tone) + "\n"
+    + "LANGUE : " + (langLabels[lang]||lang) + "\n"
+    + "CTA : " + cta + "\n"
+    + "FORMATS : " + formats.join(", ") + "\n\n"
+    + "REGLES META ADS STRICTES A RESPECTER :\n"
+    + "1. Texte principal MAX 125 caracteres (compte exactement)\n"
+    + "2. Titre MAX 40 caracteres\n"
+    + "3. Description MAX 30 caracteres\n"
+    + "4. INTERDIT : claims sante/medicaux, avant/apres corps, garanties absolues, 'cliquez ici', MAJUSCULES EXCESSIVES\n"
+    + "5. INTERDIT : fausses urgences fabriquees, prix faux barrés sans preuve\n"
+    + "6. INTERDIT : discrimination (age, genre, religion, origine)\n"
+    + "7. REQUIS : le texte doit correspondre exactement au produit et a la landing page\n"
+    + "8. REQUIS : CTA clairement identifiable et conforme a la liste Meta\n"
+    + "9. Privilegier questions, benefices concrets, chiffres reels\n"
+    + "10. Le hook doit arreter le scroll en moins de 2 secondes\n\n"
+    + "Genere des publicites creatives, persuasives et 100% conformes Meta Ads.\n"
+    + "Reponds UNIQUEMENT en JSON valide sans markdown backticks:\n" + schema;
+
+  if(msgEl) msgEl.textContent = "Generation des ads Meta pour " + row[1] + "...";
+
+  try {
+    var raw  = await callAI(prompt, 2500);
+    var data = safeJSON(raw);
+    metaAdsResults = {data:data, product:row, formats:formats, cta:cta, objective:objective};
+    if(loadEl) loadEl.style.display="none";
+    if(resEl)  resEl.innerHTML = renderMetaAdsResult(data, row, cta);
+    var exportBtn = document.getElementById("meta-export-btn");
+    if(exportBtn) exportBtn.style.display="";
+    toastOK({title:"Ads Meta generees !", msg:formats.length + " format(s) conformes Meta Ads"});
+  } catch(e) {
+    if(loadEl) loadEl.style.display="none";
+    if(resEl)  resEl.innerHTML = "<div class='al ao'>Erreur: " + e.message + "</div>";
+    if(empEl)  empEl.style.display="block";
+    toastErr("Erreur generation: " + e.message);
+  }
+}
+
+function renderMetaAdsResult(data, row, cta) {
+  var h = "";
+  var f = data.formats || {};
+
+  // ---- FEED ----
+  if (f.feed) {
+    h += metaCard("&#128444; Feed Facebook / Instagram (1:1 ou 4:5)", "#1877f2", renderFeedAd(f.feed, cta, row));
+    if (f.feed.variations && f.feed.variations.length) {
+      h += "<div style='font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.3px;color:var(--mut);margin:.5rem 0 .35rem'>Variations A/B</div>";
+      f.feed.variations.forEach(function(v, i){
+        h += metaCard("Variation " + String.fromCharCode(65+i), "#1877f288", renderFeedAd(v, cta, row));
+      });
+    }
+  }
+
+  // ---- STORY ----
+  if (f.story) {
+    h += metaCard("&#9654; Stories & Reels (9:16)", "#E1306C", renderStoryAd(f.story, cta, row));
+  }
+
+  // ---- CAROUSEL ----
+  if (f.carousel) {
+    h += metaCard("&#128247; Carrousel", "#1877f2", renderCarouselAd(f.carousel, cta, row));
+  }
+
+  // ---- VIDEO ----
+  if (f.video) {
+    h += metaCard("&#127916; Script Video", "#FF0000", renderVideoAd(f.video, cta, row));
+  }
+
+  // ---- TARGETING ----
+  if (data.targeting_suggestions) {
+    h += renderTargeting(data.targeting_suggestions, data.budget_recommendation);
+  }
+
+  // ---- COMPLIANCE ----
+  if (data.compliance_notes && data.compliance_notes.length) {
+    h += "<div class='card-section' style='border-left:3px solid #1877f2;border-radius:0 var(--r) var(--r) 0;margin-bottom:.75rem'>"
+      + "<h3 style='color:#1877f2;margin-bottom:.4rem'>Notes de conformite Meta</h3>"
+      + data.compliance_notes.map(function(n){ return "<div style='font-size:12px;display:flex;gap:6px;margin-bottom:3px'><span style='color:#1D9E75;flex-shrink:0'>&#9989;</span>" + n + "</div>"; }).join("")
+      + "</div>";
+  }
+
+  return h;
+}
+
+function metaCard(title, color, content) {
+  return "<div class='card-section' style='border-top:3px solid " + color + ";border-radius:0 0 var(--r) var(--r);margin-bottom:.75rem'>"
+    + "<h3 style='color:" + color + ";margin-bottom:.65rem'>" + title + "</h3>"
+    + content
+    + "</div>";
+}
+
+function charCount(text, limit) {
+  var len = (text||"").length;
+  var col = len > limit ? "#7a1a1a" : len > limit*0.9 ? "#7a4a00" : "#1D9E75";
+  return "<span style='font-size:10px;color:" + col + ";margin-left:4px;font-weight:600'>" + len + "/" + limit + "</span>";
+}
+
+function adField(label, text, limit, isCopy) {
+  var t = truncateWithWarning(text||"", limit, label);
+  var issues = checkMetaCompliance(text||"");
+  return "<div style='margin-bottom:.55rem'>"
+    + "<div style='display:flex;align-items:center;gap:5px;margin-bottom:.2rem'>"
+      + "<span style='font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.3px;color:var(--mut)'>" + label + "</span>"
+      + charCount(text, limit)
+      + (t.warning ? "<span style='font-size:10px;color:#7a1a1a'>&#9888; Tronque</span>" : "<span style='font-size:10px;color:#1D9E75'>&#9989;</span>")
+      + (isCopy ? "<button class='btn bsm' onclick='copyTxt(this)' data-txt='" + (text||"").replace(/'/g,"&apos;") + "' style='margin-left:auto;font-size:10px'>Copier</button>" : "")
+    + "</div>"
+    + "<div style='padding:.45rem .65rem;background:var(--bg);border-radius:7px;font-size:12px;line-height:1.6;border:0.5px solid " + (t.warning?"#f7c1c1":issues.length?"#fac775":"var(--bord)") + "'>" + (t.text||"—") + "</div>"
+    + (issues.length ? "<div style='font-size:10.5px;color:#7a4a00;margin-top:2px'>&#9888; " + issues.join(" · ") + "</div>" : "")
+    + "</div>";
+}
+
+function renderFeedAd(ad, cta, row) {
+  var ctaLabels = {SHOP_NOW:"Acheter maintenant",LEARN_MORE:"En savoir plus",GET_OFFER:"Obtenir l offre",ORDER_NOW:"Commander",SIGN_UP:"S inscrire",CONTACT_US:"Nous contacter"};
+  return "<div style='display:grid;grid-template-columns:1fr 1fr;gap:10px'>"
+    + "<div>"
+      + adField("Texte principal (Primary Text)", ad.primary_text, 125, true)
+      + adField("Titre (Headline)", ad.headline, 40, true)
+      + adField("Description", ad.description, 30, true)
+      + (ad.hook ? "<div style='margin-bottom:.55rem'><div style='font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.3px;color:var(--mut);margin-bottom:.2rem'>Hook (arrete le scroll)</div>"
+          + "<div style='padding:.4rem .65rem;background:#E6F1FB;border-radius:7px;font-size:12px;font-weight:500;color:#042C53'>" + ad.hook + "</div></div>" : "")
+    + "</div>"
+    + "<div>"
+      + "<div style='font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.3px;color:var(--mut);margin-bottom:.35rem'>Apercu simulé</div>"
+      + renderFeedPreview(ad, cta, ctaLabels[cta]||cta, row)
+    + "</div>"
+    + "</div>";
+}
+
+function renderFeedPreview(ad, cta, ctaLabel, row) {
+  return "<div style='max-width:280px;border:0.5px solid var(--bord2);border-radius:10px;overflow:hidden;background:#fff;font-family:Arial,sans-serif'>"
+    + "<div style='display:flex;align-items:center;gap:7px;padding:8px 10px'>"
+      + "<div style='width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#1877f2,#42b0ff);flex-shrink:0'></div>"
+      + "<div><div style='font-size:12px;font-weight:600;color:#1a1a1a'>UrbanElectroStore</div>"
+        + "<div style='font-size:10px;color:#8a8a8a'>Sponsorisé · &#127758;</div></div>"
+    + "</div>"
+    + "<div style='padding:0 10px 6px;font-size:12px;color:#1a1a1a;line-height:1.5'>" + (ad.primary_text||"").slice(0,80) + (ad.primary_text&&ad.primary_text.length>80?"…":"") + "</div>"
+    + "<div style='height:120px;background:linear-gradient(135deg,#e8f0fe,#f0f4f8);display:flex;align-items:center;justify-content:center'>"
+      + "<div style='text-align:center;color:#8a8a8a;font-size:11px'><div style='font-size:28px'>&#128444;</div>Visuel produit<br>" + row[2] + "</div>"
+    + "</div>"
+    + "<div style='padding:8px 10px;border-top:0.5px solid #e5e5e5;display:flex;align-items:center;justify-content:space-between'>"
+      + "<div><div style='font-size:12px;font-weight:600;color:#1a1a1a'>" + (ad.headline||"").slice(0,40) + "</div>"
+        + "<div style='font-size:11px;color:#8a8a8a'>" + (ad.description||"").slice(0,30) + "</div></div>"
+      + "<button style='padding:6px 12px;background:#1877f2;color:#fff;border:none;border-radius:6px;font-size:11px;font-weight:600;cursor:default'>" + ctaLabel + "</button>"
+    + "</div>"
+    + "</div>";
+}
+
+function renderStoryAd(ad, cta, row) {
+  return "<div style='display:grid;grid-template-columns:1fr 1fr;gap:10px'>"
+    + "<div>"
+      + adField("Texte (overlay ou legende)", ad.primary_text, 125, true)
+      + adField("Titre", ad.headline, 40, true)
+      + (ad.hook_visuel ? "<div style='margin-bottom:.55rem'><div style='font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.3px;color:var(--mut);margin-bottom:.2rem'>Premiere seconde visuelle</div><div style='padding:.4rem .65rem;background:var(--bg);border-radius:7px;font-size:12px'>" + ad.hook_visuel + "</div></div>" : "")
+      + (ad.text_overlay ? "<div style='margin-bottom:.55rem'><div style='font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.3px;color:var(--mut);margin-bottom:.2rem'>Texte overlay (max 5 mots)</div><div style='padding:.4rem .65rem;background:#E1306C22;border-radius:7px;font-size:13px;font-weight:600;color:#E1306C'>" + ad.text_overlay + "</div></div>" : "")
+    + "</div>"
+    + "<div>"
+      + "<div style='font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.3px;color:var(--mut);margin-bottom:.35rem'>Apercu Story (9:16)</div>"
+      + "<div style='width:130px;height:230px;border-radius:12px;background:linear-gradient(160deg,#833ab4,#fd1d1d,#fcb045);position:relative;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;padding:12px;overflow:hidden'>"
+        + "<div style='position:absolute;top:0;left:0;right:0;bottom:0;display:flex;align-items:center;justify-content:center;opacity:.15;font-size:40px'>&#128444;</div>"
+        + (ad.text_overlay ? "<div style='font-size:13px;font-weight:700;color:#fff;text-shadow:0 1px 3px rgba(0,0,0,.5);margin-bottom:8px;text-align:center'>" + ad.text_overlay + "</div>" : "")
+        + "<div style='background:rgba(255,255,255,.95);border-radius:20px;padding:4px 14px;font-size:10px;font-weight:600;color:#1877f2'>Voir plus</div>"
+      + "</div>"
+    + "</div>"
+    + "</div>";
+}
+
+function renderCarouselAd(ad, cta, row) {
+  var cards = ad.cards || [];
+  return "<div>"
+    + adField("Texte d intro", ad.intro_text, 125, true)
+    + "<div style='font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.3px;color:var(--mut);margin:.45rem 0 .35rem'>Cartes (" + cards.length + ")</div>"
+    + "<div style='display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:7px'>"
+      + cards.map(function(card, i){
+          return "<div style='border:0.5px solid var(--bord2);border-radius:8px;overflow:hidden'>"
+            + "<div style='height:80px;background:linear-gradient(135deg,#e8f0fe,#f0f4f8);display:flex;align-items:center;justify-content:center;font-size:10px;color:#8a8a8a;text-align:center;padding:4px'>"
+              + (card.image_suggestion||"Visuel "+String(i+1))
+            + "</div>"
+            + "<div style='padding:5px 7px'>"
+              + "<div style='font-size:11px;font-weight:600;margin-bottom:2px'>" + (card.title||"").slice(0,40) + charCount(card.title, 40) + "</div>"
+              + "<div style='font-size:10px;color:var(--mut)'>" + (card.description||"").slice(0,20) + charCount(card.description, 20) + "</div>"
+            + "</div>"
+            + "</div>";
+        }).join("")
+    + "</div>"
+    + "</div>";
+}
+
+function renderVideoAd(ad, cta, row) {
+  return "<div style='display:grid;grid-template-columns:1fr 1fr;gap:10px'>"
+    + "<div>"
+      + "<div class='form-group' style='margin-bottom:.45rem'><div style='font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.3px;color:var(--mut);margin-bottom:.2rem'>Hook 0-3s (arrete le scroll)</div><div style='padding:.4rem .65rem;background:#fff3cd;border-radius:7px;font-size:12px;font-weight:500;border-left:3px solid #FF6B00'>" + (ad.hook_0_3s||"") + "</div></div>"
+      + "<div class='form-group' style='margin-bottom:.45rem'><div style='font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.3px;color:var(--mut);margin-bottom:.2rem'>Probleme 3-10s</div><div style='padding:.4rem .65rem;background:var(--bg);border-radius:7px;font-size:12px'>" + (ad.problem_3_10s||"") + "</div></div>"
+      + "<div class='form-group' style='margin-bottom:.45rem'><div style='font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.3px;color:var(--mut);margin-bottom:.2rem'>Solution 10-20s</div><div style='padding:.4rem .65rem;background:#e8f4ee;border-radius:7px;font-size:12px'>" + (ad.solution_10_20s||"") + "</div></div>"
+      + "<div class='form-group' style='margin-bottom:.45rem'><div style='font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.3px;color:var(--mut);margin-bottom:.2rem'>CTA 20-30s</div><div style='padding:.4rem .65rem;background:#E6F1FB;border-radius:7px;font-size:12px;font-weight:600;color:#042C53'>" + (ad.cta_20_30s||"") + "</div></div>"
+    + "</div>"
+    + "<div>"
+      + "<div style='font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.3px;color:var(--mut);margin-bottom:.35rem'>Sous-titres</div>"
+      + (ad.subtitles||[]).map(function(s,i){ return "<div style='display:flex;align-items:center;gap:6px;margin-bottom:4px;font-size:12px'><span style='min-width:20px;font-size:10px;color:var(--mut)'>" + String(i+1) + ".</span>" + s + "</div>"; }).join("")
+      + (ad.thumbnail_text ? "<div style='margin-top:.55rem'><div style='font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.3px;color:var(--mut);margin-bottom:.25rem'>Texte vignette</div><div style='padding:.4rem .65rem;background:var(--bg);border-radius:7px;font-size:12px;font-weight:600'>" + ad.thumbnail_text + "</div></div>" : "")
+    + "</div>"
+    + "</div>";
+}
+
+function renderTargeting(t, budget) {
+  return "<div class='card-section' style='margin-bottom:.75rem'>"
+    + "<h3 style='margin-bottom:.5rem'>&#127919; Suggestions de ciblage Meta</h3>"
+    + "<div style='display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:10px'>"
+    + "<div><div style='font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.3px;color:var(--mut);margin-bottom:.3rem'>Centres d interet</div>"
+      + (t.interests||[]).map(function(i){ return "<span class='tag'>" + i + "</span>"; }).join("") + "</div>"
+    + "<div><div style='font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.3px;color:var(--mut);margin-bottom:.3rem'>Comportements</div>"
+      + (t.behaviors||[]).map(function(b){ return "<span class='tag'>" + b + "</span>"; }).join("") + "</div>"
+    + "<div><div style='font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.3px;color:var(--mut);margin-bottom:.3rem'>Age recommande</div>"
+      + "<span style='font-size:13px;font-weight:600'>" + (t.age_range||"25-54") + " ans</span></div>"
+    + "<div><div style='font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.3px;color:var(--mut);margin-bottom:.3rem'>Placements</div>"
+      + (t.placements||[]).map(function(p){ return "<span class='tag'>" + p + "</span>"; }).join("") + "</div>"
+    + "</div>"
+    + (budget ? "<div style='margin-top:.6rem;padding:.5rem .7rem;background:var(--gnbg);border-radius:7px;font-size:12px;display:flex;flex-wrap:wrap;gap:12px'>"
+        + "<span><b>Budget min/jour:</b> " + (budget.daily_min||"") + "</span>"
+        + "<span><b>Budget recommande:</b> " + (budget.daily_recommended||"") + "</span>"
+        + "<span><b>Test:</b> " + (budget.test_duration||"") + "</span>"
+        + (budget.kpi_target?"<span><b>KPI:</b> " + budget.kpi_target + "</span>":"")
+        + "</div>" : "")
+    + "</div>";
+}
+
+function copyTxt(btn) {
+  var txt = btn.dataset.txt;
+  if (!txt) return;
+  if (navigator.clipboard) navigator.clipboard.writeText(txt).then(function(){
+    var orig = btn.textContent; btn.textContent = "OK!";
+    setTimeout(function(){ btn.textContent = orig; }, 1200);
+  });
+}
+
+function exportMetaAds() {
+  if (!metaAdsResults) { toastWarn("Genere d abord des ads"); return; }
+  var d = metaAdsResults.data;
+  var r = metaAdsResults.product;
+  var f = d.formats || {};
+  var rows = ["Format,Champ,Texte,Chars,Conforme"];
+  function addRow(fmt, label, text, limit) {
+    var clean = (text||"").replace(/"/g,'""');
+    var len = (text||"").length;
+    var ok = len <= limit && !checkMetaCompliance(text||"").length;
+    rows.push('"'+fmt+'","'+label+'","'+clean+'",'+len+','+(ok?"OUI":"VERIFIER"));
+  }
+  if (f.feed) {
+    addRow("Feed","Texte principal",f.feed.primary_text,125);
+    addRow("Feed","Titre",f.feed.headline,40);
+    addRow("Feed","Description",f.feed.description,30);
+    (f.feed.variations||[]).forEach(function(v,i){
+      addRow("Feed Var "+String.fromCharCode(65+i),"Texte principal",v.primary_text,125);
+      addRow("Feed Var "+String.fromCharCode(65+i),"Titre",v.headline,40);
+    });
+  }
+  if (f.story) {
+    addRow("Story","Texte",f.story.primary_text,125);
+    addRow("Story","Titre",f.story.headline,40);
+    addRow("Story","Overlay",f.story.text_overlay,30);
+  }
+  if (f.carousel) {
+    addRow("Carrousel","Intro",f.carousel.intro_text,125);
+    (f.carousel.cards||[]).forEach(function(c,i){
+      addRow("Carrousel carte "+(i+1),"Titre",c.title,40);
+      addRow("Carrousel carte "+(i+1),"Description",c.description,20);
+    });
+  }
+  if (f.video) {
+    addRow("Video","Hook 0-3s",f.video.hook_0_3s,60);
+    addRow("Video","Probleme",f.video.problem_3_10s,100);
+    addRow("Video","Solution",f.video.solution_10_20s,100);
+    addRow("Video","CTA",f.video.cta_20_30s,60);
+  }
+  dl("\uFEFF"+rows.join("\n"), "meta_ads_"+r[1].slice(0,20).replace(/\s/g,"_")+"_"+new Date().toISOString().slice(0,10)+".csv");
+  toastOK("Export CSV Meta Ads pret");
+}
+
+
 // INIT -- EN DERNIER
 // ============================================================
 initAccessControl();
@@ -5811,6 +6586,17 @@ var deferredInstallPrompt = null;
 
 function registerServiceWorker() {
   if (!("serviceWorker" in navigator)) return;
+  // Ne pas enregistrer sur les domaines de preview (Claude, Vercel preview, localhost)
+  var host = window.location.hostname;
+  var isPreview = host === "www.claudeusercontent.com"
+    || host.includes("claudeusercontent")
+    || host.includes("vercel.app")
+    || host === "localhost"
+    || host === "127.0.0.1";
+  if (isPreview) {
+    console.log("[PWA] Service Worker desactive sur domaine de preview:", host);
+    return;
+  }
   navigator.serviceWorker.register("./service-worker.js").then(function(reg) {
     console.log("[PWA] Service Worker registered:", reg.scope);
     reg.addEventListener("updatefound", function() {
