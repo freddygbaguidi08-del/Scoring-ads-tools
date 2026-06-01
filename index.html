@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>NOF — Cockpit E-commerce</title>
-<meta name="description" content="Scoring produits, generateur d ads IA et geo-ciblage pour NOF">
+<title>UrbanElectroStore — Cockpit E-commerce</title>
+<meta name="description" content="Scoring produits, generateur d ads IA et geo-ciblage pour UrbanElectroStore">
 <meta name="theme-color" content="#18180f">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -339,7 +339,7 @@ th{position:sticky;top:0;z-index:1}
 <div class="login-overlay" id="login-overlay">
   <div class="login-box" id="login-box-user">
     <div class="logo">🛍</div>
-    <h2>NOF — Cockpit</h2>
+    <h2>UrbanElectroStore — Cockpit</h2>
     <p class="sub">Entre tes identifiants pour acceder a l outil</p>
     <div class="login-field">
       <label>Ton prenom ou identifiant</label>
@@ -383,7 +383,7 @@ th{position:sticky;top:0;z-index:1}
 </div>
 
 <div class="topbar">
-  <h1>&#128722; NOF &mdash; Cockpit E-commerce</h1>
+  <h1>&#128722; UrbanElectroStore &mdash; Cockpit E-commerce</h1>
   <span id="sync-indicator" onclick="manualSync()" title="Cliquer pour synchroniser maintenant"
     style="font-size:11px;font-weight:500;padding:3px 10px;border-radius:20px;cursor:pointer;background:#e8f0fb;color:#0c3d6e;display:inline-flex;align-items:center;gap:4px">&#9729; Cloud</span>
   <div class="topr">
@@ -968,7 +968,7 @@ th{position:sticky;top:0;z-index:1}
       <div class="form-row" style="margin-top:.5rem">
         <div class="form-group" style="flex:1;min-width:200px">
           <label>URL de ta boutique</label>
-          <input type="text" id="wc-url" placeholder="https://NOF.com" style="width:100%">
+          <input type="text" id="wc-url" placeholder="https://urbanelectrostore.com" style="width:100%">
         </div>
       </div>
       <div class="form-row">
@@ -1519,12 +1519,13 @@ CTA : Voir l offre" style="width:100%;height:130px;padding:7px 9px;border:1px so
         </div>
         <div class="form-group">
           <label>URL de destination</label>
-          <input type="url" id="meta-dest-url" placeholder="https://NOF.com/produit/..." style="width:100%">
+          <input type="url" id="meta-dest-url" placeholder="https://urbanelectrostore.com/produit/..." style="width:100%">
         </div>
       </div>
       <div style="display:flex;gap:7px;flex-wrap:wrap">
         <button class="btn" id="meta-fetch-img-btn" onclick="fetchWooImage()" style="font-size:12px">&#128247; Recuperer la photo WooCommerce</button>
-        <button class="btn bg" id="meta-publish-btn" onclick="createMetaAd()" style="font-size:12px;background:#1877f2;color:#fff;border-color:transparent">&#128640; Creer le brouillon dans Meta</button>
+        <button class="btn" id="meta-publish-btn" onclick="createMetaAd()" style="font-size:12px;background:#1877f2;color:#fff;border-color:transparent;color:#fff">&#128640; Creer via API (acces Standard requis)</button>
+        <button class="btn" onclick="openAdsManagerReady()" style="font-size:12px;background:#42b72a;color:#fff;border-color:transparent">&#9989; Ouvrir Ads Manager pret a lancer</button>
       </div>
       <div id="ma-woo-img-preview" style="margin-top:.55rem"></div>
       <div id="ma-publish-progress" style="margin-top:.5rem"></div>
@@ -2833,7 +2834,7 @@ function exportScoring() {
 
 // ============================================================
 // EXPORT WOOCOMMERCE CSV — mappage complet 64 colonnes
-// Basé sur le format réel du fichier product-export d NOF
+// Basé sur le format réel du fichier product-export d UrbanElectroStore
 // ============================================================
 function exportWooCSV() {
   // Mapping catégories cockpit → catégories WooCommerce réelles
@@ -2893,7 +2894,7 @@ function exportWooCSV() {
   ];
 
   var now = new Date().toISOString().replace("T"," ").slice(0,19);
-  var baseUrl = "https://NOF.com";
+  var baseUrl = "https://urbanelectrostore.com";
 
   var rows = PRODUCTS.map(function(r, i) {
     var d      = userScores[r[0]] || {};
@@ -2929,10 +2930,10 @@ function exportWooCSV() {
     var focuskw = name.split(" ").slice(0,4).join(" ").toLowerCase();
 
     // meta:_yoast_wpseo_title — titre SEO
-    var seoTitle = name + " | NOF";
+    var seoTitle = name + " | UrbanElectroStore";
 
     // meta:_yoast_wpseo_metadesc — meta description
-    var metadesc = "Achetez " + name + " au meilleur prix sur NOF";
+    var metadesc = "Achetez " + name + " au meilleur prix sur UrbanElectroStore";
     if (r[7] === "win" && r[6]) metadesc += " - " + price + " EUR vs " + r[6] + " ailleurs";
     metadesc += ".";
 
@@ -5374,7 +5375,7 @@ function deleteUser(idx) {
 function copyInvite(idx) {
   var u = ACCESS.users[idx];
   if (!u) return;
-  var msg = "Bonjour " + u.name + ",\n\nTu as acces au Cockpit E-commerce NOF.\n\n"
+  var msg = "Bonjour " + u.name + ",\n\nTu as acces au Cockpit E-commerce UrbanElectroStore.\n\n"
     + "Lien : " + window.location.href.split("?")[0] + "\nPrenom : " + u.name + "\nCode : " + u.code
     + (u.expiry ? "\nAcces valable jusqu au : " + u.expiry : "")
     + "\n\nBonne utilisation !";
@@ -6529,7 +6530,7 @@ function renderFeedPreview(ad, cta, ctaLabel, row) {
   return "<div style='max-width:280px;border:0.5px solid var(--bord2);border-radius:10px;overflow:hidden;background:#fff;font-family:Arial,sans-serif'>"
     + "<div style='display:flex;align-items:center;gap:7px;padding:8px 10px'>"
       + "<div style='width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#1877f2,#42b0ff);flex-shrink:0'></div>"
-      + "<div><div style='font-size:12px;font-weight:600;color:#1a1a1a'>NOF</div>"
+      + "<div><div style='font-size:12px;font-weight:600;color:#1a1a1a'>UrbanElectroStore</div>"
         + "<div style='font-size:10px;color:#8a8a8a'>Sponsorisé · &#127758;</div></div>"
     + "</div>"
     + "<div style='padding:0 10px 6px;font-size:12px;color:#1a1a1a;line-height:1.5'>" + (ad.primary_text||"").slice(0,80) + (ad.primary_text&&ad.primary_text.length>80?"…":"") + "</div>"
@@ -6810,11 +6811,15 @@ async function graphAPI(endpoint, method, params) {
   var options = {method: method};
 
   if (method === "POST" && params) {
-    // Use form-urlencoded — required by Meta for most Marketing API endpoints
     var body = new URLSearchParams();
     Object.keys(params).forEach(function(k) {
       var v = params[k];
-      body.append(k, typeof v === "object" ? JSON.stringify(v) : String(v));
+      if (v === null || v === undefined) return;
+      if (Array.isArray(v)) {
+        v.forEach(function(item) { body.append(k, String(item)); });
+      } else {
+        body.append(k, typeof v === "object" ? JSON.stringify(v) : String(v));
+      }
     });
     options.headers = {"Content-Type": "application/x-www-form-urlencoded"};
     options.body    = body.toString();
@@ -6925,7 +6930,7 @@ async function fetchWooImage() {
   } catch(e) {
     if (prevEl) prevEl.innerHTML = "<div class='al ao' style='margin-top:.4rem'>Erreur: " + e.message + "</div>"
       + "<div style='font-size:11px;color:var(--mut);margin-top:.3rem'>Tu peux aussi entrer l URL de l image manuellement ci-dessous.</div>"
-      + "<div class='form-group' style='margin-top:.35rem'><label>URL image manuelle</label><input type='url' id='meta-img-url-manual' placeholder='https://NOF.com/...image.jpg' style='width:100%' oninput='metaWooImageUrl=this.value'></div>";
+      + "<div class='form-group' style='margin-top:.35rem'><label>URL image manuelle</label><input type='url' id='meta-img-url-manual' placeholder='https://urbanelectrostore.com/...image.jpg' style='width:100%' oninput='metaWooImageUrl=this.value'></div>";
     toastWarn("WooCommerce: " + e.message);
   }
 }
@@ -6961,7 +6966,7 @@ async function createMetaAd() {
   var budget     = parseInt((document.getElementById("meta-daily-budget")||{}).value||"20") * 100; // en centimes
   var startDate  = (document.getElementById("meta-start-date")||{}).value;
   var endDate    = (document.getElementById("meta-end-date")||{}).value;
-  var destUrl    = (document.getElementById("meta-dest-url")||{}).value || wcConfig.url || "https://NOF.com";
+  var destUrl    = (document.getElementById("meta-dest-url")||{}).value || wcConfig.url || "https://urbanelectrostore.com";
   var objective  = metaAdsResults.objective || "OUTCOME_SALES";
   var cta        = metaAdsResults.cta || "SHOP_NOW";
 
@@ -7002,7 +7007,7 @@ async function createMetaAd() {
       name:                   "[Cockpit] " + r[1].slice(0,30) + " — " + new Date().toLocaleDateString("fr-FR"),
       objective:              objApi,
       status:                 "PAUSED",
-      special_ad_categories:  "[]"
+      "special_ad_categories[]": ""
     });
     var campaignId = campaign.id;
     if (!campaignId) throw new Error("Erreur creation campagne");
@@ -7086,14 +7091,22 @@ async function createMetaAd() {
     if (btn) btn.disabled = false;
     var errMsg = e.message || "";
     var errGuide = "";
-    if (errMsg.indexOf("code 3") >= 0 || errMsg.indexOf("(#3)") >= 0) {
-      errGuide = "<div style='margin-top:.5rem;padding:.5rem .7rem;background:#fef3e2;border-radius:7px;font-size:12px;color:#7a4a00;line-height:1.8'>"
-        + "<b>Solution pour l erreur code 3 :</b><br>"
-        + "1. Va sur <a href='https://developers.facebook.com/apps/' target='_blank' style='color:#7a4a00;font-weight:600'>developers.facebook.com/apps</a><br>"
-        + "2. Selectionne ton app Marketing API<br>"
-        + "3. En haut : passe le mode de <b>Developpement</b> a <b>Live</b><br>"
-        + "4. Ou verifie que ton compte est bien <b>Administrateur</b> de l app<br>"
-        + "5. Regenere un nouveau token apres le changement"
+    if (errMsg.indexOf("(3)") >= 0 || errMsg.indexOf("code 3") >= 0 || errMsg.indexOf("(#3)") >= 0) {
+      // Auto-trigger the Ads Manager approach
+      openAdsManagerReady();
+      var adsUrl = "https://adsmanager.facebook.com/adsmanager/manage/ads/edit"
+        + "?act=" + (metaConfig.adAccount||"").replace("act_","")
+        + "&objective=OUTCOME_SALES";
+      var destUrl2 = (document.getElementById("meta-dest-url")||{}).value || "";
+      errGuide = "<div style='margin-top:.5rem;padding:.65rem .85rem;background:#fef3e2;border-radius:9px;border:1px solid #f0d9a0;font-size:12px;color:#7a4a00;line-height:1.9'>"
+        + "<b>L API Meta necessite un acces Standard a ads_management.</b><br><br>"
+        + "<b>Solution 1 — System User (5 min, recommande) :</b><br>"
+        + "business.facebook.com → Parametres → Utilisateurs → Utilisateurs systeme<br>"
+        + "→ Ajouter (role Admin) → Attribuer ton compte pub → Generer token (jamais expirer)<br>"
+        + "→ Coller ce token dans le cockpit<br><br>"
+        + "<b>Solution 2 — Ouvrir Ads Manager avec les textes prets :</b><br>"
+        + "<a href='" + adsUrl + "' target='_blank' style='color:#7a4a00;font-weight:600;text-decoration:underline'>Ouvrir Ads Manager &#8599;</a> "
+        + "et coller les textes generes ci-dessus manuellement."
         + "</div>";
     } else if (errMsg.indexOf("code 190") >= 0 || errMsg.toLowerCase().indexOf("token") >= 0) {
       errGuide = "<div style='margin-top:.5rem;padding:.5rem .7rem;background:#fef3e2;border-radius:7px;font-size:12px;color:#7a4a00;line-height:1.8'>"
@@ -7110,6 +7123,62 @@ async function createMetaAd() {
     }
     if (prog) prog.innerHTML = "<div class='al ao' style='margin-top:.35rem'><b>Erreur:</b> " + errMsg + errGuide + "</div>";
     toastErr("Erreur Meta: " + errMsg.slice(0,60));
+  }
+}
+
+function openAdsManagerReady() {
+  if (!metaAdsResults) {
+    toastWarn("Genere d abord les textes avec Generer les ads"); return;
+  }
+  var r   = metaAdsResults.product;
+  var f   = metaAdsResults.data.formats || {};
+  var feed = f.feed || {};
+  var dest = (document.getElementById("meta-dest-url")||{}).value || (wcConfig&&wcConfig.url) || "";
+  var acct = (metaConfig.adAccount||"").replace("act_","");
+
+  // Build text to copy
+  var primaryText = feed.primary_text || "";
+  var headline    = feed.headline     || r[1];
+  var description = feed.description  || "";
+  var copyText    = "=== TEXTES PRETS POUR META ADS ===\n\n"
+    + "TEXTE PRINCIPAL (coller dans Primary Text):\n" + primaryText + "\n\n"
+    + "TITRE (Headline):\n" + headline + "\n\n"
+    + "DESCRIPTION:\n" + description + "\n\n"
+    + "URL DESTINATION:\n" + dest + "\n\n"
+    + "IMAGE: " + (metaWooImageUrl||"recuperer depuis WooCommerce") + "\n\n"
+    + "BUDGET: 20 EUR/jour\n"
+    + "OBJECTIF: Conversions\n"
+    + "CIBLAGE: France, 18-65 ans";
+
+  // Copy to clipboard
+  if (navigator.clipboard) {
+    navigator.clipboard.writeText(copyText).then(function(){
+      // Open Ads Manager
+      var url = "https://adsmanager.facebook.com/adsmanager/manage/ads/edit?act=" + acct;
+      window.open(url, "_blank");
+      // Show instruction modal
+      var prog = document.getElementById("ma-publish-progress");
+      if (prog) prog.innerHTML = "<div style='padding:.75rem 1rem;background:#e8f4ee;border-radius:10px;border:1px solid #9FE1CB;margin-top:.5rem'>"
+        + "<div style='font-size:14px;font-weight:600;color:#085041;margin-bottom:.5rem'>&#9989; Textes copies + Ads Manager ouvert !</div>"
+        + "<div style='font-size:12px;color:#04342C;line-height:2'>"
+          + "<b>Dans Ads Manager :</b><br>"
+          + "1. Clique <b>Creer</b> → choisis l objectif <b>Ventes</b><br>"
+          + "2. Configure l audience (France, 18-65 ans)<br>"
+          + "3. Dans Publicite : colle le <b>Texte principal</b> (deja dans ton presse-papier)<br>"
+          + "4. Colle le <b>Titre</b> et la <b>Description</b><br>"
+          + "5. Uploade l image depuis ton PC ou l URL WooCommerce<br>"
+          + "6. Entre l URL de destination : <b>" + (dest||"ta boutique") + "</b><br>"
+          + "7. Clique <b>Publier</b>"
+        + "</div>"
+        + "<div style='margin-top:.65rem;padding:.5rem .75rem;background:#d4ecdf;border-radius:7px;font-size:11.5px;color:#04342C'>"
+          + "&#128203; Tous les textes sont dans ton presse-papier — colle-les directement (Ctrl+V / Cmd+V)"
+        + "</div>"
+        + "<div style='margin-top:.5rem;font-size:11px;color:#085041'>"
+          + "<b>Image :</b> " + (metaWooImageUrl ? "<a href='" + metaWooImageUrl + "' target='_blank' style='color:#085041;text-decoration:underline'>Telecharger depuis WooCommerce</a>" : "Recuperer via le bouton ci-dessus") 
+        + "</div>"
+        + "</div>";
+      toastOK({title:"Ads Manager ouvert + textes copies !", msg:"Colle avec Ctrl+V dans les champs"});
+    });
   }
 }
 
