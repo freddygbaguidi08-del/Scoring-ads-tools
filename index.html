@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>NOF — Cockpit E-commerce</title>
-<meta name="description" content="Scoring produits, generateur d ads IA et geo-ciblage pour NOF">
+<title>UrbanElectroStore — Cockpit E-commerce</title>
+<meta name="description" content="Scoring produits, generateur d ads IA et geo-ciblage pour UrbanElectroStore">
 <meta name="theme-color" content="#18180f">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -310,6 +310,51 @@ th{position:sticky;top:0;z-index:1}
   #integ-iframe{height:calc(100vh - 180px);min-height:350px}
 }
 
+
+/* ===== DARK MODE ===== */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg:#0f0f0a;--sur:#1a1a12;--bord:#2e2e22;--bord2:#3a3a2c;
+    --txt:#f0ede4;--mut:#8a8878;--grn:#4ade9e;--gnbg:#0a2218;
+    --orn:#f0b84a;--orbg:#1f1500;--red:#f87272;--rdbg:#200a0a;
+    --blu:#60a5fa;--blbg:#0a1628;--pur:#a78bfa;--pubg:#130e2e;
+    --r:9px;
+  }
+}
+[data-theme="dark"] {
+  --bg:#0f0f0a;--sur:#1a1a12;--bord:#2e2e22;--bord2:#3a3a2c;
+  --txt:#f0ede4;--mut:#8a8878;--grn:#4ade9e;--gnbg:#0a2218;
+  --orn:#f0b84a;--orbg:#1f1500;--red:#f87272;--rdbg:#200a0a;
+  --blu:#60a5fa;--blbg:#0a1628;--pur:#a78bfa;--pubg:#130e2e;
+}
+[data-theme="light"] {
+  --bg:#f7f6f3;--sur:#fff;--bord:#e5e3dc;--bord2:#d0cec5;
+  --txt:#18180f;--mut:#7a7870;--grn:#085041;--gnbg:#e8f4ee;
+  --orn:#7a4a00;--orbg:#fef3e2;--red:#7a1a1a;--rdbg:#fef2f2;
+  --blu:#0c3d6e;--blbg:#e8f0fb;--pur:#3b2a8a;--pubg:#edeafb;
+}
+/* Dark mode specific overrides */
+[data-theme="dark"] .login-box,
+:root:not([data-theme="light"]) .login-box { box-shadow:0 8px 40px rgba(0,0,0,.5) }
+[data-theme="dark"] .topbar,
+:root:not([data-theme="light"]) .topbar { box-shadow:0 1px 0 var(--bord) }
+[data-theme="dark"] .modal,
+:root:not([data-theme="light"]) .modal { background:var(--sur) }
+[data-theme="dark"] iframe,
+:root:not([data-theme="light"]) iframe { color-scheme:dark }
+/* Dark mode chart overrides */
+[data-theme="dark"] canvas,
+:root:not([data-theme="light"]) canvas { filter:brightness(.9) }
+/* Dark toggle button */
+#dark-toggle{
+  padding:4px 9px;border-radius:var(--r);border:1px solid var(--bord2);
+  background:var(--sur);font-size:14px;cursor:pointer;
+  line-height:1;display:inline-flex;align-items:center;gap:5px;
+  color:var(--txt);font-family:inherit;transition:all .15s;
+}
+#dark-toggle:hover{background:var(--bg)}
+#dark-toggle .label{font-size:11px;font-weight:500}
+
 </style>
 </head>
 <body>
@@ -339,7 +384,7 @@ th{position:sticky;top:0;z-index:1}
 <div class="login-overlay" id="login-overlay">
   <div class="login-box" id="login-box-user">
     <div class="logo">🛍</div>
-    <h2>NOF — Cockpit</h2>
+    <h2>UrbanElectroStore — Cockpit</h2>
     <p class="sub">Entre tes identifiants pour acceder a l outil</p>
     <div class="login-field">
       <label>Ton prenom ou identifiant</label>
@@ -383,7 +428,7 @@ th{position:sticky;top:0;z-index:1}
 </div>
 
 <div class="topbar">
-  <h1>&#128722; NOF &mdash; Cockpit E-commerce</h1>
+  <h1>&#128722; UrbanElectroStore &mdash; Cockpit E-commerce</h1>
   <span id="sync-indicator" onclick="manualSync()" title="Cliquer pour synchroniser maintenant"
     style="font-size:11px;font-weight:500;padding:3px 10px;border-radius:20px;cursor:pointer;background:#e8f0fb;color:#0c3d6e;display:inline-flex;align-items:center;gap:4px">&#9729; Cloud</span>
   <div class="topr">
@@ -395,6 +440,7 @@ th{position:sticky;top:0;z-index:1}
     <button class="btn" onclick="resetProductsToDefault()" style="color:#7a1a1a">&#8635; Reset</button>
     <button class="btn" onclick="printReport()">&#128438; Rapport</button>
     <button id="admin-access-btn" onclick="accessAdminFromTopbar()" title="Admin (Ctrl+Shift+A)" style="padding:5px 8px;font-size:13px;border:none;background:transparent;cursor:pointer;color:var(--mut);opacity:.5" onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=.5">&#128274;</button>
+    <button id="dark-toggle" onclick="toggleDarkMode()" title="Basculer mode sombre/clair"><span id="dark-icon">&#127769;</span><span class="label" id="dark-label">Sombre</span></button>
     <button id="logout-btn" onclick="doLogout()" style="display:none;padding:5px 11px;border-radius:7px;border:1px solid var(--bord2);background:var(--sur);font-size:12px;cursor:pointer;color:#7a1a1a;font-family:inherit">&#128100; <span id="logout-name">Deconnexion</span></button>
   </div>
 </div>
@@ -417,6 +463,7 @@ th{position:sticky;top:0;z-index:1}
   <button class="mtab" onclick="showMain('guidads')">&#127919; Guide Ads</button>
   <button class="mtab" onclick="showMain('woocommerce')">&#128722; WooCommerce</button>
   <button class="mtab" onclick="showMain('translator')">&#127760; Traducteur</button>
+  <button class="mtab" id="mtab-analytics" onclick="showMain('analytics')" style="color:#E37400">&#128200; Analytics</button>
   <button class="mtab" id="mtab-integ" onclick="showMain('integrations')">&#128279; Intégrations</button>
   <button class="mtab" id="mtab-admin" style="display:none" onclick="showMain('admin')">&#128274; Admin Acces</button>
 </div>
@@ -968,7 +1015,7 @@ th{position:sticky;top:0;z-index:1}
       <div class="form-row" style="margin-top:.5rem">
         <div class="form-group" style="flex:1;min-width:200px">
           <label>URL de ta boutique</label>
-          <input type="text" id="wc-url" placeholder="https://NOF.com" style="width:100%">
+          <input type="text" id="wc-url" placeholder="https://urbanelectrostore.com" style="width:100%">
         </div>
       </div>
       <div class="form-row">
@@ -1519,7 +1566,7 @@ CTA : Voir l offre" style="width:100%;height:130px;padding:7px 9px;border:1px so
         </div>
         <div class="form-group">
           <label>URL de destination</label>
-          <input type="url" id="meta-dest-url" placeholder="https://NOF.com/produit/..." style="width:100%">
+          <input type="url" id="meta-dest-url" placeholder="https://urbanelectrostore.com/produit/..." style="width:100%">
         </div>
       </div>
       <div style="display:flex;gap:7px;flex-wrap:wrap">
@@ -1545,6 +1592,82 @@ CTA : Voir l offre" style="width:100%;height:130px;padding:7px 9px;border:1px so
     </div>
   </div>
 </div>
+
+<!-- TAB GOOGLE ANALYTICS -->
+<div class="panel" id="tab-analytics">
+  <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-top:.5rem;margin-bottom:.75rem">
+    <div>
+      <div style="font-size:15px;font-weight:600;margin-bottom:.2rem">&#128200; Google Analytics 4</div>
+      <div style="font-size:12px;color:var(--mut)">Connecte GA4 pour voir le trafic, les conversions et enrichir le scoring de tes produits.</div>
+    </div>
+    <button class="btn bg" onclick="loadAnalyticsData()" id="ga-load-btn" style="display:none">Actualiser les donnees</button>
+  </div>
+
+  <!-- Config -->
+  <div class="card-section" style="margin-bottom:.75rem;border-top:3px solid #E37400;border-radius:0 0 var(--r) var(--r)">
+    <h3 style="color:#E37400;margin-bottom:.6rem">Configuration Google Analytics 4</h3>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:8px;margin-bottom:.55rem">
+      <div class="form-group">
+        <label>Property ID GA4</label>
+        <input type="text" id="ga-property-id" placeholder="123456789" style="width:100%;font-family:monospace">
+      </div>
+      <div class="form-group">
+        <label>Client ID (OAuth2)</label>
+        <input type="text" id="ga-client-id" placeholder="xxxx.apps.googleusercontent.com" style="width:100%;font-family:monospace;font-size:11px">
+      </div>
+    </div>
+    <div style="display:flex;gap:7px;flex-wrap:wrap;margin-bottom:.5rem">
+      <button class="btn bg" onclick="connectGoogleAnalytics()" id="ga-connect-btn">Connecter avec Google</button>
+      <button class="btn" onclick="disconnectGA()" id="ga-disconnect-btn" style="display:none;color:var(--red)">Deconnecter</button>
+    </div>
+    <div id="ga-auth-status" style="font-size:12px;color:var(--mut)">Non connecte — clique Connecter pour autoriser l acces a Google Analytics.</div>
+
+    <div style="margin-top:.65rem;background:var(--bg);border-radius:7px;padding:.55rem .75rem;font-size:11.5px;color:var(--mut);line-height:1.8">
+      <b>Comment obtenir ton Property ID :</b> console.analytics.google.com → ton site → Admin (roue dentee) → Propriete → ID de la propriete<br>
+      <b>Comment creer un Client ID :</b> console.cloud.google.com → APIs → Identifiants → Creer un ID client OAuth2 → Application Web → Origine : ton URL GitHub Pages
+    </div>
+  </div>
+
+  <!-- Periode -->
+  <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:.65rem" id="ga-period-row" style="display:none">
+    <label style="font-size:12px;font-weight:500">Periode :</label>
+    <select id="ga-period" onchange="loadAnalyticsData()" style="font-size:12px">
+      <option value="7">7 derniers jours</option>
+      <option value="28" selected>28 derniers jours</option>
+      <option value="90">90 derniers jours</option>
+    </select>
+    <button class="btn bsm bg" onclick="enrichScoresFromGA()" id="ga-enrich-btn">Enrichir les scores produits</button>
+  </div>
+
+  <!-- Loading -->
+  <div id="ga-loading" style="display:none" class="loading"><div class="spin"></div><span>Chargement des donnees GA4...</span></div>
+
+  <!-- KPIs -->
+  <div id="ga-kpis" style="display:none;margin-bottom:.75rem">
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:8px;margin-bottom:.65rem" id="ga-kpi-grid"></div>
+  </div>
+
+  <!-- Top pages -->
+  <div id="ga-pages-section" style="display:none;margin-bottom:.75rem">
+    <div class="card-section">
+      <h3 style="margin-bottom:.5rem">Pages les plus visitees</h3>
+      <div id="ga-pages-table"></div>
+    </div>
+  </div>
+
+  <!-- Top products from GA -->
+  <div id="ga-products-section" style="display:none;margin-bottom:.75rem">
+    <div class="card-section">
+      <h3 style="margin-bottom:.5rem">Produits avec le plus de trafic — enrichissement scoring</h3>
+      <div id="ga-products-table"></div>
+      <button class="btn bg" onclick="enrichScoresFromGA()" style="margin-top:.5rem">Appliquer aux scores produits</button>
+    </div>
+  </div>
+
+  <!-- Empty -->
+  <div id="ga-empty" class="ads-empty">Connecte ton compte Google Analytics pour voir le trafic reel de ta boutique.</div>
+</div>
+
 <div class="mbg" id="imp-modal" style="display:none" onclick="if(event.target===this)closeImport()">
   <div class="modal">
     <h2>Importer des produits</h2>
@@ -1881,7 +2004,7 @@ function loadUserData() {
 
 function getUserKey(key) {
   // Keys that are per-user (namespaced with username)
-  var perUserKeys = ["userScores", "margins", "campaigns", "products_catalogue","meta_config"];
+  var perUserKeys = ["userScores", "margins", "campaigns", "products_catalogue","meta_config","ga_config"];
   if (perUserKeys.indexOf(key) >= 0) {
     var user = ACCESS && ACCESS.currentUser ? ACCESS.currentUser.name : "guest";
     return key + "__" + user.toLowerCase().replace(/[^a-z0-9]/g, "_");
@@ -2073,7 +2196,7 @@ function updateSelPanel() {
 // ============================================================
 // NAVIGATION
 // ============================================================
-var TAB_IDS = ["scoring","ads","metaads","marge","saisonnal","perf","contenu","rapport","dashboard","checklist","geo","spy","tendances","calculateurs","guidads","woocommerce","translator","integrations","admin"];
+var TAB_IDS = ["scoring","ads","metaads","marge","saisonnal","perf","contenu","rapport","dashboard","checklist","geo","spy","tendances","calculateurs","guidads","woocommerce","translator","analytics","integrations","admin"];
 function showMain(t) {
   document.querySelectorAll(".mtab").forEach(function(b, i){
     var isOn = TAB_IDS[i] === t;
@@ -2106,6 +2229,7 @@ function showMain(t) {
   if (t === "translator")    initTranslatorTab();
   if (t === "admin")         renderAdminPanel();
   if (t === "integrations")  renderIntegrations();
+  if (t === "analytics")     initAnalyticsTab();
   if (t === "metaads")       initMetaAdsAgent();
   // Update bottom nav active state
   if (typeof updateBNActiveFromTab === "function") updateBNActiveFromTab();
@@ -2834,7 +2958,7 @@ function exportScoring() {
 
 // ============================================================
 // EXPORT WOOCOMMERCE CSV — mappage complet 64 colonnes
-// Basé sur le format réel du fichier product-export d NOF
+// Basé sur le format réel du fichier product-export d UrbanElectroStore
 // ============================================================
 function exportWooCSV() {
   // Mapping catégories cockpit → catégories WooCommerce réelles
@@ -2894,7 +3018,7 @@ function exportWooCSV() {
   ];
 
   var now = new Date().toISOString().replace("T"," ").slice(0,19);
-  var baseUrl = "https://NOF.com";
+  var baseUrl = "https://urbanelectrostore.com";
 
   var rows = PRODUCTS.map(function(r, i) {
     var d      = userScores[r[0]] || {};
@@ -2930,10 +3054,10 @@ function exportWooCSV() {
     var focuskw = name.split(" ").slice(0,4).join(" ").toLowerCase();
 
     // meta:_yoast_wpseo_title — titre SEO
-    var seoTitle = name + " | NOF";
+    var seoTitle = name + " | UrbanElectroStore";
 
     // meta:_yoast_wpseo_metadesc — meta description
-    var metadesc = "Achetez " + name + " au meilleur prix sur NOF";
+    var metadesc = "Achetez " + name + " au meilleur prix sur UrbanElectroStore";
     if (r[7] === "win" && r[6]) metadesc += " - " + price + " EUR vs " + r[6] + " ailleurs";
     metadesc += ".";
 
@@ -5375,7 +5499,7 @@ function deleteUser(idx) {
 function copyInvite(idx) {
   var u = ACCESS.users[idx];
   if (!u) return;
-  var msg = "Bonjour " + u.name + ",\n\nTu as acces au Cockpit E-commerce NOF.\n\n"
+  var msg = "Bonjour " + u.name + ",\n\nTu as acces au Cockpit E-commerce UrbanElectroStore.\n\n"
     + "Lien : " + window.location.href.split("?")[0] + "\nPrenom : " + u.name + "\nCode : " + u.code
     + (u.expiry ? "\nAcces valable jusqu au : " + u.expiry : "")
     + "\n\nBonne utilisation !";
@@ -5792,6 +5916,7 @@ var BN_MORE_TABS = [
   {id:"guidads",    icon:"ti-target",           label:"Guide"},
   {id:"woocommerce",icon:"ti-shopping-cart",    label:"Woo"},
   {id:"translator", icon:"ti-language",         label:"Traduct"},
+  {id:"analytics",   icon:"ti-chart-bar",       label:"Analytics"},
   {id:"integrations",icon:"ti-puzzle",          label:"Outils"},
   {id:"metaads",     icon:"ti-brand-meta",      label:"Meta Ads"}
 ];
@@ -6530,7 +6655,7 @@ function renderFeedPreview(ad, cta, ctaLabel, row) {
   return "<div style='max-width:280px;border:0.5px solid var(--bord2);border-radius:10px;overflow:hidden;background:#fff;font-family:Arial,sans-serif'>"
     + "<div style='display:flex;align-items:center;gap:7px;padding:8px 10px'>"
       + "<div style='width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#1877f2,#42b0ff);flex-shrink:0'></div>"
-      + "<div><div style='font-size:12px;font-weight:600;color:#1a1a1a'>NOF</div>"
+      + "<div><div style='font-size:12px;font-weight:600;color:#1a1a1a'>UrbanElectroStore</div>"
         + "<div style='font-size:10px;color:#8a8a8a'>Sponsorisé · &#127758;</div></div>"
     + "</div>"
     + "<div style='padding:0 10px 6px;font-size:12px;color:#1a1a1a;line-height:1.5'>" + (ad.primary_text||"").slice(0,80) + (ad.primary_text&&ad.primary_text.length>80?"…":"") + "</div>"
@@ -6930,7 +7055,7 @@ async function fetchWooImage() {
   } catch(e) {
     if (prevEl) prevEl.innerHTML = "<div class='al ao' style='margin-top:.4rem'>Erreur: " + e.message + "</div>"
       + "<div style='font-size:11px;color:var(--mut);margin-top:.3rem'>Tu peux aussi entrer l URL de l image manuellement ci-dessous.</div>"
-      + "<div class='form-group' style='margin-top:.35rem'><label>URL image manuelle</label><input type='url' id='meta-img-url-manual' placeholder='https://NOF.com/...image.jpg' style='width:100%' oninput='metaWooImageUrl=this.value'></div>";
+      + "<div class='form-group' style='margin-top:.35rem'><label>URL image manuelle</label><input type='url' id='meta-img-url-manual' placeholder='https://urbanelectrostore.com/...image.jpg' style='width:100%' oninput='metaWooImageUrl=this.value'></div>";
     toastWarn("WooCommerce: " + e.message);
   }
 }
@@ -6966,7 +7091,7 @@ async function createMetaAd() {
   var budget     = parseInt((document.getElementById("meta-daily-budget")||{}).value||"20") * 100; // en centimes
   var startDate  = (document.getElementById("meta-start-date")||{}).value;
   var endDate    = (document.getElementById("meta-end-date")||{}).value;
-  var destUrl    = (document.getElementById("meta-dest-url")||{}).value || wcConfig.url || "https://NOF.com";
+  var destUrl    = (document.getElementById("meta-dest-url")||{}).value || wcConfig.url || "https://urbanelectrostore.com";
   var objective  = metaAdsResults.objective || "OUTCOME_SALES";
   var cta        = metaAdsResults.cta || "SHOP_NOW";
 
@@ -7130,57 +7255,105 @@ function openAdsManagerReady() {
   if (!metaAdsResults) {
     toastWarn("Genere d abord les textes avec Generer les ads"); return;
   }
-  var r   = metaAdsResults.product;
-  var f   = metaAdsResults.data.formats || {};
+  var r    = metaAdsResults.product;
+  var f    = metaAdsResults.data.formats || {};
   var feed = f.feed || {};
   var dest = (document.getElementById("meta-dest-url")||{}).value || (wcConfig&&wcConfig.url) || "";
   var acct = (metaConfig.adAccount||"").replace("act_","");
+  var primaryText = (feed.primary_text || "").slice(0,125);
+  var headline    = (feed.headline    || r[1]).slice(0,40);
+  var description = (feed.description || "").slice(0,30);
+  var imgUrl      = metaWooImageUrl || "";
+  var adsUrl      = "https://adsmanager.facebook.com/adsmanager/manage/ads" + (acct ? "?act=" + acct : "");
 
-  // Build text to copy
-  var primaryText = feed.primary_text || "";
-  var headline    = feed.headline     || r[1];
-  var description = feed.description  || "";
-  var copyText    = "=== TEXTES PRETS POUR META ADS ===\n\n"
-    + "TEXTE PRINCIPAL (coller dans Primary Text):\n" + primaryText + "\n\n"
-    + "TITRE (Headline):\n" + headline + "\n\n"
-    + "DESCRIPTION:\n" + description + "\n\n"
-    + "URL DESTINATION:\n" + dest + "\n\n"
-    + "IMAGE: " + (metaWooImageUrl||"recuperer depuis WooCommerce") + "\n\n"
-    + "BUDGET: 20 EUR/jour\n"
-    + "OBJECTIF: Conversions\n"
-    + "CIBLAGE: France, 18-65 ans";
+  // Show the full guide IN the cockpit first
+  var prog = document.getElementById("ma-publish-progress");
+  if (prog) prog.innerHTML = "<div style='padding:.85rem 1rem;background:#e8f0fb;border-radius:12px;border:1px solid #b5d4f4;margin-top:.5rem'>"
+    + "<div style='font-size:14px;font-weight:600;color:#042C53;margin-bottom:.6rem'>&#128203; Tes textes sont prets — suis ce guide dans Ads Manager</div>"
 
-  // Copy to clipboard
-  if (navigator.clipboard) {
-    navigator.clipboard.writeText(copyText).then(function(){
-      // Open Ads Manager
-      var url = "https://adsmanager.facebook.com/adsmanager/manage/ads/edit?act=" + acct;
-      window.open(url, "_blank");
-      // Show instruction modal
-      var prog = document.getElementById("ma-publish-progress");
-      if (prog) prog.innerHTML = "<div style='padding:.75rem 1rem;background:#e8f4ee;border-radius:10px;border:1px solid #9FE1CB;margin-top:.5rem'>"
-        + "<div style='font-size:14px;font-weight:600;color:#085041;margin-bottom:.5rem'>&#9989; Textes copies + Ads Manager ouvert !</div>"
-        + "<div style='font-size:12px;color:#04342C;line-height:2'>"
-          + "<b>Dans Ads Manager :</b><br>"
-          + "1. Clique <b>Creer</b> → choisis l objectif <b>Ventes</b><br>"
-          + "2. Configure l audience (France, 18-65 ans)<br>"
-          + "3. Dans Publicite : colle le <b>Texte principal</b> (deja dans ton presse-papier)<br>"
-          + "4. Colle le <b>Titre</b> et la <b>Description</b><br>"
-          + "5. Uploade l image depuis ton PC ou l URL WooCommerce<br>"
-          + "6. Entre l URL de destination : <b>" + (dest||"ta boutique") + "</b><br>"
-          + "7. Clique <b>Publier</b>"
-        + "</div>"
-        + "<div style='margin-top:.65rem;padding:.5rem .75rem;background:#d4ecdf;border-radius:7px;font-size:11.5px;color:#04342C'>"
-          + "&#128203; Tous les textes sont dans ton presse-papier — colle-les directement (Ctrl+V / Cmd+V)"
-        + "</div>"
-        + "<div style='margin-top:.5rem;font-size:11px;color:#085041'>"
-          + "<b>Image :</b> " + (metaWooImageUrl ? "<a href='" + metaWooImageUrl + "' target='_blank' style='color:#085041;text-decoration:underline'>Telecharger depuis WooCommerce</a>" : "Recuperer via le bouton ci-dessus") 
-        + "</div>"
-        + "</div>";
-      toastOK({title:"Ads Manager ouvert + textes copies !", msg:"Colle avec Ctrl+V dans les champs"});
-    });
-  }
+    // Step 1 — setup account
+    + "<div style='background:#fff3cd;border-radius:8px;padding:.5rem .75rem;margin-bottom:.6rem;font-size:12px;color:#7a4a00'>"
+      + "<b>&#9888; Avant tout :</b> dans Ads Manager, clique <b>Vue d ensemble du compte</b> et configure ta carte bancaire. Sans ca, aucune pub ne peut etre creee."
+    + "</div>"
+
+    // Texts to copy
+    + "<div style='display:grid;grid-template-columns:1fr;gap:6px;margin-bottom:.65rem'>"
+
+    + "<div style='background:var(--sur);border-radius:8px;padding:.5rem .75rem;border:0.5px solid var(--bord)'>"
+      + "<div style='display:flex;align-items:center;justify-content:space-between;margin-bottom:.25rem'>"
+        + "<span style='font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.3px;color:var(--mut)'>Texte principal (125 cars max)</span>"
+        + "<button onclick='copyField(this.dataset.fid)' data-fid='ma-txt-primary' style='padding:2px 9px;border-radius:5px;border:0.5px solid var(--bord);background:var(--bg);font-size:10px;cursor:pointer'>Copier</button>"
+      + "</div>"
+      + "<div id='ma-txt-primary' style='font-size:12.5px;line-height:1.6;color:var(--txt)'>" + primaryText + "</div>"
+    + "</div>"
+
+    + "<div style='background:var(--sur);border-radius:8px;padding:.5rem .75rem;border:0.5px solid var(--bord)'>"
+      + "<div style='display:flex;align-items:center;justify-content:space-between;margin-bottom:.25rem'>"
+        + "<span style='font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.3px;color:var(--mut)'>Titre / Headline (40 cars max)</span>"
+        + "<button onclick='copyField(this.dataset.fid)' data-fid='ma-txt-headline' style='padding:2px 9px;border-radius:5px;border:0.5px solid var(--bord);background:var(--bg);font-size:10px;cursor:pointer'>Copier</button>"
+      + "</div>"
+      + "<div id='ma-txt-headline' style='font-size:12.5px;font-weight:500;color:var(--txt)'>" + headline + "</div>"
+    + "</div>"
+
+    + (description ? "<div style='background:var(--sur);border-radius:8px;padding:.5rem .75rem;border:0.5px solid var(--bord)'>"
+      + "<div style='display:flex;align-items:center;justify-content:space-between;margin-bottom:.25rem'>"
+        + "<span style='font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.3px;color:var(--mut)'>Description (30 cars max)</span>"
+        + "<button onclick='copyField(this.dataset.fid)' data-fid='ma-txt-desc' style='padding:2px 9px;border-radius:5px;border:0.5px solid var(--bord);background:var(--bg);font-size:10px;cursor:pointer'>Copier</button>"
+      + "</div>"
+      + "<div id='ma-txt-desc' style='font-size:12.5px;color:var(--txt)'>" + description + "</div>"
+    + "</div>" : "")
+
+    + "<div style='background:var(--sur);border-radius:8px;padding:.5rem .75rem;border:0.5px solid var(--bord)'>"
+      + "<div style='display:flex;align-items:center;justify-content:space-between;margin-bottom:.25rem'>"
+        + "<span style='font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.3px;color:var(--mut)'>URL de destination</span>"
+        + "<button onclick='copyField(this.dataset.fid)' data-fid='ma-txt-url' style='padding:2px 9px;border-radius:5px;border:0.5px solid var(--bord);background:var(--bg);font-size:10px;cursor:pointer'>Copier</button>"
+      + "</div>"
+      + "<div id='ma-txt-url' style='font-size:12px;color:#1877f2;font-family:monospace'>" + dest + "</div>"
+    + "</div>"
+
+    + (imgUrl ? "<div style='background:var(--sur);border-radius:8px;padding:.5rem .75rem;border:0.5px solid var(--bord);display:flex;align-items:center;gap:10px'>"
+      + "<img src='" + imgUrl + "' style='width:60px;height:60px;object-fit:cover;border-radius:6px;flex-shrink:0'>"
+      + "<div style='flex:1'><div style='font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.3px;color:var(--mut);margin-bottom:.2rem'>Image produit</div>"
+        + "<a href='" + imgUrl + "' download target='_blank' style='font-size:11.5px;color:#1877f2;text-decoration:underline'>Telecharger l image &#8599;</a>"
+        + "<div style='font-size:10px;color:var(--mut);margin-top:2px'>Uploade cette image dans Ads Manager lors de la creation</div>"
+      + "</div>"
+    + "</div>" : "")
+
+    + "</div>"
+
+    // Steps in Ads Manager
+    + "<div style='font-size:12px;color:#042C53;line-height:2.2;background:#fff;border-radius:8px;padding:.6rem .85rem;margin-bottom:.65rem'>"
+      + "<b>Dans Ads Manager :</b><br>"
+      + "1. Clique <b>+ Creer</b> → objectif <b>Ventes</b> ou <b>Trafic</b><br>"
+      + "2. Configure l audience → France, 18-65 ans<br>"
+      + "3. Choisis le placement → <b>Avantage+ placements</b><br>"
+      + "4. Dans la section Publicite : colle le texte principal → le titre → la description<br>"
+      + "5. Uploade l image (bouton ci-dessus)<br>"
+      + "6. Entre l URL de destination<br>"
+      + "7. Clique <b>Verifier et publier</b>"
+    + "</div>"
+
+    + "<button id='ma-open-ads-btn' style='padding:9px 18px;background:#1877f2;color:#fff;border:none;border-radius:9px;font-size:13px;font-weight:600;cursor:pointer;width:100%'>Ouvrir Ads Manager &#8599;</button>"
+    + "</div>";
+
+  toastInfo("Guide affiche ci-dessous — suis les etapes");
+  // Wire up the open button after DOM update
+  setTimeout(function() {
+    var openBtn = document.getElementById("ma-open-ads-btn");
+    if (openBtn) openBtn.onclick = function() { window.open(adsUrl, "_blank"); };
+  }, 100);
 }
+
+function copyField(id) {
+  var el = document.getElementById(id);
+  if (!el) return;
+  var txt = el.textContent || el.innerText;
+  if (navigator.clipboard) navigator.clipboard.writeText(txt.trim()).then(function(){
+    toastOK("Copie !");
+  });
+}
+
+
 
 function copyMetaIds() {
   if (!lastMetaAdResult) return;
@@ -7192,8 +7365,353 @@ function copyMetaIds() {
 // Ne pas redéfinir initMetaAdsAgent ici
 
 
+
+// ============================================================
+// DARK MODE
+// ============================================================
+var darkModeActive = false;
+
+function initDarkMode() {
+  var saved = localStorage.getItem("theme");
+  if (saved) {
+    applyTheme(saved);
+  } else if (window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches) {
+    applyTheme("dark");
+  }
+  // Listen for system changes
+  if (window.matchMedia) {
+    window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", function(e) {
+      if (!localStorage.getItem("theme")) applyTheme(e.matches ? "dark" : "light");
+    });
+  }
+}
+
+function applyTheme(theme) {
+  document.documentElement.setAttribute("data-theme", theme);
+  darkModeActive = theme === "dark";
+  localStorage.setItem("theme", theme);
+  var icon  = document.getElementById("dark-icon");
+  var label = document.getElementById("dark-label");
+  if (icon)  icon.textContent  = darkModeActive ? "☀️" : "🌙";
+  if (label) label.textContent = darkModeActive ? "Clair" : "Sombre";
+  // Rebuild charts with new colors if Dashboard visible
+  if (typeof renderDashboard === "function") {
+    var dash = document.getElementById("tab-dashboard");
+    if (dash && dash.classList.contains("on")) renderDashboard();
+  }
+}
+
+function toggleDarkMode() {
+  applyTheme(darkModeActive ? "light" : "dark");
+  toastInfo(darkModeActive ? "Mode clair active" : "Mode sombre active");
+}
+
+// ============================================================
+// GOOGLE ANALYTICS 4
+// ============================================================
+var gaConfig    = {};
+var gaToken     = null;
+var gaTokenExp  = null;
+var gaData      = null;
+
+var GA_SCOPES   = "https://www.googleapis.com/auth/analytics.readonly";
+var GA_AUTH_URL = "https://accounts.google.com/o/oauth2/v2/auth";
+
+function initAnalyticsTab() {
+  loadGAConfig();
+  updateGAStatus();
+  if (gaToken && new Date(gaTokenExp) > new Date()) loadAnalyticsData();
+}
+
+function loadGAConfig() {
+  try {
+    var saved = JSON.parse(localStorage.getItem(getUserKey("ga_config")) || "{}");
+    gaConfig = saved;
+    if (saved.token) gaToken = saved.token;
+    if (saved.tokenExp) gaTokenExp = saved.tokenExp;
+    var el;
+    el = document.getElementById("ga-property-id"); if(el && saved.propertyId) el.value = saved.propertyId;
+    el = document.getElementById("ga-client-id");    if(el && saved.clientId)   el.value = saved.clientId;
+  } catch(e) {}
+}
+
+function saveGAConfig() {
+  gaConfig.propertyId = (document.getElementById("ga-property-id")||{}).value.trim();
+  gaConfig.clientId   = (document.getElementById("ga-client-id")||{}).value.trim();
+  gaConfig.token      = gaToken;
+  gaConfig.tokenExp   = gaTokenExp;
+  localStorage.setItem(getUserKey("ga_config"), JSON.stringify(gaConfig));
+}
+
+function updateGAStatus() {
+  var st      = document.getElementById("ga-auth-status");
+  var connBtn = document.getElementById("ga-connect-btn");
+  var discBtn = document.getElementById("ga-disconnect-btn");
+  var loadBtn = document.getElementById("ga-load-btn");
+  var period  = document.getElementById("ga-period-row");
+  var empEl   = document.getElementById("ga-empty");
+  var isAuth  = gaToken && gaTokenExp && new Date(gaTokenExp) > new Date();
+  if (isAuth) {
+    if (st) st.innerHTML = "<span style='color:var(--grn);font-weight:500'>&#9989; Connecte a Google Analytics</span>"
+      + " — Property: <b>" + (gaConfig.propertyId||"") + "</b>"
+      + " <span style='color:var(--mut);font-size:11px'>Token valide jusqu au "
+      + new Date(gaTokenExp).toLocaleDateString("fr-FR") + "</span>";
+    if (connBtn) connBtn.style.display = "none";
+    if (discBtn) discBtn.style.display = "";
+    if (loadBtn) loadBtn.style.display = "";
+    if (period)  period.style.display  = "flex";
+    if (empEl)   empEl.style.display   = "none";
+  } else {
+    if (st) st.innerHTML = "Non connecte — clique <b>Connecter avec Google</b> pour autoriser l acces.";
+    if (connBtn) connBtn.style.display = "";
+    if (discBtn) discBtn.style.display = "none";
+    if (loadBtn) loadBtn.style.display = "none";
+    if (period)  period.style.display  = "none";
+    if (empEl)   empEl.style.display   = "";
+  }
+}
+
+function connectGoogleAnalytics() {
+  gaConfig.propertyId = (document.getElementById("ga-property-id")||{}).value.trim();
+  gaConfig.clientId   = (document.getElementById("ga-client-id")||{}).value.trim();
+  if (!gaConfig.clientId) { toastWarn("Entre ton Client ID OAuth2 Google"); return; }
+  if (!gaConfig.propertyId) { toastWarn("Entre ton Property ID GA4"); return; }
+  saveGAConfig();
+  var redirectUri = window.location.origin + window.location.pathname;
+  var params = new URLSearchParams({
+    client_id:     gaConfig.clientId,
+    redirect_uri:  redirectUri,
+    response_type: "token",
+    scope:         GA_SCOPES,
+    state:         "ga_auth"
+  });
+  var popup = window.open(GA_AUTH_URL + "?" + params, "ga_auth", "width=500,height=600,left=200,top=100");
+  // Listen for the token returned via redirect
+  var interval = setInterval(function() {
+    try {
+      if (!popup || popup.closed) { clearInterval(interval); return; }
+      var hash = popup.location.hash;
+      if (hash && hash.includes("access_token=")) {
+        clearInterval(interval);
+        popup.close();
+        var p = new URLSearchParams(hash.slice(1));
+        gaToken = p.get("access_token");
+        var expiresIn = parseInt(p.get("expires_in") || "3600");
+        gaTokenExp = new Date(Date.now() + expiresIn * 1000).toISOString();
+        saveGAConfig();
+        updateGAStatus();
+        toastOK("Google Analytics connecte !");
+        loadAnalyticsData();
+      }
+    } catch(e) {}
+  }, 500);
+}
+
+function disconnectGA() {
+  gaToken = null; gaTokenExp = null; gaData = null;
+  saveGAConfig();
+  updateGAStatus();
+  ["ga-kpis","ga-pages-section","ga-products-section"].forEach(function(id) {
+    var el = document.getElementById(id); if(el) el.style.display = "none";
+  });
+  var emp = document.getElementById("ga-empty"); if(emp) emp.style.display = "";
+  toastInfo("Google Analytics deconnecte");
+}
+
+async function gaRequest(endpoint, body) {
+  if (!gaToken) throw new Error("Non authentifie");
+  var resp = await fetch("https://analyticsdata.googleapis.com/v1beta/" + endpoint, {
+    method:  "POST",
+    headers: {"Authorization": "Bearer " + gaToken, "Content-Type": "application/json"},
+    body:    JSON.stringify(body)
+  });
+  var data = await resp.json();
+  if (data.error) throw new Error(data.error.message + " (code " + data.error.code + ")");
+  return data;
+}
+
+async function loadAnalyticsData() {
+  if (!gaToken) return;
+  var propertyId = (document.getElementById("ga-property-id")||{}).value.trim() || gaConfig.propertyId;
+  var days       = (document.getElementById("ga-period")||{}).value || "28";
+  var loadEl     = document.getElementById("ga-loading");
+  if (loadEl) loadEl.style.display = "flex";
+  try {
+    // Request 1: overview KPIs
+    var overview = await gaRequest("properties/" + propertyId + ":runReport", {
+      dateRanges:  [{ startDate: days + "daysAgo", endDate: "today" }],
+      metrics: [
+        { name: "sessions" }, { name: "activeUsers" },
+        { name: "screenPageViews" }, { name: "conversions" },
+        { name: "totalRevenue" }, { name: "bounceRate" },
+        { name: "averageSessionDuration" }
+      ]
+    });
+    // Request 2: top pages
+    var pages = await gaRequest("properties/" + propertyId + ":runReport", {
+      dateRanges:  [{ startDate: days + "daysAgo", endDate: "today" }],
+      dimensions:  [{ name: "pagePath" }, { name: "pageTitle" }],
+      metrics:     [{ name: "screenPageViews" }, { name: "activeUsers" }, { name: "conversions" }],
+      orderBys:    [{ metric: { metricName: "screenPageViews" }, desc: true }],
+      limit:       20
+    });
+    gaData = { overview, pages, days };
+    if (loadEl) loadEl.style.display = "none";
+    renderGAData(gaData);
+  } catch(e) {
+    if (loadEl) loadEl.style.display = "none";
+    toastErr("GA4: " + e.message);
+    if (e.message.includes("401") || e.message.includes("UNAUTHENTICATED")) {
+      gaToken = null; saveGAConfig(); updateGAStatus();
+      toastWarn("Session expiree — reconnecte-toi a Google Analytics");
+    }
+  }
+}
+
+function renderGAData(data) {
+  var kpisEl    = document.getElementById("ga-kpis");
+  var kpiGrid   = document.getElementById("ga-kpi-grid");
+  var pagesEl   = document.getElementById("ga-pages-section");
+  var pagesTable= document.getElementById("ga-pages-table");
+  var prodsEl   = document.getElementById("ga-products-section");
+  var prodsTable= document.getElementById("ga-products-table");
+
+  // KPIs
+  if (kpisEl && kpiGrid && data.overview && data.overview.rows && data.overview.rows[0]) {
+    var row    = data.overview.rows[0];
+    var vals   = row.metricValues || [];
+    var metrics = [
+      { label: "Sessions", val: parseInt(vals[0]&&vals[0].value||0).toLocaleString("fr-FR"), icon: "&#128101;" },
+      { label: "Utilisateurs actifs", val: parseInt(vals[1]&&vals[1].value||0).toLocaleString("fr-FR"), icon: "&#128100;" },
+      { label: "Pages vues", val: parseInt(vals[2]&&vals[2].value||0).toLocaleString("fr-FR"), icon: "&#128196;" },
+      { label: "Conversions", val: parseInt(vals[3]&&vals[3].value||0).toLocaleString("fr-FR"), icon: "&#9989;" },
+      { label: "Revenu total", val: parseFloat(vals[4]&&vals[4].value||0).toLocaleString("fr-FR", {style:"currency",currency:"EUR"}), icon: "&#128176;" },
+      { label: "Taux rebond", val: (parseFloat(vals[5]&&vals[5].value||0)*100).toFixed(1) + "%", icon: "&#128203;" },
+      { label: "Duree session", val: Math.round(parseFloat(vals[6]&&vals[6].value||0)) + "s", icon: "&#9201;" },
+    ];
+    kpiGrid.innerHTML = metrics.map(function(m) {
+      return "<div style='background:var(--bg);border-radius:var(--r);padding:.5rem .75rem'>"
+        + "<div style='font-size:10px;text-transform:uppercase;letter-spacing:.3px;color:var(--mut);margin-bottom:.2rem'>" + m.icon + " " + m.label + "</div>"
+        + "<div style='font-size:16px;font-weight:600'>" + m.val + "</div>"
+        + "</div>";
+    }).join("");
+    kpisEl.style.display = "";
+  }
+
+  // Top pages
+  if (pagesEl && pagesTable && data.pages && data.pages.rows) {
+    var rows = data.pages.rows.slice(0,15);
+    pagesTable.innerHTML = "<div style='overflow-x:auto'><table style='width:100%;font-size:12px;border-collapse:collapse'>"
+      + "<tr><th style='text-align:left;padding:5px 8px;border-bottom:1px solid var(--bord);color:var(--mut);font-weight:500'>Page</th>"
+      + "<th style='text-align:right;padding:5px 8px;border-bottom:1px solid var(--bord);color:var(--mut);font-weight:500'>Vues</th>"
+      + "<th style='text-align:right;padding:5px 8px;border-bottom:1px solid var(--bord);color:var(--mut);font-weight:500'>Utilisateurs</th>"
+      + "<th style='text-align:right;padding:5px 8px;border-bottom:1px solid var(--bord);color:var(--mut);font-weight:500'>Conversions</th></tr>"
+      + rows.map(function(r) {
+          var dims = r.dimensionValues || [];
+          var mets = r.metricValues    || [];
+          var path  = (dims[0]&&dims[0].value||"").slice(0,50);
+          var title = (dims[1]&&dims[1].value||"").slice(0,40);
+          var views = parseInt(mets[0]&&mets[0].value||0).toLocaleString("fr-FR");
+          var users = parseInt(mets[1]&&mets[1].value||0).toLocaleString("fr-FR");
+          var conv  = parseInt(mets[2]&&mets[2].value||0);
+          return "<tr style='border-bottom:0.5px solid var(--bord)'>"
+            + "<td style='padding:5px 8px'><div style='font-weight:500'>" + (title||path) + "</div>"
+              + "<div style='font-size:10px;color:var(--mut);font-family:monospace'>" + path + "</div></td>"
+            + "<td style='text-align:right;padding:5px 8px'>" + views + "</td>"
+            + "<td style='text-align:right;padding:5px 8px'>" + users + "</td>"
+            + "<td style='text-align:right;padding:5px 8px'>"
+              + (conv > 0 ? "<span style='color:var(--grn);font-weight:600'>" + conv + "</span>" : "<span style='color:var(--mut)'>—</span>")
+            + "</td></tr>";
+        }).join("")
+      + "</table></div>";
+    pagesEl.style.display = "";
+    // Also extract product-like pages for enrichment
+    renderGAProducts(rows);
+  }
+}
+
+function renderGAProducts(pageRows) {
+  var prodsEl    = document.getElementById("ga-products-section");
+  var prodsTable = document.getElementById("ga-products-table");
+  if (!prodsEl || !prodsTable) return;
+  // Filter pages that look like product pages (contain /produit/ or /product/ or /shop/)
+  var productPages = pageRows.filter(function(r) {
+    var path = (r.dimensionValues&&r.dimensionValues[0]&&r.dimensionValues[0].value||"").toLowerCase();
+    return path.includes("produit") || path.includes("product") || path.includes("shop") || path.includes("boutique");
+  });
+  if (!productPages.length) {
+    prodsEl.style.display = "none"; return;
+  }
+  prodsTable.innerHTML = productPages.slice(0,10).map(function(r) {
+    var dims   = r.dimensionValues || [];
+    var mets   = r.metricValues    || [];
+    var path   = dims[0]&&dims[0].value||"";
+    var title  = (dims[1]&&dims[1].value||path).replace(" - UrbanElectroStore","").replace(" - WooCommerce","");
+    var views  = parseInt(mets[0]&&mets[0].value||0);
+    var conv   = parseInt(mets[2]&&mets[2].value||0);
+    var matchedProduct = null;
+    for (var i = 0; i < PRODUCTS.length; i++) {
+      var pn = PRODUCTS[i][1].toLowerCase();
+      var tn = title.toLowerCase().replace(/-/g," ").slice(0,20);
+      if (pn.indexOf(tn.slice(0,12)) >= 0) { matchedProduct = PRODUCTS[i]; break; }
+    }
+    var score = views > 1000 ? 4 : views > 300 ? 3 : views > 100 ? 2 : 1;
+    return "<div style='display:flex;align-items:center;gap:10px;padding:.35rem .5rem;background:var(--bg);border-radius:6px;margin-bottom:4px;font-size:12px'>"
+      + "<div style='flex:1;min-width:0'>"
+        + "<div style='font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap'>" + title.slice(0,50) + "</div>"
+        + "<div style='font-size:10px;color:var(--mut);font-family:monospace'>" + path.slice(0,40) + "</div>"
+      + "</div>"
+      + "<div style='text-align:center;min-width:50px'><div style='font-size:13px;font-weight:600'>" + views.toLocaleString("fr-FR") + "</div><div style='font-size:10px;color:var(--mut)'>vues</div></div>"
+      + (conv > 0 ? "<div style='text-align:center;min-width:50px'><div style='font-size:13px;font-weight:600;color:var(--grn)'>" + conv + "</div><div style='font-size:10px;color:var(--mut)'>conv.</div></div>" : "")
+      + "<div style='font-size:10px;background:var(--gnbg);color:var(--grn);padding:2px 7px;border-radius:4px;flex-shrink:0'>"
+        + (matchedProduct ? "Match: " + matchedProduct[1].slice(0,15) : "Score CTR: " + score + "/5")
+      + "</div>"
+      + "</div>";
+  }).join("");
+  prodsEl.style.display = "";
+}
+
+function enrichScoresFromGA() {
+  if (!gaData || !gaData.pages || !gaData.pages.rows) {
+    toastWarn("Charge d abord les donnees Google Analytics"); return;
+  }
+  var enriched = 0;
+  gaData.pages.rows.forEach(function(r) {
+    var dims  = r.dimensionValues || [];
+    var mets  = r.metricValues    || [];
+    var title = (dims[1]&&dims[1].value||"").toLowerCase().replace(/-/g," ");
+    var views = parseInt(mets[0]&&mets[0].value||0);
+    var conv  = parseInt(mets[2]&&mets[2].value||0);
+    if (!views) return;
+    // Match product by name
+    for (var i = 0; i < PRODUCTS.length; i++) {
+      var pn = PRODUCTS[i][1].toLowerCase();
+      var key = title.slice(0,15);
+      if (key.length > 5 && pn.indexOf(key) >= 0) {
+        var pid = PRODUCTS[i][0];
+        if (!userScores[pid]) userScores[pid] = {};
+        // CTR based on page views
+        var ctrScore = views > 1000 ? 5 : views > 500 ? 4 : views > 200 ? 3 : views > 50 ? 2 : 1;
+        userScores[pid].ctr = String(ctrScore);
+        // Conversions → ventes score
+        if (conv > 0) {
+          var venScore = conv > 50 ? 5 : conv > 20 ? 4 : conv > 10 ? 3 : conv > 3 ? 2 : 1;
+          userScores[pid].ven = String(venScore);
+        }
+        enriched++;
+        break;
+      }
+    }
+  });
+  persist("userScores", userScores);
+  render();
+  toastOK({title: enriched + " produits enrichis depuis Google Analytics", msg: "Scores CTR et Ventes mis a jour avec les vraies donnees"});
+}
+
+
 // INIT -- EN DERNIER
 // ============================================================
+initDarkMode();
 initAccessControl();
 updateApiBar();
 renderCatTabs();
