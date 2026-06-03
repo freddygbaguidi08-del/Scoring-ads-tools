@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>NOF — Cockpit E-commerce</title>
-<meta name="description" content="Scoring produits, generateur d ads IA et geo-ciblage pour NOF">
+<title>UrbanElectroStore — Cockpit E-commerce</title>
+<meta name="description" content="Scoring produits, generateur d ads IA et geo-ciblage pour UrbanElectroStore">
 <meta name="theme-color" content="#18180f">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -36,9 +36,110 @@ body{font-family:'Inter',-apple-system,BlinkMacSystemFont,Arial,sans-serif;font-
 .topbar{display:flex;align-items:center;justify-content:space-between;padding:.55rem 1rem;padding-top:calc(.55rem + env(safe-area-inset-top,0px));background:var(--sur);border-bottom:1px solid var(--bord);position:sticky;top:0;z-index:100}
 .topbar h1{font-size:14px;font-weight:600}
 .topr{display:flex;gap:5px;flex-wrap:wrap}
-.maintabs{display:flex;overflow-x:auto;padding:.35rem .75rem .0rem;gap:3px;background:var(--sur);border-bottom:1px solid var(--bord);scrollbar-width:none}
-.mtab{flex-shrink:0;padding:6px 11px;border-radius:7px 7px 0 0;border:none;background:transparent;font-size:12px;font-family:inherit;cursor:pointer;color:var(--mut);transition:all .15s;white-space:nowrap}
-.mtab.on{color:var(--txt);border-bottom-color:var(--txt)}
+.maintabs{display:none !important}
+/* ===== SIDEBAR NAVIGATION ===== */
+#app-layout {
+  display: flex;
+  min-height: calc(100vh - 54px);
+}
+#sidebar {
+  width: 200px;
+  flex-shrink: 0;
+  background: var(--sur);
+  border-right: 1px solid var(--bord);
+  padding: .5rem 0 1rem;
+  position: sticky;
+  top: 54px;
+  height: calc(100vh - 54px);
+  overflow-y: auto;
+  overflow-x: hidden;
+  scrollbar-width: thin;
+  transition: width .2s ease;
+}
+#sidebar.collapsed { width: 52px; }
+#sidebar.collapsed .sb-label,
+#sidebar.collapsed .sb-group-label { display: none; }
+#sidebar.collapsed .sb-item { justify-content: center; padding: 8px 0; }
+#main-content {
+  flex: 1;
+  min-width: 0;
+  overflow-x: hidden;
+}
+.sb-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding: .35rem .6rem;
+  margin-bottom: .25rem;
+}
+.sb-toggle-btn {
+  background: none; border: none; cursor: pointer;
+  color: var(--mut); padding: 4px; border-radius: 5px;
+  transition: background .15s, color .15s;
+  font-size: 16px; line-height: 1;
+}
+.sb-toggle-btn:hover { background: var(--gnbg); color: var(--grn); }
+.sb-group-label {
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: .6px;
+  color: var(--mut);
+  padding: .65rem .9rem .25rem;
+  white-space: nowrap;
+}
+.sb-item {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 7px .9rem;
+  font-size: 12.5px;
+  color: var(--txt);
+  cursor: pointer;
+  transition: background .12s ease, color .12s ease;
+  white-space: nowrap;
+  border-radius: 0;
+  margin: 1px 6px;
+  border-radius: 7px;
+  position: relative;
+}
+.sb-item:hover {
+  background: var(--bg);
+  color: var(--grn);
+}
+.sb-item.active {
+  background: var(--gnbg);
+  color: var(--grn);
+  font-weight: 500;
+}
+.sb-item.active::before {
+  content: '';
+  position: absolute;
+  left: -6px; top: 20%; bottom: 20%;
+  width: 3px;
+  background: var(--grn);
+  border-radius: 0 3px 3px 0;
+}
+.sb-icon {
+  font-size: 15px;
+  flex-shrink: 0;
+  width: 18px;
+  text-align: center;
+}
+.sb-label { flex: 1; }
+.sb-sep {
+  height: .5px;
+  background: var(--bord);
+  margin: .4rem .9rem;
+}
+/* Mobile — sidebar se cache, bottom bar reste */
+@media (max-width: 768px) {
+  #sidebar { display: none; }
+  #app-layout { display: block; }
+}
+
+
+
 .panel{display:none;padding:.65rem .9rem 2rem}
 .panel.on{display:block}
 .al{padding:.5rem .8rem;border-radius:var(--r);font-size:11.5px;margin-bottom:.55rem}
@@ -197,7 +298,7 @@ tr.sel td{background:#f0f8f3}
   #sync-indicator{display:none}
   .maintabs{overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;flex-wrap:nowrap}
   .maintabs::-webkit-scrollbar{display:none}
-  .mtab{font-size:11.5px;padding:.45rem .75rem;white-space:nowrap;flex-shrink:0}
+  
   .panel{padding:.55rem .75rem 2rem}
   .stats{gap:5px}
   .stat{min-width:80px;padding:.4rem .6rem}
@@ -406,7 +507,7 @@ th{position:sticky;top:0;z-index:1}
 }
 
 /* --- Panel transitions — 3D slide in --- */
-.panel{display:none;padding:.75rem 1rem 4rem}
+.panel{display:none;padding:.75rem 1.25rem 4rem;min-height:calc(100vh - 120px)}
 to{opacity:1;transform:translateY(0)}}
   to   { opacity: 1; transform: translateY(0) scale(1); }
 }
@@ -689,7 +790,7 @@ select option{background:var(--sur);color:var(--txt)}
   <div class="login-scene">
     <div class="login-box" id="login-box-user">
       <span class="logo">🛍</span>
-      <h2>NOF</h2>
+      <h2>UrbanElectroStore</h2>
       <p class="sub">Entre tes identifiants pour acceder au Cockpit</p>
       <div class="login-field">
         <label>Prenom ou identifiant</label>
@@ -734,7 +835,7 @@ select option{background:var(--sur);color:var(--txt)}
 </div>
 
 <div class="topbar">
-  <h1>&#128722; NOF &mdash; Cockpit E-commerce</h1>
+  <h1>&#128722; UrbanElectroStore &mdash; Cockpit E-commerce</h1>
   <span id="sync-indicator" onclick="manualSync()" title="Cliquer pour synchroniser maintenant"
     style="font-size:11px;font-weight:500;padding:3px 10px;border-radius:20px;cursor:pointer;background:var(--blbg);color:#0c3d6e;display:inline-flex;align-items:center;gap:4px">&#9729; Cloud</span>
   <div class="topr">
@@ -751,28 +852,53 @@ select option{background:var(--sur);color:var(--txt)}
   </div>
 </div>
 
-<div class="maintabs" id="maintabs">
-  <button class="mtab on" onclick="showMain('scoring')">&#128202; Produits</button>
-  <button class="mtab" onclick="showMain('ads')">&#127919; Ads</button>
-  <button class="mtab" id="mtab-metaads" onclick="showMain('metaads')" style="background:linear-gradient(90deg,#1877f222,transparent);border-color:#1877f244;color:#1877f2;font-weight:500">&#128640; Meta Ads</button>
-  <button class="mtab" onclick="showMain('marge')">&#128176; Marge &amp; ROI</button>
-  <button class="mtab" onclick="showMain('saisonnal')">&#128197; Saisonnalite</button>
-  <button class="mtab" onclick="showMain('perf')">&#128200; Performance</button>
-  <button class="mtab" onclick="showMain('contenu')">&#9997; Contenu AI</button>
-  <button class="mtab" onclick="showMain('rapport')">&#128196; Rapport</button>
-  <button class="mtab" onclick="showMain('dashboard')">&#128202; Dashboard</button>
-  <button class="mtab" onclick="showMain('checklist')">&#9989; Checklist</button>
-  <button class="mtab" onclick="showMain('geo')">&#127758; Geo-ciblage</button>
-  <button class="mtab" onclick="showMain('spy')">&#128373; Espion Ads</button>
-  <button class="mtab" onclick="showMain('tendances')">&#128200; Tendances</button>
-  <button class="mtab" onclick="showMain('calculateurs')">&#129518; Calculateurs</button>
-  <button class="mtab" onclick="showMain('guidads')">&#127919; Guide Ads</button>
-  <button class="mtab" onclick="showMain('woocommerce')">&#128722; WooCommerce</button>
-  <button class="mtab" onclick="showMain('translator')">&#127760; Traducteur</button>
-  <button class="mtab" id="mtab-analytics" onclick="showMain('analytics')" style="color:#E37400">&#128200; Analytics</button>
-  <button class="mtab" id="mtab-integ" onclick="showMain('integrations')">&#128279; Intégrations</button>
-  <button class="mtab" id="mtab-admin" style="display:none" onclick="showMain('admin')">&#128274; Admin Acces</button>
-</div>
+
+<!-- ===== SIDEBAR + LAYOUT ===== -->
+<div id="app-layout">
+
+<nav id="sidebar">
+  <div class="sb-toggle">
+    <button class="sb-toggle-btn" onclick="toggleSidebar()" title="Réduire/Agrandir" aria-label="Toggle sidebar">
+      <i class="ti ti-layout-sidebar-left-collapse" aria-hidden="true"></i>
+    </button>
+  </div>
+
+  <div class="sb-group-label">Principal</div>
+  <div class="sb-item active" id="sb-scoring"   onclick="showMain('scoring')"   aria-label="Produits"><span class="sb-icon">&#128202;</span><span class="sb-label">Produits</span></div>
+  <div class="sb-item"        id="sb-ads"        onclick="showMain('ads')"       aria-label="Ads"><span class="sb-icon">&#127919;</span><span class="sb-label">Ads</span></div>
+  <div class="sb-item"        id="sb-metaads"    onclick="showMain('metaads')"   aria-label="Meta Ads"><span class="sb-icon">&#128640;</span><span class="sb-label">Meta Ads</span></div>
+
+  <div class="sb-sep"></div>
+  <div class="sb-group-label">Analyse</div>
+  <div class="sb-item" id="sb-dashboard"  onclick="showMain('dashboard')"  aria-label="Dashboard"><span class="sb-icon">&#128208;</span><span class="sb-label">Dashboard</span></div>
+  <div class="sb-item" id="sb-marge"      onclick="showMain('marge')"      aria-label="Marge & ROI"><span class="sb-icon">&#128176;</span><span class="sb-label">Marge & ROI</span></div>
+  <div class="sb-item" id="sb-tendances"  onclick="showMain('tendances')"  aria-label="Tendances"><span class="sb-icon">&#128200;</span><span class="sb-label">Tendances</span></div>
+  <div class="sb-item" id="sb-saisonnal"  onclick="showMain('saisonnal')"  aria-label="Saisonnalité"><span class="sb-icon">&#128197;</span><span class="sb-label">Saisonnalité</span></div>
+  <div class="sb-item" id="sb-perf"       onclick="showMain('perf')"       aria-label="Performance"><span class="sb-icon">&#128201;</span><span class="sb-label">Performance</span></div>
+  <div class="sb-item" id="sb-analytics"  onclick="showMain('analytics')"  aria-label="Analytics"><span class="sb-icon" style="color:#E37400">&#128202;</span><span class="sb-label">Analytics</span></div>
+
+  <div class="sb-sep"></div>
+  <div class="sb-group-label">Publicité</div>
+  <div class="sb-item" id="sb-contenu"    onclick="showMain('contenu')"    aria-label="Contenu AI"><span class="sb-icon">&#9997;&#65039;</span><span class="sb-label">Contenu AI</span></div>
+  <div class="sb-item" id="sb-guidads"    onclick="showMain('guidads')"    aria-label="Guide Ads"><span class="sb-icon">&#127919;</span><span class="sb-label">Guide Ads</span></div>
+  <div class="sb-item" id="sb-spy"        onclick="showMain('spy')"        aria-label="Espion Ads"><span class="sb-icon">&#128373;&#65039;</span><span class="sb-label">Espion Ads</span></div>
+  <div class="sb-item" id="sb-rapport"    onclick="showMain('rapport')"    aria-label="Rapport"><span class="sb-icon">&#128196;</span><span class="sb-label">Rapport</span></div>
+  <div class="sb-item" id="sb-checklist"  onclick="showMain('checklist')"  aria-label="Checklist"><span class="sb-icon">&#9989;</span><span class="sb-label">Checklist</span></div>
+  <div class="sb-item" id="sb-geo"        onclick="showMain('geo')"        aria-label="Géo-ciblage"><span class="sb-icon">&#127758;</span><span class="sb-label">Géo-ciblage</span></div>
+
+  <div class="sb-sep"></div>
+  <div class="sb-group-label">Outils</div>
+  <div class="sb-item" id="sb-woocommerce" onclick="showMain('woocommerce')" aria-label="WooCommerce"><span class="sb-icon">&#128722;</span><span class="sb-label">WooCommerce</span></div>
+  <div class="sb-item" id="sb-calculateurs" onclick="showMain('calculateurs')" aria-label="Calculateurs"><span class="sb-icon">&#129518;</span><span class="sb-label">Calculateurs</span></div>
+  <div class="sb-item" id="sb-translator"  onclick="showMain('translator')"  aria-label="Traducteur"><span class="sb-icon">&#127758;</span><span class="sb-label">Traducteur</span></div>
+  <div class="sb-item" id="sb-integrations" onclick="showMain('integrations')" aria-label="Intégrations"><span class="sb-icon">&#128279;</span><span class="sb-label">Intégrations</span></div>
+
+  <div class="sb-sep"></div>
+  <div class="sb-item" id="sb-admin"      onclick="showMain('admin')"      aria-label="Admin" style="display:none"><span class="sb-icon">&#128274;</span><span class="sb-label">Admin Accès</span></div>
+</nav>
+
+<div id="main-content">
+
 
 <div class="panel on" id="tab-scoring">
   <div style="display:flex;gap:7px;flex-wrap:wrap;margin-top:.5rem;margin-bottom:.6rem">
@@ -1321,7 +1447,7 @@ select option{background:var(--sur);color:var(--txt)}
       <div class="form-row" style="margin-top:.5rem">
         <div class="form-group" style="flex:1;min-width:200px">
           <label>URL de ta boutique</label>
-          <input type="text" id="wc-url" placeholder="https://NOF.com" style="width:100%">
+          <input type="text" id="wc-url" placeholder="https://urbanelectrostore.com" style="width:100%">
         </div>
       </div>
       <div class="form-row">
@@ -1602,6 +1728,11 @@ CTA : Voir l offre" style="width:100%;height:130px;padding:7px 9px;border:1px so
 </div>
 
 <!-- MODAL AJOUT INTEGRATION -->
+
+</div><!-- /main-content -->
+
+</div><!-- /app-layout -->
+
 <div class="mbg" id="integ-modal" style="display:none" onclick="if(event.target===this)closeAddIntegModal()">
   <div class="modal" style="max-width:520px">
     <h2>Ajouter un outil</h2>
@@ -1872,7 +2003,7 @@ CTA : Voir l offre" style="width:100%;height:130px;padding:7px 9px;border:1px so
         </div>
         <div class="form-group">
           <label>URL de destination</label>
-          <input type="url" id="meta-dest-url" placeholder="https://NOF.com/produit/..." style="width:100%">
+          <input type="url" id="meta-dest-url" placeholder="https://urbanelectrostore.com/produit/..." style="width:100%">
         </div>
       </div>
       <div style="display:flex;gap:7px;flex-wrap:wrap">
@@ -2504,6 +2635,7 @@ function updateSelPanel() {
 // ============================================================
 var TAB_IDS = ["scoring","ads","metaads","marge","saisonnal","perf","contenu","rapport","dashboard","checklist","geo","spy","tendances","calculateurs","guidads","woocommerce","translator","analytics","integrations","admin"];
 function showMain(t) {
+  updateSidebarActive(t);
   document.querySelectorAll(".mtab").forEach(function(b, i){
     var isOn = TAB_IDS[i] === t;
     b.classList.toggle("on", isOn);
@@ -3264,7 +3396,7 @@ function exportScoring() {
 
 // ============================================================
 // EXPORT WOOCOMMERCE CSV — mappage complet 64 colonnes
-// Basé sur le format réel du fichier product-export d NOF
+// Basé sur le format réel du fichier product-export d UrbanElectroStore
 // ============================================================
 function exportWooCSV() {
   // Mapping catégories cockpit → catégories WooCommerce réelles
@@ -3324,7 +3456,7 @@ function exportWooCSV() {
   ];
 
   var now = new Date().toISOString().replace("T"," ").slice(0,19);
-  var baseUrl = "https://NOF.com";
+  var baseUrl = "https://urbanelectrostore.com";
 
   var rows = PRODUCTS.map(function(r, i) {
     var d      = userScores[r[0]] || {};
@@ -3360,10 +3492,10 @@ function exportWooCSV() {
     var focuskw = name.split(" ").slice(0,4).join(" ").toLowerCase();
 
     // meta:_yoast_wpseo_title — titre SEO
-    var seoTitle = name + " | NOF";
+    var seoTitle = name + " | UrbanElectroStore";
 
     // meta:_yoast_wpseo_metadesc — meta description
-    var metadesc = "Achetez " + name + " au meilleur prix sur NOF";
+    var metadesc = "Achetez " + name + " au meilleur prix sur UrbanElectroStore";
     if (r[7] === "win" && r[6]) metadesc += " - " + price + " EUR vs " + r[6] + " ailleurs";
     metadesc += ".";
 
@@ -5497,6 +5629,7 @@ function initAccessControl() {
 }
 
 function hideLockScreen() {
+  setTimeout(updateSidebarAdminVisibility, 100);
   var overlay = document.getElementById("login-overlay");
   if (overlay) { overlay.style.opacity="0"; setTimeout(function(){ overlay.style.display="none"; overlay.style.opacity=""; },300); }
   // Show user badge first (fast, no data needed)
@@ -5805,7 +5938,7 @@ function deleteUser(idx) {
 function copyInvite(idx) {
   var u = ACCESS.users[idx];
   if (!u) return;
-  var msg = "Bonjour " + u.name + ",\n\nTu as acces au Cockpit E-commerce NOF.\n\n"
+  var msg = "Bonjour " + u.name + ",\n\nTu as acces au Cockpit E-commerce UrbanElectroStore.\n\n"
     + "Lien : " + window.location.href.split("?")[0] + "\nPrenom : " + u.name + "\nCode : " + u.code
     + (u.expiry ? "\nAcces valable jusqu au : " + u.expiry : "")
     + "\n\nBonne utilisation !";
@@ -6989,7 +7122,7 @@ function renderFeedPreview(ad, cta, ctaLabel, row) {
   return "<div style='max-width:280px;border:0.5px solid var(--bord2);border-radius:10px;overflow:hidden;background:var(--sur);font-family:Arial,sans-serif'>"
     + "<div style='display:flex;align-items:center;gap:7px;padding:8px 10px'>"
       + "<div style='width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#1877f2,#42b0ff);flex-shrink:0'></div>"
-      + "<div><div style='font-size:12px;font-weight:600;color:#1a1a1a'>NOF</div>"
+      + "<div><div style='font-size:12px;font-weight:600;color:#1a1a1a'>UrbanElectroStore</div>"
         + "<div style='font-size:10px;color:#8a8a8a'>Sponsorisé · &#127758;</div></div>"
     + "</div>"
     + "<div style='padding:0 10px 6px;font-size:12px;color:#1a1a1a;line-height:1.5'>" + (ad.primary_text||"").slice(0,80) + (ad.primary_text&&ad.primary_text.length>80?"…":"") + "</div>"
@@ -7389,7 +7522,7 @@ async function fetchWooImage() {
   } catch(e) {
     if (prevEl) prevEl.innerHTML = "<div class='al ao' style='margin-top:.4rem'>Erreur: " + e.message + "</div>"
       + "<div style='font-size:11px;color:var(--mut);margin-top:.3rem'>Tu peux aussi entrer l URL de l image manuellement ci-dessous.</div>"
-      + "<div class='form-group' style='margin-top:.35rem'><label>URL image manuelle</label><input type='url' id='meta-img-url-manual' placeholder='https://NOF.com/...image.jpg' style='width:100%' oninput='metaWooImageUrl=this.value'></div>";
+      + "<div class='form-group' style='margin-top:.35rem'><label>URL image manuelle</label><input type='url' id='meta-img-url-manual' placeholder='https://urbanelectrostore.com/...image.jpg' style='width:100%' oninput='metaWooImageUrl=this.value'></div>";
     toastWarn("WooCommerce: " + e.message);
   }
 }
@@ -7425,7 +7558,7 @@ async function createMetaAd() {
   var budget     = parseInt((document.getElementById("meta-daily-budget")||{}).value||"20") * 100; // en centimes
   var startDate  = (document.getElementById("meta-start-date")||{}).value;
   var endDate    = (document.getElementById("meta-end-date")||{}).value;
-  var destUrl    = (document.getElementById("meta-dest-url")||{}).value || wcConfig.url || "https://NOF.com";
+  var destUrl    = (document.getElementById("meta-dest-url")||{}).value || wcConfig.url || "https://urbanelectrostore.com";
   var objective  = metaAdsResults.objective || "OUTCOME_SALES";
   var cta        = metaAdsResults.cta || "SHOP_NOW";
 
@@ -7981,7 +8114,7 @@ function renderGAProducts(pageRows) {
     var dims   = r.dimensionValues || [];
     var mets   = r.metricValues    || [];
     var path   = dims[0]&&dims[0].value||"";
-    var title  = (dims[1]&&dims[1].value||path).replace(" - NOF","").replace(" - WooCommerce","");
+    var title  = (dims[1]&&dims[1].value||path).replace(" - UrbanElectroStore","").replace(" - WooCommerce","");
     var views  = parseInt(mets[0]&&mets[0].value||0);
     var conv   = parseInt(mets[2]&&mets[2].value||0);
     var matchedProduct = null;
@@ -8162,10 +8295,52 @@ function loginSuccessAnim(cb) {
 
 
 
+
+// ============================================================
+// SIDEBAR NAVIGATION
+// ============================================================
+var sidebarCollapsed = localStorage.getItem("sidebarCollapsed") === "1";
+
+function initSidebar() {
+  var sb = document.getElementById("sidebar");
+  if (!sb) return;
+  if (sidebarCollapsed) sb.classList.add("collapsed");
+  // Montrer admin si admin connecté
+  updateSidebarAdminVisibility();
+}
+
+function toggleSidebar() {
+  var sb = document.getElementById("sidebar");
+  if (!sb) return;
+  sidebarCollapsed = !sidebarCollapsed;
+  sb.classList.toggle("collapsed", sidebarCollapsed);
+  localStorage.setItem("sidebarCollapsed", sidebarCollapsed ? "1" : "0");
+}
+
+function updateSidebarAdminVisibility() {
+  var adminItem = document.getElementById("sb-admin");
+  if (!adminItem) return;
+  var isAdmin = sess && (sess.isAdmin === true || sess.name === "Admin");
+  adminItem.style.display = isAdmin ? "" : "none";
+}
+
+function updateSidebarActive(tab) {
+  document.querySelectorAll(".sb-item").forEach(function(el) {
+    el.classList.remove("active");
+  });
+  var active = document.getElementById("sb-" + tab);
+  if (active) active.classList.add("active");
+}
+
+// Patch showMain pour mettre à jour la sidebar
+var _origShowMain = typeof showMain === "function" ? showMain : null;
+
+
 // INIT -- EN DERNIER
 // ============================================================
 initDarkMode();
 initLoginCanvas();
+initSidebar();
 initAccessControl();
 updateApiBar();
 renderCatTabs();
