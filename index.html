@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>NOF — Cockpit E-commerce</title>
-<meta name="description" content="Scoring produits, generateur d ads IA et geo-ciblage pour NOF">
+<title>UrbanElectroStore — Cockpit E-commerce</title>
+<meta name="description" content="Scoring produits, generateur d ads IA et geo-ciblage pour UrbanElectroStore">
 <meta name="theme-color" content="#18180f">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -729,6 +729,93 @@ select option{background:var(--sur);color:var(--txt)}
 
 
 
+
+/* ===== EFFETS 3D SIDEBAR + PANELS ===== */
+
+/* Entrée des panels */
+.panel { animation: panelIn .2s cubic-bezier(.4,0,.2,1) both; }
+@keyframes panelIn {
+  from { opacity:0; transform:translateY(6px); }
+  to   { opacity:1; transform:translateY(0); }
+}
+
+/* Items sidebar — lévitation au survol */
+.sb-item {
+  transition: transform .15s cubic-bezier(.34,1.2,.64,1),
+              background .12s ease, color .12s ease,
+              box-shadow .15s ease !important;
+}
+.sb-item:hover {
+  transform: translateX(3px) !important;
+  box-shadow: 2px 0 8px rgba(8,80,65,.08) !important;
+}
+.sb-item.active {
+  transform: translateX(2px) !important;
+  box-shadow: 3px 0 12px rgba(8,80,65,.12) !important;
+}
+
+/* Cards — lévitation + tilt subtil */
+.card-section {
+  transition: transform .2s cubic-bezier(.34,1.2,.64,1),
+              box-shadow .2s ease, border-color .15s ease;
+  will-change: transform;
+}
+.card-section:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0,0,0,.07), 0 2px 6px rgba(0,0,0,.04);
+  border-color: var(--bord2);
+}
+
+/* Stat cards */
+.stat {
+  transition: transform .18s cubic-bezier(.34,1.2,.64,1), box-shadow .18s ease;
+}
+.stat:hover {
+  transform: translateY(-3px) scale(1.01);
+  box-shadow: 0 6px 18px rgba(0,0,0,.08);
+}
+
+/* Boutons */
+.btn {
+  transition: transform .15s cubic-bezier(.34,1.2,.64,1),
+              box-shadow .15s ease, background .12s ease !important;
+}
+.btn:hover {
+  transform: translateY(-1px) !important;
+  box-shadow: 0 3px 10px rgba(0,0,0,.08) !important;
+}
+.btn:active {
+  transform: translateY(1px) scale(.97) !important;
+  box-shadow: none !important;
+}
+.btn.bg:hover { box-shadow: 0 4px 14px rgba(8,80,65,.25) !important; }
+
+/* Toasts */
+.toast { animation: toastIn .3s cubic-bezier(.34,1.3,.64,1) both; }
+@keyframes toastIn {
+  from { opacity:0; transform:translateX(20px) scale(.95); }
+  to   { opacity:1; transform:translateX(0) scale(1); }
+}
+
+/* Badges/tags micro-bounce */
+.bdg {
+  display:inline-block;
+  transition: transform .15s cubic-bezier(.34,1.4,.64,1);
+}
+.bdg:hover { transform: scale(1.07); }
+
+/* Score bars animation */
+.score-bar > div { transition: width .6s cubic-bezier(.34,1.1,.64,1); }
+
+/* Inputs — focus lift */
+input:focus, select:focus, textarea:focus {
+  transform: translateY(-1px);
+  transition: transform .15s ease, border-color .15s ease, box-shadow .15s ease;
+}
+
+/* Table rows */
+.score-table tr { transition: background .1s ease; }
+
 </style>
 </head>
 <body style="background:#f7f6f3 !important;color:#18180f !important">
@@ -790,7 +877,7 @@ select option{background:var(--sur);color:var(--txt)}
   <div class="login-scene">
     <div class="login-box" id="login-box-user">
       <span class="logo">🛍</span>
-      <h2>NOF</h2>
+      <h2>UrbanElectroStore</h2>
       <p class="sub">Entre tes identifiants pour acceder au Cockpit</p>
       <div class="login-field">
         <label>Prenom ou identifiant</label>
@@ -835,20 +922,20 @@ select option{background:var(--sur);color:var(--txt)}
 </div>
 
 <div class="topbar">
-  <h1>&#128722; NOF &mdash; Cockpit E-commerce</h1>
-  <span id="sync-indicator" onclick="manualSync()" title="Cliquer pour synchroniser maintenant"
-    style="font-size:11px;font-weight:500;padding:3px 10px;border-radius:20px;cursor:pointer;background:var(--blbg);color:#0c3d6e;display:inline-flex;align-items:center;gap:4px">&#9729; Cloud</span>
-  <div class="topr">
-    <button class="btn bb" onclick="loadFromCloud()" title="Charger depuis le cloud">&#9729; Charger cloud</button>
-    <button class="btn" onclick="openImport()">&#8679; Importer</button>
-    <button class="btn bg" onclick="exportScoring()">&#8681; Scoring CSV</button>
-    <button class="btn bd" onclick="exportWooCSV()" title="Exporter au format WooCommerce officiel pour import direct">&#128722; Export WooCommerce</button>
-    <button class="btn" onclick="runDeduplication()">&#128683; Dedoublonner</button>
-    <button class="btn" onclick="resetProductsToDefault()" style="color:#7a1a1a">&#8635; Reset</button>
-    <button class="btn" onclick="printReport()">&#128438; Rapport</button>
-    <button id="admin-access-btn" onclick="accessAdminFromTopbar()" title="Admin (Ctrl+Shift+A)" style="padding:5px 8px;font-size:13px;border:none;background:transparent;cursor:pointer;color:var(--mut);opacity:.5" onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=.5">&#128274;</button>
-    <button id="dark-toggle" onclick="toggleDarkMode()" title="Basculer mode sombre/clair"><span id="dark-icon">&#127769;</span><span class="label" id="dark-label">Sombre</span></button>
-    <button id="logout-btn" onclick="doLogout()" style="display:none;padding:5px 11px;border-radius:7px;border:1px solid var(--bord2);background:var(--sur);font-size:12px;cursor:pointer;color:var(--red);font-family:inherit">&#128100; <span id="logout-name">Deconnexion</span></button>
+  <h1 style="font-size:13px;font-weight:600;white-space:nowrap;margin:0;flex-shrink:0">&#128722; UrbanElectroStore</h1>
+  <div class="topr" style="display:flex;align-items:center;gap:4px;flex-wrap:nowrap;flex:1;justify-content:flex-end;overflow:hidden">
+    <span id="sync-indicator" onclick="manualSync()" title="Synchroniser" style="font-size:11px;font-weight:500;padding:3px 8px;border-radius:20px;cursor:pointer;background:var(--blbg);color:var(--blu);display:inline-flex;align-items:center;gap:3px;white-space:nowrap;flex-shrink:0">&#9729;</span>
+    <button class="btn bb" onclick="loadFromCloud()" title="Charger cloud" style="font-size:11px;padding:4px 8px">&#9729; Cloud</button>
+    <button class="btn" onclick="openImport()" style="font-size:11px;padding:4px 8px">&#8679; Importer</button>
+    <button class="btn bg" onclick="exportScoring()" style="font-size:11px;padding:4px 8px">&#8681; CSV</button>
+    <button class="btn bd" onclick="exportWooCSV()" title="Export WooCommerce" style="font-size:11px;padding:4px 8px">&#128722; WooCommerce</button>
+    <button class="btn" onclick="runDeduplication()" title="Dédoublonner" style="font-size:11px;padding:4px 7px">&#128683;</button>
+    <button class="btn" onclick="resetProductsToDefault()" title="Reset" style="font-size:11px;padding:4px 7px;color:var(--red)">&#8635;</button>
+    <button class="btn" onclick="printReport()" title="Rapport" style="font-size:11px;padding:4px 7px">&#128438;</button>
+    <div style="width:.5px;height:18px;background:var(--bord);flex-shrink:0;margin:0 2px"></div>
+    <button id="dark-toggle" onclick="toggleDarkMode()" title="Mode sombre" style="font-size:11px;padding:4px 8px;border-radius:6px;border:1px solid var(--bord2);background:var(--sur);cursor:pointer;font-family:inherit;display:inline-flex;align-items:center;gap:3px;flex-shrink:0"><span id="dark-icon">&#127769;</span><span id="dark-label" style="font-size:11px">Sombre</span></button>
+    <button id="admin-access-btn" onclick="accessAdminFromTopbar()" title="Admin" style="padding:4px 7px;font-size:12px;border:1px solid var(--bord2);border-radius:6px;background:var(--sur);cursor:pointer;color:var(--mut);flex-shrink:0" onmouseover="this.style.color=getComputedStyle(document.documentElement).getPropertyValue('--grn')" onmouseout="this.style.color=getComputedStyle(document.documentElement).getPropertyValue('--mut')">&#128274;</button>
+    <button id="logout-btn" onclick="doLogout()" style="display:none;padding:4px 9px;border-radius:6px;border:1px solid var(--bord2);background:var(--sur);font-size:11px;cursor:pointer;color:var(--red);font-family:inherit;flex-shrink:0;white-space:nowrap">&#128100; <span id="logout-name">Deconnexion</span></button>
   </div>
 </div>
 
@@ -1447,7 +1534,7 @@ select option{background:var(--sur);color:var(--txt)}
       <div class="form-row" style="margin-top:.5rem">
         <div class="form-group" style="flex:1;min-width:200px">
           <label>URL de ta boutique</label>
-          <input type="text" id="wc-url" placeholder="https://NOF.com" style="width:100%">
+          <input type="text" id="wc-url" placeholder="https://urbanelectrostore.com" style="width:100%">
         </div>
       </div>
       <div class="form-row">
@@ -2003,7 +2090,7 @@ CTA : Voir l offre" style="width:100%;height:130px;padding:7px 9px;border:1px so
         </div>
         <div class="form-group">
           <label>URL de destination</label>
-          <input type="url" id="meta-dest-url" placeholder="https://NOF.com/produit/..." style="width:100%">
+          <input type="url" id="meta-dest-url" placeholder="https://urbanelectrostore.com/produit/..." style="width:100%">
         </div>
       </div>
       <div style="display:flex;gap:7px;flex-wrap:wrap">
@@ -3396,7 +3483,7 @@ function exportScoring() {
 
 // ============================================================
 // EXPORT WOOCOMMERCE CSV — mappage complet 64 colonnes
-// Basé sur le format réel du fichier product-export d NOF
+// Basé sur le format réel du fichier product-export d UrbanElectroStore
 // ============================================================
 function exportWooCSV() {
   // Mapping catégories cockpit → catégories WooCommerce réelles
@@ -3456,7 +3543,7 @@ function exportWooCSV() {
   ];
 
   var now = new Date().toISOString().replace("T"," ").slice(0,19);
-  var baseUrl = "https://NOF.com";
+  var baseUrl = "https://urbanelectrostore.com";
 
   var rows = PRODUCTS.map(function(r, i) {
     var d      = userScores[r[0]] || {};
@@ -3492,10 +3579,10 @@ function exportWooCSV() {
     var focuskw = name.split(" ").slice(0,4).join(" ").toLowerCase();
 
     // meta:_yoast_wpseo_title — titre SEO
-    var seoTitle = name + " | NOF";
+    var seoTitle = name + " | UrbanElectroStore";
 
     // meta:_yoast_wpseo_metadesc — meta description
-    var metadesc = "Achetez " + name + " au meilleur prix sur NOF";
+    var metadesc = "Achetez " + name + " au meilleur prix sur UrbanElectroStore";
     if (r[7] === "win" && r[6]) metadesc += " - " + price + " EUR vs " + r[6] + " ailleurs";
     metadesc += ".";
 
@@ -5938,7 +6025,7 @@ function deleteUser(idx) {
 function copyInvite(idx) {
   var u = ACCESS.users[idx];
   if (!u) return;
-  var msg = "Bonjour " + u.name + ",\n\nTu as acces au Cockpit E-commerce NOF.\n\n"
+  var msg = "Bonjour " + u.name + ",\n\nTu as acces au Cockpit E-commerce UrbanElectroStore.\n\n"
     + "Lien : " + window.location.href.split("?")[0] + "\nPrenom : " + u.name + "\nCode : " + u.code
     + (u.expiry ? "\nAcces valable jusqu au : " + u.expiry : "")
     + "\n\nBonne utilisation !";
@@ -7122,7 +7209,7 @@ function renderFeedPreview(ad, cta, ctaLabel, row) {
   return "<div style='max-width:280px;border:0.5px solid var(--bord2);border-radius:10px;overflow:hidden;background:var(--sur);font-family:Arial,sans-serif'>"
     + "<div style='display:flex;align-items:center;gap:7px;padding:8px 10px'>"
       + "<div style='width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#1877f2,#42b0ff);flex-shrink:0'></div>"
-      + "<div><div style='font-size:12px;font-weight:600;color:#1a1a1a'>NOF</div>"
+      + "<div><div style='font-size:12px;font-weight:600;color:#1a1a1a'>UrbanElectroStore</div>"
         + "<div style='font-size:10px;color:#8a8a8a'>Sponsorisé · &#127758;</div></div>"
     + "</div>"
     + "<div style='padding:0 10px 6px;font-size:12px;color:#1a1a1a;line-height:1.5'>" + (ad.primary_text||"").slice(0,80) + (ad.primary_text&&ad.primary_text.length>80?"…":"") + "</div>"
@@ -7522,7 +7609,7 @@ async function fetchWooImage() {
   } catch(e) {
     if (prevEl) prevEl.innerHTML = "<div class='al ao' style='margin-top:.4rem'>Erreur: " + e.message + "</div>"
       + "<div style='font-size:11px;color:var(--mut);margin-top:.3rem'>Tu peux aussi entrer l URL de l image manuellement ci-dessous.</div>"
-      + "<div class='form-group' style='margin-top:.35rem'><label>URL image manuelle</label><input type='url' id='meta-img-url-manual' placeholder='https://NOF.com/...image.jpg' style='width:100%' oninput='metaWooImageUrl=this.value'></div>";
+      + "<div class='form-group' style='margin-top:.35rem'><label>URL image manuelle</label><input type='url' id='meta-img-url-manual' placeholder='https://urbanelectrostore.com/...image.jpg' style='width:100%' oninput='metaWooImageUrl=this.value'></div>";
     toastWarn("WooCommerce: " + e.message);
   }
 }
@@ -7558,7 +7645,7 @@ async function createMetaAd() {
   var budget     = parseInt((document.getElementById("meta-daily-budget")||{}).value||"20") * 100; // en centimes
   var startDate  = (document.getElementById("meta-start-date")||{}).value;
   var endDate    = (document.getElementById("meta-end-date")||{}).value;
-  var destUrl    = (document.getElementById("meta-dest-url")||{}).value || wcConfig.url || "https://NOF.com";
+  var destUrl    = (document.getElementById("meta-dest-url")||{}).value || wcConfig.url || "https://urbanelectrostore.com";
   var objective  = metaAdsResults.objective || "OUTCOME_SALES";
   var cta        = metaAdsResults.cta || "SHOP_NOW";
 
@@ -8114,7 +8201,7 @@ function renderGAProducts(pageRows) {
     var dims   = r.dimensionValues || [];
     var mets   = r.metricValues    || [];
     var path   = dims[0]&&dims[0].value||"";
-    var title  = (dims[1]&&dims[1].value||path).replace(" - NOF","").replace(" - WooCommerce","");
+    var title  = (dims[1]&&dims[1].value||path).replace(" - UrbanElectroStore","").replace(" - WooCommerce","");
     var views  = parseInt(mets[0]&&mets[0].value||0);
     var conv   = parseInt(mets[2]&&mets[2].value||0);
     var matchedProduct = null;
@@ -8336,11 +8423,39 @@ function updateSidebarActive(tab) {
 var _origShowMain = typeof showMain === "function" ? showMain : null;
 
 
+
+// ============================================================
+// CARD TILT 3D — effet subtil au survol
+// ============================================================
+function initCardTilt() {
+  document.addEventListener("mousemove", function(e) {
+    document.querySelectorAll(".card-section").forEach(function(card) {
+      var r   = card.getBoundingClientRect();
+      var inZ = e.clientX > r.left-30 && e.clientX < r.right+30
+             && e.clientY > r.top-30  && e.clientY < r.bottom+30;
+      if (!inZ) { card.style.transform = ""; card.style.boxShadow = ""; return; }
+      var rx = (e.clientY - (r.top  + r.height/2)) / r.height * -4;
+      var ry = (e.clientX - (r.left + r.width /2)) / r.width  *  4;
+      card.style.transform  = "perspective(800px) rotateX("+rx+"deg) rotateY("+ry+"deg) translateY(-2px)";
+      card.style.boxShadow  = "0 8px 24px rgba(0,0,0,.09), "+(ry*.3)+"px "+(-rx*.3)+"px 10px rgba(8,80,65,.05)";
+      card.style.transition = "none";
+    });
+  });
+  document.addEventListener("mouseleave", function() {
+    document.querySelectorAll(".card-section").forEach(function(c) {
+      c.style.transform = c.style.boxShadow = "";
+      c.style.transition = "";
+    });
+  });
+}
+
+
 // INIT -- EN DERNIER
 // ============================================================
 initDarkMode();
 initLoginCanvas();
 initSidebar();
+initCardTilt();
 initAccessControl();
 updateApiBar();
 renderCatTabs();
