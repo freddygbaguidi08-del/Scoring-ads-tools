@@ -1,11 +1,10 @@
 <!DOCTYPE html>
-<!-- SPACE THEME v3 -->
-<html lang="fr" style="background:radial-gradient(ellipse at 15% 40%,#0b1e36 0%,#020307 45%,#080805 100%) fixed;background-attachment:fixed;min-height:100vh">
+<html lang="fr">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>NOF — Cockpit E-commerce</title>
-<meta name="description" content="Scoring produits, generateur d ads IA et geo-ciblage pour NOF">
+<title>UrbanElectroStore — Cockpit E-commerce</title>
+<meta name="description" content="Scoring produits, generateur d ads IA et geo-ciblage pour UrbanElectroStore">
 <meta name="theme-color" content="#18180f">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -17,43 +16,34 @@
 <link rel="icon" type="image/png" sizes="512x512" href="icons/icon-512x512.png">
 <style>
 :root{
-  /* === SPACE DARK THEME — default === */
-  --bg:rgba(0,0,0,0);
-  --sur:rgba(255,255,255,.06);
-  --bord:rgba(255,255,255,.1);
-  --bord2:rgba(255,255,255,.16);
-  --txt:#f0ede4;
-  --mut:rgba(255,255,255,.45);
-  --grn:#4ade9e;
-  --gnbg:rgba(74,222,158,.1);
-  --orn:#fbbf24;
-  --orbg:rgba(251,191,36,.1);
-  --red:#f87272;
-  --rdbg:rgba(248,114,114,.1);
-  --blu:#60a5fa;
-  --blbg:rgba(96,165,250,.1);
-  --pur:#a78bfa;
-  --pubg:rgba(167,139,250,.1);
-  --r:12px;
-  /* glass surfaces */
-  --glass:rgba(255,255,255,.07);
-  --glass-hover:rgba(255,255,255,.11);
-  --glass-border:rgba(255,255,255,.12);
-  --glass-strong:rgba(255,255,255,.12);
+  /* === PREMIUM DARK — Linear / Vercel inspired === */
+  --bg:     #0d1117;   /* fond principal */
+  --sur:    #161b27;   /* surfaces cartes */
+  --sur2:   #1e2535;   /* surfaces secondaires */
+  --bord:   #252f44;   /* bordures */
+  --bord2:  #2e3a52;   /* bordures hover */
+  --txt:    #e2e8f0;   /* texte principal */
+  --txt2:   #94a3b8;   /* texte secondaire */
+  --mut:    #64748b;   /* texte muted */
+  --grn:    #10b981;   /* accent émeraude */
+  --grn2:   #059669;   /* émeraude foncé */
+  --gnbg:   #0d2318;   /* fond vert */
+  --orn:    #f59e0b;   /* orange/amber */
+  --orbg:   #1c1206;   /* fond amber */
+  --red:    #ef4444;   /* erreur */
+  --rdbg:   #1c0a0a;   /* fond rouge */
+  --blu:    #3b82f6;   /* bleu accent */
+  --blbg:   #0d1a38;   /* fond bleu */
+  --pur:    #8b5cf6;   /* violet */
+  --pubg:   #150d28;   /* fond violet */
+  --r:      10px;      /* border radius */
+  --shadow: 0 1px 3px rgba(0,0,0,.4), 0 1px 2px rgba(0,0,0,.3);
+  --shadow-md: 0 4px 16px rgba(0,0,0,.4), 0 2px 4px rgba(0,0,0,.3);
+  --shadow-lg: 0 8px 32px rgba(0,0,0,.5), 0 4px 8px rgba(0,0,0,.3);
 }
-[data-theme="light"] {
-  --txt:rgba(255,255,255,.9);
-  --mut:rgba(255,255,255,.5);
-  --grn:#4ade9e;
-  --glass:rgba(255,255,255,.1);
-  --glass-border:rgba(255,255,255,.15);
-}
+
 *{box-sizing:border-box;margin:0;padding:0}
-body{font-family:'Inter',-apple-system,BlinkMacSystemFont,Arial,sans-serif;
-  font-size:13px;color:var(--txt);line-height:1.5;
-  background:radial-gradient(ellipse at 15% 40%,#0b1e36 0%,#020307 45%,#080805 100%);
-  min-height:100vh;
-}
+body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif;font-size:13px;color:var(--txt);background:var(--bg);min-height:100vh;-webkit-font-smoothing:antialiased}
 .apibar{display:flex;align-items:center;gap:8px;padding:.5rem 1rem;background:var(--orbg);border-bottom:1px solid #f0d9a0;flex-wrap:wrap;transition:all .25s ease}
 .apibar.ok{background:var(--gnbg);border-color:#b0d8be}
 .apibar.collapsed{padding:.3rem 1rem;background:var(--gnbg);border-color:#b0d8be;cursor:pointer}
@@ -71,39 +61,53 @@ body{font-family:'Inter',-apple-system,BlinkMacSystemFont,Arial,sans-serif;
 .topbar{
   display:flex;align-items:center;justify-content:space-between;
   padding:.55rem 1rem;padding-top:calc(.55rem + env(safe-area-inset-top,0px));
-  background:rgba(8,14,26,.72);
-  backdrop-filter:blur(28px) saturate(180%);
-  -webkit-backdrop-filter:blur(28px);
-  border-bottom:1px solid rgba(255,255,255,.08);
-  box-shadow:0 1px 30px rgba(0,0,0,.35),0 1px 0 rgba(255,255,255,.05) inset;
+  background:rgba(13,17,23,.95);
+  border-bottom:1px solid var(--bord);
   position:sticky;top:0;z-index:100;
+  backdrop-filter:blur(12px);
 }
 .topbar h1{font-size:14px;font-weight:600}
 .topr{display:flex;gap:5px;flex-wrap:wrap}
-.maintabs{display:flex;background:var(--sur);border-bottom:1px solid var(--bord);flex-wrap:wrap;gap:0}
-.mtab{padding:.5rem .9rem;font-size:12px;font-weight:500;border:none;background:transparent;cursor:pointer;color:var(--mut);border-bottom:2px solid transparent;white-space:nowrap}
+.maintabs{
+  display:flex;overflow-x:auto;padding:.3rem .75rem 0;gap:2px;
+  background:rgba(13,17,23,.9);
+  border-bottom:1px solid var(--bord);
+  scrollbar-width:none;
+}
+.mtab{
+  flex-shrink:0;padding:7px 13px;border-radius:7px 7px 0 0;border:none;
+  background:transparent;font-size:12.5px;font-family:inherit;cursor:pointer;
+  color:var(--mut);transition:all .15s ease;white-space:nowrap;
+  border-bottom:2px solid transparent;margin-bottom:-1px;
+}
+.mtab:hover{color:var(--txt2);background:rgba(255,255,255,.04)}
+.mtab.active{color:var(--grn) !important;border-bottom-color:var(--grn) !important;background:rgba(16,185,129,.06) !important;font-weight:500}
 .mtab.on{color:var(--txt);border-bottom-color:var(--txt)}
 .panel{display:none;padding:.65rem .9rem 2rem}
 .panel.on{display:block}
 .al{padding:.5rem .8rem;border-radius:var(--r);font-size:11.5px;margin-bottom:.55rem}
 .ag{background:var(--gnbg);color:var(--grn)}.ao{background:var(--orbg);color:var(--orn)}.ai{background:var(--blbg);color:var(--blu)}.ar{background:var(--rdbg);color:var(--red)}
 .stats{display:flex;gap:7px;margin-bottom:.6rem;flex-wrap:wrap}
-.stat{flex:1;min-width:90px;background:var(--sur);border:1px solid var(--bord);border-radius:var(--r);padding:.45rem .75rem}
+.stat{
+  background:var(--sur);border:1px solid var(--bord);
+  border-radius:var(--r);padding:.65rem .85rem;
+  transition:border-color .15s,box-shadow .15s;
+}
+.stat:hover{border-color:var(--bord2);box-shadow:var(--shadow)}
 .stat .lb{font-size:10px;color:var(--mut);text-transform:uppercase;letter-spacing:.3px}
 .stat .vl{font-size:17px;font-weight:600;margin-top:1px}
 .ctrls{display:flex;gap:5px;margin-bottom:.55rem;flex-wrap:wrap;align-items:center}
 .ctrls input,.ctrls select{padding:5px 8px;border:1px solid var(--bord2);border-radius:7px;background:var(--sur);color:var(--txt);font-size:12px;outline:none}
 .ctrls input{min-width:150px}
 .btn{
-  display:inline-flex;align-items:center;gap:4px;padding:5px 12px;
-  border-radius:8px;border:1px solid rgba(255,255,255,.15);
-  background:rgba(255,255,255,.08);
-  backdrop-filter:blur(12px);
-  color:var(--txt);font-size:12px;font-family:inherit;cursor:pointer;
-  transition:all .18s cubic-bezier(.34,1.2,.64,1);white-space:nowrap;
+  display:inline-flex;align-items:center;gap:5px;padding:6px 12px;
+  border-radius:7px;border:1px solid var(--bord2);
+  background:var(--sur2);color:var(--txt);
+  font-size:12px;font-family:inherit;cursor:pointer;
+  transition:all .15s ease;white-space:nowrap;font-weight:500;
 }
-.btn:hover{background:rgba(255,255,255,.14);transform:translateY(-2px);box-shadow:0 4px 16px rgba(0,0,0,.2)}
-.btn:active{transform:translateY(1px);box-shadow:none}
+.btn:hover{background:var(--bord);border-color:var(--bord2);transform:translateY(-1px);box-shadow:0 2px 8px rgba(0,0,0,.3)}
+.btn:active{transform:translateY(0);box-shadow:none}
 .btn:hover{background:var(--bg)}
 .bg{background:var(--gnbg);color:var(--grn);border-color:transparent}.bg:hover{background:#d4ecdf}
 .bb{background:var(--blbg);color:var(--blu);border-color:transparent}.bb:hover{background:#d5e7f6}
@@ -147,12 +151,8 @@ tr.sel td{background:#f0f8f3}
 .loading{display:flex;align-items:center;gap:8px;color:var(--mut);padding:1rem;font-size:12px}
 .spin{width:14px;height:14px;border:2px solid var(--bord2);border-top-color:var(--txt);border-radius:50%;animation:sp .7s linear infinite}
 @keyframes sp{to{transform:rotate(360deg)}}
-.mbg{position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:100;display:flex;align-items:center;justify-content:center;padding:1rem}
-.modal{
-  background:rgba(12,16,28,.88);
-  backdrop-filter:blur(32px) saturate(180%);
-  border:1px solid rgba(255,255,255,.12);
-  box-shadow:0 40px 100px rgba(0,0,0,.6);}
+.mbg{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:1000;display:none;align-items:center;justify-content:center}
+.modal{background:var(--sur);border:1px solid var(--bord2);border-radius:14px;padding:1.5rem;max-width:520px;width:94%;max-height:90vh;overflow-y:auto;box-shadow:var(--shadow-lg)}
 .modal h2{font-size:14px;font-weight:600;margin-bottom:.8rem}
 .fdrop{border:2px dashed var(--bord2);border-radius:var(--r);padding:1.75rem;text-align:center;cursor:pointer}
 .fdrop:hover,.fdrop.drag{border-color:var(--txt)}
@@ -169,19 +169,14 @@ tr.sel td{background:#f0f8f3}
 .form-group label{font-size:10px;color:var(--mut);text-transform:uppercase;letter-spacing:.3px}
 .form-group input,.form-group select{padding:5px 8px;border:1px solid var(--bord2);border-radius:7px;font-size:12px;font-family:inherit;background:var(--sur);color:var(--txt)}
 .card-section{
-  background:var(--glass);
-  backdrop-filter:blur(20px) saturate(160%);
-  -webkit-backdrop-filter:blur(20px);
-  border:1px solid var(--glass-border);
+  background:var(--sur);
+  border:1px solid var(--bord);
   border-radius:var(--r);
-  padding:.85rem 1rem;margin-bottom:.75rem;
-  box-shadow:0 4px 24px rgba(0,0,0,.15),0 1px 0 rgba(255,255,255,.06) inset;
-  transition:transform .22s cubic-bezier(.34,1.2,.64,1),box-shadow .22s ease;
+  padding:.9rem 1rem;margin-bottom:.75rem;
+  box-shadow:var(--shadow);
+  transition:border-color .15s ease, box-shadow .15s ease;
 }
-.card-section:hover{
-  transform:translateY(-2px);
-  box-shadow:0 8px 32px rgba(0,0,0,.25),0 1px 0 rgba(255,255,255,.08) inset;
-}
+.card-section:hover{border-color:var(--bord2);box-shadow:var(--shadow-md)}
 .card-section h3{font-size:13px;font-weight:500;margin-bottom:.65rem}
 .rpt-block{background:var(--sur);border:1px solid var(--bord);border-radius:var(--r);padding:1rem 1.1rem;margin-bottom:.75rem}
 .rpt-block h3{font-size:13px;font-weight:500;margin-bottom:.6rem;padding-bottom:.4rem;border-bottom:1px solid var(--bord)}
@@ -416,33 +411,7 @@ th{position:sticky;top:0;z-index:1}
 }
 
 
-/* ===== DARK MODE ===== */
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) {
-    --bg:#0f0f0a;--sur:#1a1a12;--bord:#2e2e22;--bord2:#3a3a2c;
-    --txt:#f0ede4;--mut:#8a8878;--grn:#4ade9e;--gnbg:#0a2218;
-    --orn:#f0b84a;--orbg:#1f1500;--red:#f87272;--rdbg:#200a0a;
-    --blu:#60a5fa;--blbg:#0a1628;--pur:#a78bfa;--pubg:#130e2e;
-    --r:9px;
-  }
-}
-[data-theme="dark"] {
-  --txt:#f0ede4;--mut:rgba(255,255,255,.4);
-  --grn:#4ade9e;--gnbg:rgba(74,222,158,.1);
-  --orn:#fbbf24;--orbg:rgba(251,191,36,.1);
-  --red:#f87272;--rdbg:rgba(248,114,114,.1);
-  --blu:#60a5fa;--blbg:rgba(96,165,250,.1);
-  --pur:#a78bfa;--pubg:rgba(167,139,250,.1);
-  --glass:rgba(255,255,255,.07);
-  --glass-hover:rgba(255,255,255,.11);
-  --glass-border:rgba(255,255,255,.12);
-}
-[data-theme="light"] {
-  --bg:#f7f6f3;--sur:#fff;--bord:#e5e3dc;--bord2:#d0cec5;
-  --txt:#18180f;--mut:#7a7870;--grn:#085041;--gnbg:#e8f4ee;
-  --orn:#7a4a00;--orbg:#fef3e2;--red:#7a1a1a;--rdbg:#fef2f2;
-  --blu:#0c3d6e;--blbg:#e8f0fb;--pur:#3b2a8a;--pubg:#edeafb;
-}
+
 /* Dark mode specific overrides */
 [data-theme="dark"] .login-box,
 :root:not([data-theme="light"]) .login-box { box-shadow:0 8px 40px rgba(0,0,0,.5) }
@@ -538,8 +507,7 @@ th{position:sticky;top:0;z-index:1}
   animation: panelIn .3s cubic-bezier(.34,1.1,.64,1) both;
   transform-origin: top center;
 }
-@keyframes panelIn {
-  from { opacity: 0; transform: translateY(10px) scale(.99); }
+@keyframes panelIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
   to   { opacity: 1; transform: translateY(0) scale(1); }
 }
 
@@ -595,18 +563,13 @@ th{position:sticky;top:0;z-index:1}
 }
 
 /* --- Scrollbar 3D style --- */
-::-webkit-scrollbar { width: 6px; height: 6px; }
-::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb {
-  background: var(--bord2);
-  border-radius: 3px;
-  transition: background .2s;
-}
+::-webkit-scrollbar{width:5px;height:5px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--bord2);border-radius:3px}::-webkit-scrollbar-thumb:hover{background:var(--mut)}
 ::-webkit-scrollbar-thumb:hover { background: var(--mut); }
 
 
-/* Glass text overrides for readability */
-label { color: rgba(255,255,255,.55) !important; }
+
 select option { background:#1a1a1e; color:#f0ede4; }
 .ads-empty { color: rgba(255,255,255,.35); background: rgba(255,255,255,.03); border: 1px dashed rgba(255,255,255,.1); }
 .al { border-radius: var(--r); padding: .5rem .75rem; }
@@ -618,9 +581,7 @@ select option { background:#1a1a1e; color:#f0ede4; }
 h3 { color: var(--txt) !important; }
 
 
-/* ============================================================
-   SPACE BACKGROUND — FORCE ALL SURFACES TRANSPARENT
-   ============================================================ */
+
 html {
   background: radial-gradient(ellipse at 15% 40%, #0b1e36 0%, #020307 45%, #080805 100%) !important;
   background-attachment: fixed !important;
@@ -703,9 +664,82 @@ h1,h2,h3,h4,p,span,div,label,td,th,li {
   color: inherit;
 }
 
+
+/* ===== PREMIUM FINAL POLISH ===== */
+/* Loading spinner */
+.loading{display:flex;align-items:center;gap:10px;padding:1rem;color:var(--txt2);font-size:13px}
+.spin{width:18px;height:18px;border:2px solid var(--bord2);border-top-color:var(--grn);border-radius:50%;animation:spin .7s linear infinite;flex-shrink:0}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* Badges */
+.bdg{display:inline-flex;align-items:center;padding:2px 8px;border-radius:5px;font-size:11px;font-weight:500;white-space:nowrap}
+
+/* Table */
+.score-table{width:100%;border-collapse:collapse;font-size:12.5px}
+.score-table th{padding:8px 10px;text-align:left;color:var(--mut);font-weight:500;font-size:11px;text-transform:uppercase;letter-spacing:.4px;border-bottom:1px solid var(--bord)}
+.score-table td{padding:7px 10px;border-bottom:1px solid rgba(255,255,255,.04);vertical-align:middle}
+.score-table tr:hover td{background:rgba(255,255,255,.025)}
+
+/* Alerts */
+.al{border-radius:8px;padding:.55rem .8rem;font-size:12.5px;line-height:1.5}
+.ae,.ao{background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.2);color:#ef4444}
+.ag{background:rgba(16,185,129,.08);border:1px solid rgba(16,185,129,.2);color:var(--grn)}
+.ab{background:rgba(59,130,246,.08);border:1px solid rgba(59,130,246,.2);color:#60a5fa}
+.aw{background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.2);color:var(--orn)}
+
+/* Tags */
+.tag{display:inline-block;padding:2px 8px;border-radius:5px;font-size:11px;background:var(--sur2);border:1px solid var(--bord);color:var(--txt2)}
+
+/* Empty states */
+.ads-empty{padding:2.5rem 1rem;text-align:center;color:var(--mut);border:1px dashed var(--bord);border-radius:var(--r);font-size:13px}
+
+/* Form groups */
+.form-group{display:flex;flex-direction:column;gap:4px}
+.form-group label{font-size:11px;font-weight:500;color:var(--txt2);text-transform:uppercase;letter-spacing:.4px}
+
+/* Score bars */
+.score-bar{height:4px;background:var(--bord);border-radius:2px;overflow:hidden;margin-top:3px}
+.score-bar div{height:100%;border-radius:2px;background:var(--grn);transition:width .5s ease}
+
+/* Hover effects on interactive elements */
+.card-section{cursor:default}
+h1,h2,h3{color:var(--txt)}
+h3{font-size:13.5px;font-weight:600;margin-bottom:.5rem}
+a{color:var(--grn);text-decoration:none}
+a:hover{text-decoration:underline}
+
+/* Dark mode toggle button */
+#dark-toggle{padding:5px 11px;border-radius:7px;border:1px solid var(--bord2);background:var(--sur2);font-size:12px;cursor:pointer;line-height:1;display:inline-flex;align-items:center;gap:5px;color:var(--txt2);font-family:inherit;transition:all .15s}
+#dark-toggle:hover{background:var(--bord);color:var(--txt)}
+#dark-toggle .label{font-size:11px;font-weight:500}
+
+/* Bottom sheet */
+.bottom-sheet{background:var(--sur);border-top:1px solid var(--bord);border-radius:14px 14px 0 0;box-shadow:0 -8px 40px rgba(0,0,0,.4)}
+
+/* Labels color override */
+label{color:var(--txt2) !important}
+
+/* Select dropdown */
+select option{background:var(--sur);color:var(--txt)}
+
+
+[data-theme="light"]{
+  --bg:#f8fafc; --sur:#ffffff; --sur2:#f1f5f9;
+  --bord:#e2e8f0; --bord2:#cbd5e1;
+  --txt:#0f172a; --txt2:#475569; --mut:#94a3b8;
+  --grn:#059669; --grn2:#047857; --gnbg:#ecfdf5;
+  --orn:#d97706; --orbg:#fffbeb;
+  --red:#dc2626; --rdbg:#fef2f2;
+  --blu:#2563eb; --blbg:#eff6ff;
+  --pur:#7c3aed; --pubg:#f5f3ff;
+  --shadow:0 1px 3px rgba(0,0,0,.1),0 1px 2px rgba(0,0,0,.08);
+  --shadow-md:0 4px 16px rgba(0,0,0,.1),0 2px 4px rgba(0,0,0,.08);
+  --shadow-lg:0 8px 32px rgba(0,0,0,.15),0 4px 8px rgba(0,0,0,.1);
+}
+
 </style>
 </head>
-<body style="background:transparent !important;color:#f0ede4">
+<body>
 
 
 <!-- TOAST CONTAINER -->
@@ -764,7 +798,7 @@ h1,h2,h3,h4,p,span,div,label,td,th,li {
   <div class="login-scene">
     <div class="login-box" id="login-box-user">
       <span class="logo">🛍</span>
-      <h2>NOF</h2>
+      <h2>UrbanElectroStore</h2>
       <p class="sub">Entre tes identifiants pour acceder au Cockpit</p>
       <div class="login-field">
         <label>Prenom ou identifiant</label>
@@ -809,7 +843,7 @@ h1,h2,h3,h4,p,span,div,label,td,th,li {
 </div>
 
 <div class="topbar">
-  <h1>&#128722; NOF &mdash; Cockpit E-commerce</h1>
+  <h1>&#128722; UrbanElectroStore &mdash; Cockpit E-commerce</h1>
   <span id="sync-indicator" onclick="manualSync()" title="Cliquer pour synchroniser maintenant"
     style="font-size:11px;font-weight:500;padding:3px 10px;border-radius:20px;cursor:pointer;background:#e8f0fb;color:#0c3d6e;display:inline-flex;align-items:center;gap:4px">&#9729; Cloud</span>
   <div class="topr">
@@ -1396,7 +1430,7 @@ h1,h2,h3,h4,p,span,div,label,td,th,li {
       <div class="form-row" style="margin-top:.5rem">
         <div class="form-group" style="flex:1;min-width:200px">
           <label>URL de ta boutique</label>
-          <input type="text" id="wc-url" placeholder="https://NOF.com" style="width:100%">
+          <input type="text" id="wc-url" placeholder="https://urbanelectrostore.com" style="width:100%">
         </div>
       </div>
       <div class="form-row">
@@ -1947,7 +1981,7 @@ CTA : Voir l offre" style="width:100%;height:130px;padding:7px 9px;border:1px so
         </div>
         <div class="form-group">
           <label>URL de destination</label>
-          <input type="url" id="meta-dest-url" placeholder="https://NOF.com/produit/..." style="width:100%">
+          <input type="url" id="meta-dest-url" placeholder="https://urbanelectrostore.com/produit/..." style="width:100%">
         </div>
       </div>
       <div style="display:flex;gap:7px;flex-wrap:wrap">
@@ -3339,7 +3373,7 @@ function exportScoring() {
 
 // ============================================================
 // EXPORT WOOCOMMERCE CSV — mappage complet 64 colonnes
-// Basé sur le format réel du fichier product-export d NOF
+// Basé sur le format réel du fichier product-export d UrbanElectroStore
 // ============================================================
 function exportWooCSV() {
   // Mapping catégories cockpit → catégories WooCommerce réelles
@@ -3399,7 +3433,7 @@ function exportWooCSV() {
   ];
 
   var now = new Date().toISOString().replace("T"," ").slice(0,19);
-  var baseUrl = "https://NOF.com";
+  var baseUrl = "https://urbanelectrostore.com";
 
   var rows = PRODUCTS.map(function(r, i) {
     var d      = userScores[r[0]] || {};
@@ -3435,10 +3469,10 @@ function exportWooCSV() {
     var focuskw = name.split(" ").slice(0,4).join(" ").toLowerCase();
 
     // meta:_yoast_wpseo_title — titre SEO
-    var seoTitle = name + " | NOF";
+    var seoTitle = name + " | UrbanElectroStore";
 
     // meta:_yoast_wpseo_metadesc — meta description
-    var metadesc = "Achetez " + name + " au meilleur prix sur NOF";
+    var metadesc = "Achetez " + name + " au meilleur prix sur UrbanElectroStore";
     if (r[7] === "win" && r[6]) metadesc += " - " + price + " EUR vs " + r[6] + " ailleurs";
     metadesc += ".";
 
@@ -5880,7 +5914,7 @@ function deleteUser(idx) {
 function copyInvite(idx) {
   var u = ACCESS.users[idx];
   if (!u) return;
-  var msg = "Bonjour " + u.name + ",\n\nTu as acces au Cockpit E-commerce NOF.\n\n"
+  var msg = "Bonjour " + u.name + ",\n\nTu as acces au Cockpit E-commerce UrbanElectroStore.\n\n"
     + "Lien : " + window.location.href.split("?")[0] + "\nPrenom : " + u.name + "\nCode : " + u.code
     + (u.expiry ? "\nAcces valable jusqu au : " + u.expiry : "")
     + "\n\nBonne utilisation !";
@@ -7064,7 +7098,7 @@ function renderFeedPreview(ad, cta, ctaLabel, row) {
   return "<div style='max-width:280px;border:0.5px solid var(--bord2);border-radius:10px;overflow:hidden;background:#fff;font-family:Arial,sans-serif'>"
     + "<div style='display:flex;align-items:center;gap:7px;padding:8px 10px'>"
       + "<div style='width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#1877f2,#42b0ff);flex-shrink:0'></div>"
-      + "<div><div style='font-size:12px;font-weight:600;color:#1a1a1a'>NOF</div>"
+      + "<div><div style='font-size:12px;font-weight:600;color:#1a1a1a'>UrbanElectroStore</div>"
         + "<div style='font-size:10px;color:#8a8a8a'>Sponsorisé · &#127758;</div></div>"
     + "</div>"
     + "<div style='padding:0 10px 6px;font-size:12px;color:#1a1a1a;line-height:1.5'>" + (ad.primary_text||"").slice(0,80) + (ad.primary_text&&ad.primary_text.length>80?"…":"") + "</div>"
@@ -7464,7 +7498,7 @@ async function fetchWooImage() {
   } catch(e) {
     if (prevEl) prevEl.innerHTML = "<div class='al ao' style='margin-top:.4rem'>Erreur: " + e.message + "</div>"
       + "<div style='font-size:11px;color:var(--mut);margin-top:.3rem'>Tu peux aussi entrer l URL de l image manuellement ci-dessous.</div>"
-      + "<div class='form-group' style='margin-top:.35rem'><label>URL image manuelle</label><input type='url' id='meta-img-url-manual' placeholder='https://NOF.com/...image.jpg' style='width:100%' oninput='metaWooImageUrl=this.value'></div>";
+      + "<div class='form-group' style='margin-top:.35rem'><label>URL image manuelle</label><input type='url' id='meta-img-url-manual' placeholder='https://urbanelectrostore.com/...image.jpg' style='width:100%' oninput='metaWooImageUrl=this.value'></div>";
     toastWarn("WooCommerce: " + e.message);
   }
 }
@@ -7500,7 +7534,7 @@ async function createMetaAd() {
   var budget     = parseInt((document.getElementById("meta-daily-budget")||{}).value||"20") * 100; // en centimes
   var startDate  = (document.getElementById("meta-start-date")||{}).value;
   var endDate    = (document.getElementById("meta-end-date")||{}).value;
-  var destUrl    = (document.getElementById("meta-dest-url")||{}).value || wcConfig.url || "https://NOF.com";
+  var destUrl    = (document.getElementById("meta-dest-url")||{}).value || wcConfig.url || "https://urbanelectrostore.com";
   var objective  = metaAdsResults.objective || "OUTCOME_SALES";
   var cta        = metaAdsResults.cta || "SHOP_NOW";
 
@@ -7781,19 +7815,12 @@ function copyMetaIds() {
 var darkModeActive = false;
 
 function initDarkMode() {
-  // Default: space dark theme (no attribute = :root vars = dark space)
-  // Toggle only switches label contrast
   var saved = localStorage.getItem("theme");
   if (saved === "light") {
     applyTheme("light");
   } else {
-    // Default space dark - remove any attribute
-    document.documentElement.removeAttribute("data-theme");
-    darkModeActive = true;
-    var icon  = document.getElementById("dark-icon");
-    var label = document.getElementById("dark-label");
-    if (icon)  icon.textContent  = "☀️";
-    if (label) label.textContent = "Clair";
+    // Default: premium dark
+    applyTheme("dark");
   }
   // Listen for system changes
   if (window.matchMedia) {
@@ -7805,9 +7832,9 @@ function initDarkMode() {
 
 function applyTheme(theme) {
   document.documentElement.setAttribute("data-theme", theme);
-  darkModeActive = theme === "dark";
-  localStorage.setItem("theme", theme);
-  if (ambientCanvas) { resizeAmbient(); buildAmbientStars(); }
+  darkModeActive = (theme === "dark");
+  if (theme === "dark") localStorage.removeItem("theme");
+  else localStorage.setItem("theme", theme);
   var icon  = document.getElementById("dark-icon");
   var label = document.getElementById("dark-label");
   if (icon)  icon.textContent  = darkModeActive ? "☀️" : "🌙";
@@ -7820,19 +7847,8 @@ function applyTheme(theme) {
 }
 
 function toggleDarkMode() {
-  if (darkModeActive) {
-    applyTheme("light");
-    toastInfo("Fond clair active");
-  } else {
-    document.documentElement.removeAttribute("data-theme");
-    darkModeActive = true;
-    localStorage.removeItem("theme");
-    var icon  = document.getElementById("dark-icon");
-    var label = document.getElementById("dark-label");
-    if (icon)  icon.textContent  = "☀️";
-    if (label) label.textContent = "Clair";
-    toastInfo("Fond spatial active");
-  }
+  applyTheme(darkModeActive ? "light" : "dark");
+  toastInfo(darkModeActive ? "Mode clair" : "Mode sombre");
 }
 
 // ============================================================
@@ -8075,7 +8091,7 @@ function renderGAProducts(pageRows) {
     var dims   = r.dimensionValues || [];
     var mets   = r.metricValues    || [];
     var path   = dims[0]&&dims[0].value||"";
-    var title  = (dims[1]&&dims[1].value||path).replace(" - NOF","").replace(" - WooCommerce","");
+    var title  = (dims[1]&&dims[1].value||path).replace(" - UrbanElectroStore","").replace(" - WooCommerce","");
     var views  = parseInt(mets[0]&&mets[0].value||0);
     var conv   = parseInt(mets[2]&&mets[2].value||0);
     var matchedProduct = null;
@@ -8492,36 +8508,6 @@ window.addEventListener("offline", function(){
 window.addEventListener("load", registerServiceWorker);
 
 </script>
-
-<style id="space-force">
-/* FORCE SPACE BACKGROUND — last resort */
-html { background: radial-gradient(ellipse at 15% 40%,#0b1e36 0%,#020307 45%,#080805 100%) !important; background-attachment: fixed !important; }
-body, #app, .panel, .panel.on { background: transparent !important; }
-.topbar { background: rgba(6,10,20,.8) !important; backdrop-filter: blur(24px) !important; border-bottom: 1px solid rgba(255,255,255,.08) !important; }
-.maintabs { background: rgba(4,7,14,.7) !important; backdrop-filter: blur(20px) !important; }
-.card-section { background: rgba(255,255,255,.07) !important; backdrop-filter: blur(18px) !important; border: 1px solid rgba(255,255,255,.11) !important; }
-.stat { background: rgba(255,255,255,.06) !important; backdrop-filter: blur(16px) !important; border: 1px solid rgba(255,255,255,.1) !important; }
-input, select, textarea { background: rgba(255,255,255,.07) !important; border-color: rgba(255,255,255,.12) !important; color: #f0ede4 !important; }
-select option { background: #0d1117 !important; color: #f0ede4 !important; }
-.btn { background: rgba(255,255,255,.09) !important; border-color: rgba(255,255,255,.15) !important; color: #f0ede4 !important; backdrop-filter: blur(10px) !important; }
-.btn.bg { background: linear-gradient(135deg,#085041,#0d7a62) !important; color: #fff !important; border-color: transparent !important; }
-.mtab { color: rgba(255,255,255,.5) !important; background: transparent !important; }
-.mtab.active { background: rgba(74,222,158,.12) !important; color: #4ade9e !important; border-bottom: 2px solid #4ade9e !important; }
-.mtab:hover { background: rgba(255,255,255,.08) !important; color: rgba(255,255,255,.9) !important; }
-.modal { background: rgba(6,10,20,.9) !important; backdrop-filter: blur(28px) !important; border: 1px solid rgba(255,255,255,.12) !important; }
-.mbg { background: rgba(0,0,0,.6) !important; backdrop-filter: blur(8px) !important; }
-.bottom-sheet { background: rgba(6,10,20,.9) !important; backdrop-filter: blur(28px) !important; }
-.bbar { background: rgba(6,10,20,.85) !important; backdrop-filter: blur(24px) !important; border-top: 1px solid rgba(255,255,255,.08) !important; }
-.toast { background: rgba(10,15,28,.9) !important; backdrop-filter: blur(24px) !important; border: 1px solid rgba(255,255,255,.12) !important; }
-.score-table td, .score-table th { background: transparent !important; }
-.score-table tr:nth-child(even) td { background: rgba(255,255,255,.025) !important; }
-.score-table tr:hover td { background: rgba(74,222,158,.06) !important; }
-h1,h2,h3,h4,h5,h6 { color: #f0ede4 !important; }
-label { color: rgba(255,255,255,.55) !important; }
-.mut, .muted, [class*="mut"] { color: rgba(255,255,255,.45) !important; }
-.api-bar { background: rgba(251,191,36,.08) !important; border: 1px solid rgba(251,191,36,.25) !important; }
-.api-bar.ok { background: rgba(74,222,158,.09) !important; border-color: rgba(74,222,158,.3) !important; }
-</style>
 
 </body>
 </html>
