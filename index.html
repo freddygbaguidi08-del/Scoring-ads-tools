@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="fr" style="background:#f7f6f3 !important">
+<html lang="fr">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>NOF — Cockpit E-commerce</title>
-<meta name="description" content="Scoring produits, generateur d ads IA et geo-ciblage pour NOF">
+<title>UrbanElectroStore — Cockpit E-commerce</title>
+<meta name="description" content="Scoring produits, generateur d ads IA et geo-ciblage pour UrbanElectroStore">
 <meta name="theme-color" content="#18180f">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -15,10 +15,34 @@
 <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192x192.png">
 <link rel="icon" type="image/png" sizes="512x512" href="icons/icon-512x512.png">
 <style>
-:root{--bg:#f7f6f3;--sur:#fff;--bord:#e5e3dc;--bord2:#d0cec5;--txt:#18180f;--mut:#7a7870;--grn:#085041;--gnbg:#e8f4ee;--orn:#7a4a00;--orbg:#fef3e2;--red:#7a1a1a;--rdbg:#fef2f2;--blu:#0c3d6e;--blbg:#e8f0fb;--pur:#3b2a8a;--pubg:#edeafb;--r:9px}
+:root{
+  --bg:#0d1117;
+  --sur:rgba(255,255,255,.07);
+  --sur2:rgba(255,255,255,.04);
+  --bord:rgba(255,255,255,.1);
+  --bord2:rgba(255,255,255,.16);
+  --txt:#e2e8f0;
+  --txt2:#94a3b8;
+  --mut:rgba(255,255,255,.38);
+  --grn:#4ade9e;
+  --grn2:#10b981;
+  --gnbg:rgba(74,222,158,.12);
+  --orn:#fbbf24;
+  --orbg:rgba(251,191,36,.1);
+  --red:#f87272;
+  --rdbg:rgba(248,114,114,.1);
+  --blu:#60a5fa;
+  --blbg:rgba(96,165,250,.1);
+  --pur:#a78bfa;
+  --pubg:rgba(167,139,250,.1);
+  --r:10px;
+  --glass:rgba(255,255,255,.07);
+  --glass-b:rgba(255,255,255,.11);
+  --shadow:0 4px 20px rgba(0,0,0,.3),0 1px 0 rgba(255,255,255,.06) inset;
+}
 
 *{box-sizing:border-box;margin:0;padding:0}
-body{font-family:'Inter',-apple-system,BlinkMacSystemFont,Arial,sans-serif;font-size:13px;color:var(--txt);background:var(--bg);min-height:100vh}
+body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif;font-size:13px;color:var(--txt);background:#0d1117;min-height:100vh;-webkit-font-smoothing:antialiased}
 .apibar{display:flex;align-items:center;gap:8px;padding:.5rem 1rem;background:var(--orbg);border-bottom:1px solid #f0d9a0;flex-wrap:wrap;transition:all .25s ease}
 .apibar.ok{background:var(--gnbg);border-color:#b0d8be}
 .apibar.collapsed{padding:.3rem 1rem;background:var(--gnbg);border-color:#b0d8be;cursor:pointer}
@@ -816,9 +840,14 @@ input:focus, select:focus, textarea:focus {
 /* Table rows */
 .score-table tr { transition: background .1s ease; }
 
+@keyframes orbFloat{0%,100%{transform:translate(0,0) scale(1)}33%{transform:translate(18px,-25px) scale(1.06)}66%{transform:translate(-12px,18px) scale(.94)}}
 </style>
 </head>
-<body style="background:#f7f6f3 !important;color:#18180f !important">
+<body>
+<div id="bg-orb-1" style="position:fixed;width:500px;height:500px;border-radius:50%;filter:blur(90px);background:rgba(8,80,65,.28);top:-150px;left:-150px;pointer-events:none;z-index:0;animation:orbFloat 12s ease-in-out infinite"></div>
+<div id="bg-orb-2" style="position:fixed;width:400px;height:400px;border-radius:50%;filter:blur(80px);background:rgba(24,119,242,.2);bottom:-100px;right:-100px;pointer-events:none;z-index:0;animation:orbFloat 10s ease-in-out infinite;animation-delay:-4s"></div>
+<div id="bg-orb-3" style="position:fixed;width:280px;height:280px;border-radius:50%;filter:blur(70px);background:rgba(139,92,246,.15);top:40%;right:5%;pointer-events:none;z-index:0;animation:orbFloat 14s ease-in-out infinite;animation-delay:-7s"></div>
+<canvas id="ambient-canvas" style="position:fixed;inset:0;z-index:0;pointer-events:none"></canvas>
 
 
 <!-- TOAST CONTAINER -->
@@ -877,7 +906,7 @@ input:focus, select:focus, textarea:focus {
   <div class="login-scene">
     <div class="login-box" id="login-box-user">
       <span class="logo">🛍</span>
-      <h2>NOF</h2>
+      <h2>UrbanElectroStore</h2>
       <p class="sub">Entre tes identifiants pour acceder au Cockpit</p>
       <div class="login-field">
         <label>Prenom ou identifiant</label>
@@ -922,7 +951,7 @@ input:focus, select:focus, textarea:focus {
 </div>
 
 <div class="topbar">
-  <h1 style="font-size:13px;font-weight:600;white-space:nowrap;margin:0;flex-shrink:0">&#128722; NOF</h1>
+  <h1 style="font-size:13px;font-weight:600;white-space:nowrap;margin:0;flex-shrink:0">&#128722; UrbanElectroStore</h1>
   <div class="topr" style="display:flex;align-items:center;gap:4px;flex-wrap:nowrap;flex:1;justify-content:flex-end;overflow:hidden">
     <span id="sync-indicator" onclick="manualSync()" title="Synchroniser" style="font-size:11px;font-weight:500;padding:3px 8px;border-radius:20px;cursor:pointer;background:var(--blbg);color:var(--blu);display:inline-flex;align-items:center;gap:3px;white-space:nowrap;flex-shrink:0">&#9729;</span>
     <button class="btn bb" onclick="loadFromCloud()" title="Charger cloud" style="font-size:11px;padding:4px 8px">&#9729; Cloud</button>
@@ -941,7 +970,7 @@ input:focus, select:focus, textarea:focus {
 
 
 <!-- ===== SIDEBAR + LAYOUT ===== -->
-<div id="app-layout">
+<div id="app-layout" style="position:relative;z-index:1">
 
 <nav id="sidebar">
   <div class="sb-toggle">
@@ -2242,9 +2271,12 @@ function changeProvider() {
 }
 function saveKey(v) {
   apiKey = (v || "").trim();
-  // Store per-user: api_key_{provider} is in perUserKeys via getUserKey
+  if (!apiKey) return;
+  // Sauvegarde namespaced par utilisateur
   var storageKey = getUserKey("api_key_" + curProvider);
   localStorage.setItem(storageKey, apiKey);
+  // Aussi sauvegarder le provider choisi
+  localStorage.setItem(getUserKey("ai_provider"), curProvider);
   updateApiBar();
 }
 function toggleKeyVis() {
@@ -2450,11 +2482,13 @@ var pendingImport = [];
 
 // Load persisted data
 function loadUserApiKeys() {
-  // Load API keys for the current user — fully isolated
+  // Load API keys — appelé APRÈS que sess et ACCESS soient définis
   loadMetaConfig();
   var prov = localStorage.getItem(getUserKey("ai_provider")) || "groq";
   curProvider = prov;
-  apiKey      = localStorage.getItem(getUserKey("api_key_" + prov)) || "";
+  var loaded  = localStorage.getItem(getUserKey("api_key_" + prov)) || "";
+  apiKey      = loaded;
+  if (loaded) console.log("[API] Clé " + prov + " restaurée pour", getUserKey("api_key_" + prov));
   // Also load WooCommerce config for this user
   try {
     var savedWC = JSON.parse(localStorage.getItem(getUserKey("wc_config")) || "{}");
@@ -2528,7 +2562,7 @@ function loadUserData() {
 
 function getUserKey(key) {
   // Keys that are per-user (namespaced with username)
-  var perUserKeys = ["userScores", "margins", "campaigns", "products_catalogue","meta_config","ga_config"];
+  var perUserKeys = ["userScores", "margins", "campaigns", "products_catalogue","meta_config","ga_config","api_key_groq","api_key_gemini","api_key_anthropic","ai_provider","wc_config"];
   if (perUserKeys.indexOf(key) >= 0) {
     var user = ACCESS && ACCESS.currentUser ? ACCESS.currentUser.name : "guest";
     return key + "__" + user.toLowerCase().replace(/[^a-z0-9]/g, "_");
@@ -3483,7 +3517,7 @@ function exportScoring() {
 
 // ============================================================
 // EXPORT WOOCOMMERCE CSV — mappage complet 64 colonnes
-// Basé sur le format réel du fichier product-export d NOF
+// Basé sur le format réel du fichier product-export d UrbanElectroStore
 // ============================================================
 function exportWooCSV() {
   // Mapping catégories cockpit → catégories WooCommerce réelles
@@ -5717,6 +5751,11 @@ function initAccessControl() {
 
 function hideLockScreen() {
   setTimeout(updateSidebarAdminVisibility, 100);
+  // Charger les clés API dès que la session est active
+  setTimeout(function() {
+    loadUserApiKeys();
+    updateApiBar();
+  }, 50);
   var overlay = document.getElementById("login-overlay");
   if (overlay) { overlay.style.opacity="0"; setTimeout(function(){ overlay.style.display="none"; overlay.style.opacity=""; },300); }
   // Show user badge first (fast, no data needed)
@@ -6025,7 +6064,7 @@ function deleteUser(idx) {
 function copyInvite(idx) {
   var u = ACCESS.users[idx];
   if (!u) return;
-  var msg = "Bonjour " + u.name + ",\n\nTu as acces au Cockpit E-commerce NOF.\n\n"
+  var msg = "Bonjour " + u.name + ",\n\nTu as acces au Cockpit E-commerce UrbanElectroStore.\n\n"
     + "Lien : " + window.location.href.split("?")[0] + "\nPrenom : " + u.name + "\nCode : " + u.code
     + (u.expiry ? "\nAcces valable jusqu au : " + u.expiry : "")
     + "\n\nBonne utilisation !";
@@ -7209,7 +7248,7 @@ function renderFeedPreview(ad, cta, ctaLabel, row) {
   return "<div style='max-width:280px;border:0.5px solid var(--bord2);border-radius:10px;overflow:hidden;background:var(--sur);font-family:Arial,sans-serif'>"
     + "<div style='display:flex;align-items:center;gap:7px;padding:8px 10px'>"
       + "<div style='width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#1877f2,#42b0ff);flex-shrink:0'></div>"
-      + "<div><div style='font-size:12px;font-weight:600;color:#1a1a1a'>NOF</div>"
+      + "<div><div style='font-size:12px;font-weight:600;color:#1a1a1a'>UrbanElectroStore</div>"
         + "<div style='font-size:10px;color:#8a8a8a'>Sponsorisé · &#127758;</div></div>"
     + "</div>"
     + "<div style='padding:0 10px 6px;font-size:12px;color:#1a1a1a;line-height:1.5'>" + (ad.primary_text||"").slice(0,80) + (ad.primary_text&&ad.primary_text.length>80?"…":"") + "</div>"
@@ -8450,10 +8489,83 @@ function initCardTilt() {
 }
 
 
+
+// ============================================================
+// AMBIENT CANVAS — Particules fond spatial permanent
+// ============================================================
+var ambientCanvas = null, ambientCtx = null, ambientStars = [];
+
+function initAmbientCanvas() {
+  ambientCanvas = document.getElementById("ambient-canvas");
+  if (!ambientCanvas) return;
+  ambientCtx = ambientCanvas.getContext("2d");
+  resizeAmbient();
+  buildAmbientStars();
+  drawAmbient();
+  window.addEventListener("resize", function() { resizeAmbient(); buildAmbientStars(); });
+}
+
+function resizeAmbient() {
+  if (!ambientCanvas) return;
+  ambientCanvas.width  = window.innerWidth;
+  ambientCanvas.height = window.innerHeight;
+}
+
+function buildAmbientStars() {
+  ambientStars = [];
+  var W = ambientCanvas.width, H = ambientCanvas.height;
+  var n = Math.min(140, Math.floor(W * H / 10000));
+  for (var i = 0; i < n; i++) {
+    ambientStars.push({
+      x: Math.random()*W, y: Math.random()*H,
+      r: Math.random()*.8+.15,
+      a: Math.random()*.35+.08,
+      vx:(Math.random()-.5)*.09, vy:(Math.random()-.5)*.09,
+      phase: Math.random()*Math.PI*2,
+      col: Math.random()>.8?"74,222,158":Math.random()>.65?"96,165,250":"255,255,255"
+    });
+  }
+}
+
+function drawAmbient() {
+  if (!ambientCtx || !ambientCanvas) return;
+  var W = ambientCanvas.width, H = ambientCanvas.height;
+  ambientCtx.clearRect(0, 0, W, H);
+  ambientStars.forEach(function(s) {
+    s.phase += .014; s.x += s.vx; s.y += s.vy;
+    if (s.x < 0) s.x = W; if (s.x > W) s.x = 0;
+    if (s.y < 0) s.y = H; if (s.y > H) s.y = 0;
+    var a = s.a * (.55 + Math.sin(s.phase) * .35);
+    ambientCtx.beginPath();
+    ambientCtx.arc(s.x, s.y, s.r, 0, Math.PI*2);
+    ambientCtx.fillStyle = "rgba("+s.col+","+a+")";
+    ambientCtx.fill();
+  });
+  // Connexions subtiles
+  for (var i = 0; i < ambientStars.length; i++) {
+    for (var j = i+1; j < ambientStars.length; j++) {
+      var dx = ambientStars[i].x-ambientStars[j].x;
+      var dy = ambientStars[i].y-ambientStars[j].y;
+      var d  = Math.sqrt(dx*dx+dy*dy);
+      if (d < 85) {
+        ambientCtx.beginPath();
+        ambientCtx.moveTo(ambientStars[i].x, ambientStars[i].y);
+        ambientCtx.lineTo(ambientStars[j].x, ambientStars[j].y);
+        ambientCtx.strokeStyle = "rgba(74,222,158,"+(1-d/85)*.07+")";
+        ambientCtx.lineWidth = .4;
+        ambientCtx.stroke();
+      }
+    }
+  }
+  requestAnimationFrame(drawAmbient);
+}
+
+
 // INIT -- EN DERNIER
 // ============================================================
 initDarkMode();
 initLoginCanvas();
+initAmbientCanvas();
 initSidebar();
 initCardTilt();
 initAccessControl();
@@ -8613,6 +8725,158 @@ h1,h2,h3,h4,label { color: #18180f !important; }
 .score-table td, .score-table th { color: #18180f !important; background: transparent !important; }
 .modal { background: #ffffff !important; color: #18180f !important; }
 .toast { background: #ffffff !important; color: #18180f !important; border: 1px solid #e5e3dc !important; }
+</style>
+<style id="glass-theme">
+/* ============================================================
+   SPACE GLASS THEME — Fond spatial + Glassmorphism
+   ============================================================ */
+
+/* Base */
+html { background: #0d1117 !important; }
+body { background: transparent !important; color: var(--txt) !important; }
+#app, #app-layout, #main-content { background: transparent !important; }
+.panel, .panel.on { background: transparent !important; color: var(--txt) !important; }
+* { color: inherit; }
+h1,h2,h3,h4,h5,h6 { color: var(--txt) !important; }
+a { color: var(--grn); }
+
+/* Topbar glass */
+.topbar {
+  background: rgba(13,17,23,.75) !important;
+  backdrop-filter: blur(24px) saturate(180%) !important;
+  -webkit-backdrop-filter: blur(24px) !important;
+  border-bottom: 0.5px solid rgba(255,255,255,.08) !important;
+  box-shadow: 0 1px 30px rgba(0,0,0,.4), 0 1px 0 rgba(255,255,255,.05) inset !important;
+}
+.topbar h1 { color: var(--txt) !important; }
+
+/* Sidebar glass */
+#sidebar {
+  background: rgba(13,17,23,.65) !important;
+  backdrop-filter: blur(20px) !important;
+  -webkit-backdrop-filter: blur(20px) !important;
+  border-right: 0.5px solid rgba(255,255,255,.08) !important;
+}
+.sb-group-label { color: rgba(255,255,255,.28) !important; }
+.sb-item { color: rgba(255,255,255,.55) !important; }
+.sb-item:hover { background: rgba(255,255,255,.07) !important; color: rgba(255,255,255,.9) !important; }
+.sb-item.active { background: rgba(74,222,158,.12) !important; color: #4ade9e !important; box-shadow: 0 0 0 0.5px rgba(74,222,158,.25) !important; }
+.sb-sep { background: rgba(255,255,255,.06) !important; }
+
+/* Cards glass */
+.card-section {
+  background: rgba(255,255,255,.06) !important;
+  backdrop-filter: blur(20px) saturate(160%) !important;
+  -webkit-backdrop-filter: blur(20px) !important;
+  border: 0.5px solid rgba(255,255,255,.1) !important;
+  box-shadow: 0 4px 24px rgba(0,0,0,.2), 0 1px 0 rgba(255,255,255,.06) inset !important;
+  color: var(--txt) !important;
+}
+.card-section:hover {
+  background: rgba(255,255,255,.09) !important;
+  border-color: rgba(255,255,255,.16) !important;
+  box-shadow: 0 8px 32px rgba(0,0,0,.3), 0 1px 0 rgba(255,255,255,.08) inset !important;
+}
+.card-section h3 { color: var(--txt) !important; }
+
+/* Stat cards glass */
+.stat {
+  background: rgba(255,255,255,.06) !important;
+  backdrop-filter: blur(16px) !important;
+  -webkit-backdrop-filter: blur(16px) !important;
+  border: 0.5px solid rgba(255,255,255,.1) !important;
+  box-shadow: 0 2px 12px rgba(0,0,0,.2) !important;
+  color: var(--txt) !important;
+}
+.stat:hover { background: rgba(255,255,255,.1) !important; }
+.stat-n { color: #4ade9e !important; font-size: 24px; font-weight: 600; }
+.stat-l { color: rgba(255,255,255,.4) !important; font-size: 10px; text-transform: uppercase; letter-spacing: .4px; }
+
+/* Buttons glass */
+.btn {
+  background: rgba(255,255,255,.08) !important;
+  border: 0.5px solid rgba(255,255,255,.14) !important;
+  color: rgba(255,255,255,.85) !important;
+  backdrop-filter: blur(12px) !important;
+}
+.btn:hover { background: rgba(255,255,255,.14) !important; border-color: rgba(255,255,255,.22) !important; color: #fff !important; }
+.btn:active { background: rgba(255,255,255,.06) !important; }
+.btn.bg { background: rgba(74,222,158,.75) !important; color: #042C53 !important; border-color: rgba(74,222,158,.4) !important; font-weight: 600 !important; }
+.btn.bg:hover { background: rgba(74,222,158,.9) !important; box-shadow: 0 4px 16px rgba(74,222,158,.3) !important; }
+.btn.bb { background: rgba(96,165,250,.15) !important; border-color: rgba(96,165,250,.3) !important; color: #93c5fd !important; }
+.btn.bd { background: rgba(255,255,255,.05) !important; border-color: rgba(255,255,255,.12) !important; color: rgba(255,255,255,.6) !important; }
+
+/* Inputs glass */
+input, select, textarea {
+  background: rgba(255,255,255,.07) !important;
+  border: 0.5px solid rgba(255,255,255,.12) !important;
+  color: var(--txt) !important;
+  backdrop-filter: blur(8px) !important;
+}
+input:focus, select:focus, textarea:focus {
+  background: rgba(255,255,255,.1) !important;
+  border-color: rgba(74,222,158,.5) !important;
+  box-shadow: 0 0 0 3px rgba(74,222,158,.12) !important;
+}
+input::placeholder { color: rgba(255,255,255,.25) !important; }
+select option { background: #161b27 !important; color: #e2e8f0 !important; }
+label { color: rgba(255,255,255,.5) !important; }
+
+/* Table */
+.score-table th { color: rgba(255,255,255,.35) !important; border-bottom: 0.5px solid rgba(255,255,255,.07) !important; }
+.score-table td { color: var(--txt) !important; border-bottom: 0.5px solid rgba(255,255,255,.04) !important; }
+.score-table tr:hover td { background: rgba(255,255,255,.03) !important; }
+
+/* Modal glass */
+.mbg { background: rgba(0,0,0,.65) !important; backdrop-filter: blur(6px) !important; }
+.modal { background: rgba(15,20,32,.88) !important; backdrop-filter: blur(28px) !important; border: 0.5px solid rgba(255,255,255,.12) !important; box-shadow: 0 32px 80px rgba(0,0,0,.6) !important; color: var(--txt) !important; }
+
+/* Toasts glass */
+.toast { background: rgba(15,20,32,.9) !important; backdrop-filter: blur(24px) !important; border: 0.5px solid rgba(255,255,255,.12) !important; box-shadow: 0 12px 40px rgba(0,0,0,.4) !important; color: var(--txt) !important; }
+
+/* API bar glass */
+.api-bar { background: rgba(251,191,36,.08) !important; border: 0.5px solid rgba(251,191,36,.2) !important; }
+.api-bar.ok { background: rgba(74,222,158,.08) !important; border-color: rgba(74,222,158,.25) !important; }
+
+/* Alerts glass */
+.ae,.ao { background: rgba(248,114,114,.1) !important; border: 0.5px solid rgba(248,114,114,.2) !important; color: #fca5a5 !important; }
+.ag { background: rgba(74,222,158,.1) !important; border: 0.5px solid rgba(74,222,158,.2) !important; color: #4ade9e !important; }
+.ab { background: rgba(96,165,250,.1) !important; border: 0.5px solid rgba(96,165,250,.2) !important; color: #93c5fd !important; }
+.aw { background: rgba(251,191,36,.1) !important; border: 0.5px solid rgba(251,191,36,.2) !important; color: #fcd34d !important; }
+
+/* Bottom bar glass */
+.bbar { background: rgba(13,17,23,.9) !important; border-top: 0.5px solid rgba(255,255,255,.08) !important; backdrop-filter: blur(24px) !important; }
+.bottom-sheet { background: rgba(15,20,32,.92) !important; border-top: 0.5px solid rgba(255,255,255,.1) !important; backdrop-filter: blur(28px) !important; }
+
+/* Tags */
+.tag { background: rgba(255,255,255,.07) !important; border-color: rgba(255,255,255,.12) !important; color: rgba(255,255,255,.6) !important; }
+.bdg { backdrop-filter: blur(8px); }
+
+/* Sync indicator */
+#sync-indicator { background: rgba(96,165,250,.15) !important; color: #93c5fd !important; }
+
+/* Dark toggle */
+#dark-toggle { background: rgba(255,255,255,.08) !important; border-color: rgba(255,255,255,.14) !important; color: rgba(255,255,255,.7) !important; }
+#dark-toggle:hover { background: rgba(255,255,255,.14) !important; }
+
+/* Score categories pills */
+.cat-pill, [onclick*="filterCat"] {
+  background: rgba(255,255,255,.07) !important;
+  border: 0.5px solid rgba(255,255,255,.12) !important;
+  color: rgba(255,255,255,.7) !important;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 5px; height: 5px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(255,255,255,.12); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,.22); }
+
+/* Empty states */
+.ads-empty { border-color: rgba(255,255,255,.08) !important; color: rgba(255,255,255,.3) !important; }
+
+/* Form groups */
+.form-group label { color: rgba(255,255,255,.45) !important; }
 </style>
 </body>
 </html>
