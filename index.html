@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>NOF — Cockpit E-commerce</title>
+<title>UrbanElectroStore — Cockpit E-commerce</title>
 <meta name="description" content="Scoring produits, generateur d ads IA et geo-ciblage pour UrbanElectroStore">
 <meta name="theme-color" content="#18180f">
 <meta name="mobile-web-app-capable" content="yes">
@@ -40,27 +40,12 @@
   --glass-border:rgba(255,255,255,.12);
   --glass-strong:rgba(255,255,255,.12);
 }
-[data-theme="light"]{
-  --bg:rgba(245,244,240,.6);
-  --sur:rgba(255,255,255,.75);
-  --bord:rgba(0,0,0,.1);
-  --bord2:rgba(0,0,0,.16);
-  --txt:#18180f;
-  --mut:#7a7870;
-  --grn:#085041;
-  --gnbg:rgba(8,80,65,.09);
-  --orn:#7a4a00;
-  --orbg:rgba(251,191,36,.12);
-  --red:#7a1a1a;
-  --rdbg:rgba(248,114,114,.1);
-  --blu:#0c3d6e;
-  --blbg:rgba(96,165,250,.1);
-  --pur:#3b2a8a;
-  --pubg:rgba(167,139,250,.1);
-  --glass:rgba(255,255,255,.65);
-  --glass-hover:rgba(255,255,255,.8);
-  --glass-border:rgba(0,0,0,.1);
-  --glass-strong:rgba(255,255,255,.8);
+[data-theme="light"] {
+  --txt:rgba(255,255,255,.9);
+  --mut:rgba(255,255,255,.5);
+  --grn:#4ade9e;
+  --glass:rgba(255,255,255,.1);
+  --glass-border:rgba(255,255,255,.15);
 }
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:'Inter',-apple-system,BlinkMacSystemFont,Arial,sans-serif;
@@ -441,10 +426,15 @@ th{position:sticky;top:0;z-index:1}
   }
 }
 [data-theme="dark"] {
-  --bg:#0f0f0a;--sur:#1a1a12;--bord:#2e2e22;--bord2:#3a3a2c;
-  --txt:#f0ede4;--mut:#8a8878;--grn:#4ade9e;--gnbg:#0a2218;
-  --orn:#f0b84a;--orbg:#1f1500;--red:#f87272;--rdbg:#200a0a;
-  --blu:#60a5fa;--blbg:#0a1628;--pur:#a78bfa;--pubg:#130e2e;
+  --txt:#f0ede4;--mut:rgba(255,255,255,.4);
+  --grn:#4ade9e;--gnbg:rgba(74,222,158,.1);
+  --orn:#fbbf24;--orbg:rgba(251,191,36,.1);
+  --red:#f87272;--rdbg:rgba(248,114,114,.1);
+  --blu:#60a5fa;--blbg:rgba(96,165,250,.1);
+  --pur:#a78bfa;--pubg:rgba(167,139,250,.1);
+  --glass:rgba(255,255,255,.07);
+  --glass-hover:rgba(255,255,255,.11);
+  --glass-border:rgba(255,255,255,.12);
 }
 [data-theme="light"] {
   --bg:#f7f6f3;--sur:#fff;--bord:#e5e3dc;--bord2:#d0cec5;
@@ -625,6 +615,92 @@ select option { background:#1a1a1e; color:#f0ede4; }
 .ab { background: rgba(96,165,250,.1); border: 1px solid rgba(96,165,250,.2); color: #60a5fa; }
 .aw { background: rgba(251,191,36,.1); border: 1px solid rgba(251,191,36,.2); color: #fbbf24; }
 h3 { color: var(--txt) !important; }
+
+
+/* ============================================================
+   SPACE BACKGROUND — FORCE ALL SURFACES TRANSPARENT
+   ============================================================ */
+html {
+  background: radial-gradient(ellipse at 15% 40%, #0b1e36 0%, #020307 45%, #080805 100%) !important;
+  background-attachment: fixed !important;
+}
+body {
+  background: transparent !important;
+  color: var(--txt) !important;
+}
+#app {
+  background: transparent !important;
+}
+/* All panels transparent */
+.panel.on, .panel {
+  background: transparent !important;
+}
+/* Main app background override */
+.topbar, .maintabs {
+  background: rgba(6, 10, 20, 0.75) !important;
+}
+/* Cards always glass */
+.card-section, .stat, .kpi-card {
+  background: rgba(255,255,255,.07) !important;
+  backdrop-filter: blur(20px) !important;
+  -webkit-backdrop-filter: blur(20px) !important;
+  border: 1px solid rgba(255,255,255,.11) !important;
+  color: var(--txt) !important;
+}
+/* Inputs glass */
+input, select, textarea {
+  background: rgba(255,255,255,.07) !important;
+  color: #f0ede4 !important;
+  border-color: rgba(255,255,255,.12) !important;
+}
+select option {
+  background: #0d1117 !important;
+  color: #f0ede4 !important;
+}
+/* Remove all white/grey backgrounds from common wrappers */
+.form-group, .loading, .ads-result-item,
+.score-table, .score-table td, .score-table th {
+  background: transparent !important;
+}
+.score-table tr:nth-child(even) td {
+  background: rgba(255,255,255,.03) !important;
+}
+.score-table tr:hover td {
+  background: rgba(74,222,158,.06) !important;
+}
+/* Tag/badge backgrounds */
+.bdg, .badge, .tag {
+  backdrop-filter: blur(8px);
+}
+/* Bottom sheet glass */
+.bottom-sheet {
+  background: rgba(6,10,20,.9) !important;
+  backdrop-filter: blur(32px) !important;
+  border-top: 1px solid rgba(255,255,255,.1) !important;
+}
+/* Modal glass */
+.modal {
+  background: rgba(6,10,20,.88) !important;
+  backdrop-filter: blur(32px) !important;
+  border: 1px solid rgba(255,255,255,.12) !important;
+}
+/* Alert boxes */
+.al {
+  backdrop-filter: blur(8px) !important;
+}
+/* API bar */
+.api-bar {
+  background: rgba(251,191,36,.08) !important;
+  border: 1px solid rgba(251,191,36,.2) !important;
+}
+.api-bar.ok {
+  background: rgba(74,222,158,.08) !important;
+  border-color: rgba(74,222,158,.25) !important;
+}
+/* Ensure text is always visible */
+h1,h2,h3,h4,p,span,div,label,td,th,li {
+  color: inherit;
+}
 
 </style>
 </head>
@@ -7704,11 +7780,19 @@ function copyMetaIds() {
 var darkModeActive = false;
 
 function initDarkMode() {
+  // Default: space dark theme (no attribute = :root vars = dark space)
+  // Toggle only switches label contrast
   var saved = localStorage.getItem("theme");
-  if (saved) {
-    applyTheme(saved);
-  } else if (window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches) {
-    applyTheme("dark");
+  if (saved === "light") {
+    applyTheme("light");
+  } else {
+    // Default space dark - remove any attribute
+    document.documentElement.removeAttribute("data-theme");
+    darkModeActive = true;
+    var icon  = document.getElementById("dark-icon");
+    var label = document.getElementById("dark-label");
+    if (icon)  icon.textContent  = "☀️";
+    if (label) label.textContent = "Clair";
   }
   // Listen for system changes
   if (window.matchMedia) {
@@ -7735,8 +7819,19 @@ function applyTheme(theme) {
 }
 
 function toggleDarkMode() {
-  applyTheme(darkModeActive ? "light" : "dark");
-  toastInfo(darkModeActive ? "Mode clair active" : "Mode sombre active");
+  if (darkModeActive) {
+    applyTheme("light");
+    toastInfo("Fond clair active");
+  } else {
+    document.documentElement.removeAttribute("data-theme");
+    darkModeActive = true;
+    localStorage.removeItem("theme");
+    var icon  = document.getElementById("dark-icon");
+    var label = document.getElementById("dark-label");
+    if (icon)  icon.textContent  = "☀️";
+    if (label) label.textContent = "Clair";
+    toastInfo("Fond spatial active");
+  }
 }
 
 // ============================================================
