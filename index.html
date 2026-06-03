@@ -1903,59 +1903,6 @@ CTA : Voir l offre" style="width:100%;height:130px;padding:7px 9px;border:1px so
 
 <!-- MODAL AJOUT INTEGRATION -->
 
-</div><!-- /main-content -->
-
-</div><!-- /app-layout -->
-
-<div class="mbg" id="integ-modal" style="display:none" onclick="if(event.target===this)closeAddIntegModal()">
-  <div class="modal" style="max-width:520px">
-    <h2>Ajouter un outil</h2>
-    <p style="font-size:12px;color:var(--mut);margin-bottom:.85rem">Entre les informations de l outil a integrer dans le Cockpit.</p>
-    <div class="form-row">
-      <div class="form-group" style="flex:1">
-        <label>Nom de l outil *</label>
-        <input type="text" id="integ-name" placeholder="ex: Google Analytics" style="width:100%">
-      </div>
-      <div class="form-group">
-        <label>Icone (emoji)</label>
-        <input type="text" id="integ-icon" placeholder="ex: &#128200;" style="width:70px;text-align:center;font-size:18px">
-      </div>
-    </div>
-    <div class="form-group" style="margin-bottom:.6rem">
-      <label>URL de l outil *</label>
-      <input type="url" id="integ-url" placeholder="https://analytics.google.com" style="width:100%">
-    </div>
-    <div class="form-row">
-      <div class="form-group" style="flex:1">
-        <label>Description</label>
-        <input type="text" id="integ-desc" placeholder="ex: Suivi du trafic" style="width:100%">
-      </div>
-      <div class="form-group">
-        <label>Couleur</label>
-        <input type="color" id="integ-color" value="#085041" style="width:50px;height:34px;border:1px solid var(--bord2);border-radius:7px;cursor:pointer;padding:2px">
-      </div>
-    </div>
-    <div class="form-group" style="margin-bottom:.75rem">
-      <label>Categorie</label>
-      <select id="integ-cat" style="width:100%">
-        <option value="analytics">Analytics</option>
-        <option value="ads">Publicite</option>
-        <option value="ecommerce">E-commerce</option>
-        <option value="design">Design</option>
-        <option value="productivity">Productivite</option>
-        <option value="finance">Finance</option>
-        <option value="other">Autre</option>
-      </select>
-    </div>
-    <div style="background:var(--bg);border-radius:var(--r);padding:.55rem .75rem;margin-bottom:.75rem;font-size:11.5px;color:var(--mut)">
-      &#9888;&#65039; Certains outils (Google, Facebook) bloquent les iframes. Dans ce cas, l outil s ouvrira dans un nouvel onglet automatiquement.
-    </div>
-    <div class="mbts">
-      <button class="btn" onclick="closeAddIntegModal()">Annuler</button>
-      <button class="btn bg" onclick="addIntegration()">Ajouter</button>
-    </div>
-  </div>
-</div>
 
 
 <!-- TAB META ADS AGENT -->
@@ -2204,6 +2151,7 @@ CTA : Voir l offre" style="width:100%;height:130px;padding:7px 9px;border:1px so
   </div>
 </div>
 
+
 <!-- TAB GOOGLE ANALYTICS -->
 <div class="panel" id="tab-analytics">
   <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-top:.5rem;margin-bottom:.75rem">
@@ -2279,6 +2227,60 @@ CTA : Voir l offre" style="width:100%;height:130px;padding:7px 9px;border:1px so
   <div id="ga-empty" class="ads-empty">Connecte ton compte Google Analytics pour voir le trafic reel de ta boutique.</div>
 </div>
 
+
+</div><!-- /main-content -->
+
+</div><!-- /app-layout -->
+
+<div class="mbg" id="integ-modal" style="display:none" onclick="if(event.target===this)closeAddIntegModal()">
+  <div class="modal" style="max-width:520px">
+    <h2>Ajouter un outil</h2>
+    <p style="font-size:12px;color:var(--mut);margin-bottom:.85rem">Entre les informations de l outil a integrer dans le Cockpit.</p>
+    <div class="form-row">
+      <div class="form-group" style="flex:1">
+        <label>Nom de l outil *</label>
+        <input type="text" id="integ-name" placeholder="ex: Google Analytics" style="width:100%">
+      </div>
+      <div class="form-group">
+        <label>Icone (emoji)</label>
+        <input type="text" id="integ-icon" placeholder="ex: &#128200;" style="width:70px;text-align:center;font-size:18px">
+      </div>
+    </div>
+    <div class="form-group" style="margin-bottom:.6rem">
+      <label>URL de l outil *</label>
+      <input type="url" id="integ-url" placeholder="https://analytics.google.com" style="width:100%">
+    </div>
+    <div class="form-row">
+      <div class="form-group" style="flex:1">
+        <label>Description</label>
+        <input type="text" id="integ-desc" placeholder="ex: Suivi du trafic" style="width:100%">
+      </div>
+      <div class="form-group">
+        <label>Couleur</label>
+        <input type="color" id="integ-color" value="#085041" style="width:50px;height:34px;border:1px solid var(--bord2);border-radius:7px;cursor:pointer;padding:2px">
+      </div>
+    </div>
+    <div class="form-group" style="margin-bottom:.75rem">
+      <label>Categorie</label>
+      <select id="integ-cat" style="width:100%">
+        <option value="analytics">Analytics</option>
+        <option value="ads">Publicite</option>
+        <option value="ecommerce">E-commerce</option>
+        <option value="design">Design</option>
+        <option value="productivity">Productivite</option>
+        <option value="finance">Finance</option>
+        <option value="other">Autre</option>
+      </select>
+    </div>
+    <div style="background:var(--bg);border-radius:var(--r);padding:.55rem .75rem;margin-bottom:.75rem;font-size:11.5px;color:var(--mut)">
+      &#9888;&#65039; Certains outils (Google, Facebook) bloquent les iframes. Dans ce cas, l outil s ouvrira dans un nouvel onglet automatiquement.
+    </div>
+    <div class="mbts">
+      <button class="btn" onclick="closeAddIntegModal()">Annuler</button>
+      <button class="btn bg" onclick="addIntegration()">Ajouter</button>
+    </div>
+  </div>
+</div>
 <div class="mbg" id="imp-modal" style="display:none" onclick="if(event.target===this)closeImport()">
   <div class="modal">
     <h2>Importer des produits</h2>
