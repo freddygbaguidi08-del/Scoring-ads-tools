@@ -1009,6 +1009,7 @@ input[type="text"] { color: #e2e8f0 !important; }
 
 <div class="topbar">
   <h1 style="font-size:13px;font-weight:600;white-space:nowrap;margin:0;flex-shrink:0">&#128722; UrbanElectroStore</h1>
+    <span id="api-topbar-badge" onclick="toggleApiPanel()" title="Cliquer pour configurer la clé IA" style="display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:20px;font-size:11px;cursor:pointer;flex-shrink:0;transition:all .15s;background:rgba(251,191,36,.15);border:0.5px solid rgba(251,191,36,.3);color:#fbbf24">&#9888; IA non configurée</span>
   <div class="topr" style="display:flex;align-items:center;gap:4px;flex-wrap:nowrap;flex:1;justify-content:flex-end;overflow:hidden">
     <span id="sync-indicator" onclick="manualSync()" title="Synchroniser" style="font-size:11px;font-weight:500;padding:3px 8px;border-radius:20px;cursor:pointer;background:var(--blbg);color:var(--blu);display:inline-flex;align-items:center;gap:3px;white-space:nowrap;flex-shrink:0">&#9729;</span>
     <button class="btn bb" onclick="loadFromCloud()" title="Charger cloud" style="font-size:11px;padding:4px 8px">&#9729; Cloud</button>
@@ -2342,6 +2343,22 @@ function toggleKeyVis() {
   i.type = i.type === "password" ? "text" : "password";
 }
 function updateApiBar() {
+  // Mettre à jour le badge topbar
+  var tb = document.getElementById("api-topbar-badge");
+  if (tb) {
+    if (apiKey && apiKey.length > 8) {
+      var provLabel = curProvider === "groq" ? "Groq" : curProvider === "gemini" ? "Gemini" : "Anthropic";
+      tb.innerHTML = "&#9989; " + provLabel + " connecté";
+      tb.style.background = "rgba(74,222,158,.12)";
+      tb.style.borderColor = "rgba(74,222,158,.3)";
+      tb.style.color = "#4ade9e";
+    } else {
+      tb.innerHTML = "&#9888; Clé IA manquante";
+      tb.style.background = "rgba(251,191,36,.12)";
+      tb.style.borderColor = "rgba(251,191,36,.3)";
+      tb.style.color = "#fbbf24";
+    }
+  }
   var bar    = document.getElementById("apibar");
   var st     = document.getElementById("apist");
   var inp    = document.getElementById("api-inp");
@@ -5814,6 +5831,13 @@ function hideLockScreen() {
     loadUserApiKeys();
     updateApiBar();
   }, 50);
+  // Restaurer le dernier onglet visité
+  setTimeout(function() {
+    var lastTab = localStorage.getItem("lastTab");
+    if (lastTab && document.getElementById("tab-" + lastTab)) {
+      showMain(lastTab);
+    }
+  }, 150);
   var overlay = document.getElementById("login-overlay");
   if (overlay) { overlay.style.opacity="0"; setTimeout(function(){ overlay.style.display="none"; overlay.style.opacity=""; },300); }
   // Show user badge first (fast, no data needed)
@@ -8619,6 +8643,17 @@ function drawAmbient() {
     }
   }
   requestAnimationFrame(drawAmbient);
+}
+
+
+
+function toggleApiPanel() {
+  var bar = document.getElementById("apibar");
+  if (!bar) return;
+  var isHidden = bar.style.display === "none" || getComputedStyle(bar).display === "none";
+  bar.style.cssText = isHidden
+    ? "display:flex !important;align-items:center;gap:8px;padding:.5rem 1rem;background:rgba(13,17,23,.85);border-bottom:0.5px solid rgba(255,255,255,.1);flex-wrap:wrap;backdrop-filter:blur(20px)"
+    : "display:none !important";
 }
 
 
