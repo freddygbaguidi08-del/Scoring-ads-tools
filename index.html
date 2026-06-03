@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>UrbanElectroStore — Cockpit E-commerce</title>
-<meta name="description" content="Scoring produits, generateur d ads IA et geo-ciblage pour UrbanElectroStore">
+<title>NOF — Cockpit E-commerce</title>
+<meta name="description" content="Scoring produits, generateur d ads IA et geo-ciblage pour NOF">
 <meta name="theme-color" content="#18180f">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -877,7 +877,7 @@ input:focus, select:focus, textarea:focus {
   <div class="login-scene">
     <div class="login-box" id="login-box-user">
       <span class="logo">🛍</span>
-      <h2>UrbanElectroStore</h2>
+      <h2>NOF</h2>
       <p class="sub">Entre tes identifiants pour acceder au Cockpit</p>
       <div class="login-field">
         <label>Prenom ou identifiant</label>
@@ -922,7 +922,7 @@ input:focus, select:focus, textarea:focus {
 </div>
 
 <div class="topbar">
-  <h1 style="font-size:13px;font-weight:600;white-space:nowrap;margin:0;flex-shrink:0">&#128722; UrbanElectroStore</h1>
+  <h1 style="font-size:13px;font-weight:600;white-space:nowrap;margin:0;flex-shrink:0">&#128722; NOF</h1>
   <div class="topr" style="display:flex;align-items:center;gap:4px;flex-wrap:nowrap;flex:1;justify-content:flex-end;overflow:hidden">
     <span id="sync-indicator" onclick="manualSync()" title="Synchroniser" style="font-size:11px;font-weight:500;padding:3px 8px;border-radius:20px;cursor:pointer;background:var(--blbg);color:var(--blu);display:inline-flex;align-items:center;gap:3px;white-space:nowrap;flex-shrink:0">&#9729;</span>
     <button class="btn bb" onclick="loadFromCloud()" title="Charger cloud" style="font-size:11px;padding:4px 8px">&#9729; Cloud</button>
@@ -3483,7 +3483,7 @@ function exportScoring() {
 
 // ============================================================
 // EXPORT WOOCOMMERCE CSV — mappage complet 64 colonnes
-// Basé sur le format réel du fichier product-export d UrbanElectroStore
+// Basé sur le format réel du fichier product-export d NOF
 // ============================================================
 function exportWooCSV() {
   // Mapping catégories cockpit → catégories WooCommerce réelles
@@ -6025,7 +6025,7 @@ function deleteUser(idx) {
 function copyInvite(idx) {
   var u = ACCESS.users[idx];
   if (!u) return;
-  var msg = "Bonjour " + u.name + ",\n\nTu as acces au Cockpit E-commerce UrbanElectroStore.\n\n"
+  var msg = "Bonjour " + u.name + ",\n\nTu as acces au Cockpit E-commerce NOF.\n\n"
     + "Lien : " + window.location.href.split("?")[0] + "\nPrenom : " + u.name + "\nCode : " + u.code
     + (u.expiry ? "\nAcces valable jusqu au : " + u.expiry : "")
     + "\n\nBonne utilisation !";
@@ -7209,7 +7209,7 @@ function renderFeedPreview(ad, cta, ctaLabel, row) {
   return "<div style='max-width:280px;border:0.5px solid var(--bord2);border-radius:10px;overflow:hidden;background:var(--sur);font-family:Arial,sans-serif'>"
     + "<div style='display:flex;align-items:center;gap:7px;padding:8px 10px'>"
       + "<div style='width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#1877f2,#42b0ff);flex-shrink:0'></div>"
-      + "<div><div style='font-size:12px;font-weight:600;color:#1a1a1a'>UrbanElectroStore</div>"
+      + "<div><div style='font-size:12px;font-weight:600;color:#1a1a1a'>NOF</div>"
         + "<div style='font-size:10px;color:#8a8a8a'>Sponsorisé · &#127758;</div></div>"
     + "</div>"
     + "<div style='padding:0 10px 6px;font-size:12px;color:#1a1a1a;line-height:1.5'>" + (ad.primary_text||"").slice(0,80) + (ad.primary_text&&ad.primary_text.length>80?"…":"") + "</div>"
