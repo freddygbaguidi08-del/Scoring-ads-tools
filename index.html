@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="fr" style="background:#f7f6f3 !important">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
@@ -353,17 +353,12 @@ th{position:sticky;top:0;z-index:1}
 
 
 /* Dark mode specific overrides */
-[data-theme="dark"] .login-box,
-:root:not([data-theme="light"]) .login-box { box-shadow:0 8px 40px rgba(0,0,0,.5) }
-[data-theme="dark"] .topbar,
-:root:not([data-theme="light"]) .topbar { box-shadow:0 1px 0 var(--bord) }
-[data-theme="dark"] .modal,
-:root:not([data-theme="light"]) .modal { background:var(--sur) }
-[data-theme="dark"] iframe,
-:root:not([data-theme="light"]) iframe { color-scheme:dark }
+
+
+
+
 /* Dark mode chart overrides */
-[data-theme="dark"] canvas,
-:root:not([data-theme="light"]) canvas { filter:brightness(.9) }
+
 /* Dark toggle button */
 #dark-toggle{
   padding:4px 9px;border-radius:var(--r);border:1px solid var(--bord2);
@@ -385,17 +380,12 @@ th{position:sticky;top:0;z-index:1}
   border-bottom: 1px solid rgba(var(--bord-rgb, 0,0,0),.08) !important;
   box-shadow: 0 1px 24px rgba(0,0,0,.07);
 }
-[data-theme="dark"] .topbar {
-  background: rgba(26,26,18,.85) !important;
-  box-shadow: 0 1px 24px rgba(0,0,0,.3);
-}
+
 
 /* --- Card sections — depth + hover lift --- */
 
 
-[data-theme="dark"] .card-section:hover {
-  box-shadow: 0 8px 32px rgba(0,0,0,.4), 0 2px 8px rgba(74,222,158,.04);
-}
+
 
 /* --- Stat cards — 3D tilt on hover --- */
 
@@ -633,14 +623,14 @@ select option{background:var(--sur);color:var(--txt)}
 
 
 
-[data-theme="dark"]{--bg:#0f0f0a;--sur:#1a1a12;--bord:#2e2e22;--bord2:#3a3a2c;--txt:#f0ede4;--mut:#8a8878;--grn:#4ade9e;--gnbg:#0a2218;--orn:#f0b84a;--orbg:#1f1500;--red:#f87272;--rdbg:#200a0a;--blu:#60a5fa;--blbg:#0a1628;--pur:#a78bfa;--pubg:#130e2e}
+
 
 
 
 
 </style>
 </head>
-<body>
+<body style="background:#f7f6f3 !important;color:#18180f !important">
 
 
 <!-- TOAST CONTAINER -->
@@ -7716,20 +7706,14 @@ function copyMetaIds() {
 var darkModeActive = false;
 
 function initDarkMode() {
-  // Thème clair par défaut TOUJOURS — dark uniquement si l utilisateur l a choisi
-  var saved = localStorage.getItem("theme");
-  if (saved === "dark") {
-    applyTheme("dark");
-  } else {
-    // Forcer le thème clair
-    document.documentElement.removeAttribute("data-theme");
-    darkModeActive = false;
-    localStorage.removeItem("theme");
-    var icon  = document.getElementById("dark-icon");
-    var label = document.getElementById("dark-label");
-    if (icon)  icon.textContent  = "🌙";
-    if (label) label.textContent = "Sombre";
-  }
+  // Thème clair toujours par défaut
+  document.documentElement.removeAttribute("data-theme");
+  darkModeActive = false;
+  localStorage.removeItem("theme");
+  var icon  = document.getElementById("dark-icon");
+  var label = document.getElementById("dark-label");
+  if (icon)  icon.textContent  = "🌙";
+  if (label) label.textContent = "Sombre";
 }
 
 function applyTheme(theme) {
@@ -8320,5 +8304,25 @@ window.addEventListener("load", registerServiceWorker);
 </script>
 
 
+<style>
+html, body, #app, .panel, .panel.on {
+  background: #f7f6f3 !important;
+  color: #18180f !important;
+}
+.topbar { background: #ffffff !important; border-bottom: 1px solid #e5e3dc !important; }
+.maintabs { background: #ffffff !important; border-bottom: 1px solid #e5e3dc !important; }
+.card-section { background: #ffffff !important; border: 1px solid #e5e3dc !important; color: #18180f !important; }
+.stat { background: #ffffff !important; border: 1px solid #e5e3dc !important; }
+.btn { background: #ffffff !important; border: 1px solid #d0cec5 !important; color: #18180f !important; }
+.btn.bg { background: #085041 !important; color: #ffffff !important; border-color: transparent !important; }
+input, select, textarea { background: #ffffff !important; color: #18180f !important; border: 1px solid #e5e3dc !important; }
+select option { background: #ffffff !important; color: #18180f !important; }
+h1,h2,h3,h4,label { color: #18180f !important; }
+.mtab { color: #7a7870 !important; }
+.mtab.active { color: #085041 !important; border-bottom: 2px solid #085041 !important; }
+.score-table td, .score-table th { color: #18180f !important; background: transparent !important; }
+.modal { background: #ffffff !important; color: #18180f !important; }
+.toast { background: #ffffff !important; color: #18180f !important; border: 1px solid #e5e3dc !important; }
+</style>
 </body>
 </html>
