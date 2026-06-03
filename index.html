@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>NOF — Cockpit E-commerce</title>
-<meta name="description" content="Scoring produits, generateur d ads IA et geo-ciblage pour NOF">
+<title>UrbanElectroStore — Cockpit E-commerce</title>
+<meta name="description" content="Scoring produits, generateur d ads IA et geo-ciblage pour UrbanElectroStore">
 <meta name="theme-color" content="#18180f">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -142,7 +142,12 @@ tr.sel td{background:#f0f8f3}
 .login-box{background:rgba(255,255,255,.07);backdrop-filter:blur(28px) saturate(180%);-webkit-backdrop-filter:blur(28px);border:1px solid rgba(255,255,255,.13);border-radius:22px;padding:2.5rem 2.25rem;text-align:center;box-shadow:0 32px 80px rgba(0,0,0,.6),0 0 0 0.5px rgba(255,255,255,.06) inset,0 2px 0 rgba(255,255,255,.12) inset;animation:loginReveal .8s cubic-bezier(.34,1.56,.64,1) both;transform-origin:center bottom;position:relative;overflow:hidden;margin:auto}
 .login-box::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(255,255,255,.4),transparent)}
 @keyframes loginReveal{from{opacity:0;transform:translateY(50px) rotateX(15deg) scale(.92)}to{opacity:1;transform:translateY(0) rotateX(0) scale(1)}}
-.login-box .logo{font-size:40px;margin-bottom:.5rem;display:block;animation:logoPop .7s .25s cubic-bezier(.34,1.56,.64,1) both}
+.login-box .logo{
+  font-size:52px;margin-bottom:.6rem;display:block;
+  animation:logoPop .7s .25s cubic-bezier(.34,1.56,.64,1) both;
+  filter:drop-shadow(0 0 24px rgba(74,222,158,.6)) drop-shadow(0 0 8px rgba(255,255,255,.3));
+  text-shadow:none;
+}
 @keyframes logoPop{from{transform:scale(0) rotate(-20deg);opacity:0}to{transform:scale(1) rotate(0);opacity:1}}
 .login-box h2{font-size:17px;font-weight:600;color:#fff;margin-bottom:.2rem;animation:slideUp .5s .4s ease both}
 .login-box .sub{font-size:12px;color:rgba(255,255,255,.45);margin-bottom:1.5rem;animation:slideUp .5s .5s ease both}
@@ -384,6 +389,145 @@ th{position:sticky;top:0;z-index:1}
 #dark-toggle:hover{background:var(--bg)}
 #dark-toggle .label{font-size:11px;font-weight:500}
 
+
+/* ============================================================
+   3D EFFECTS — Global UI Enhancement
+   ============================================================ */
+
+/* --- Topbar glassmorphism --- */
+.topbar {
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px);
+  background: rgba(var(--sur-rgb, 255,255,255), .82) !important;
+  border-bottom: 1px solid rgba(var(--bord-rgb, 0,0,0),.08) !important;
+  box-shadow: 0 1px 24px rgba(0,0,0,.07);
+}
+[data-theme="dark"] .topbar {
+  background: rgba(26,26,18,.85) !important;
+  box-shadow: 0 1px 24px rgba(0,0,0,.3);
+}
+
+/* --- Card sections — depth + hover lift --- */
+.card-section {
+  transition: transform .22s cubic-bezier(.34,1.2,.64,1), box-shadow .22s ease;
+  will-change: transform;
+  transform-style: preserve-3d;
+}
+.card-section:hover {
+  transform: translateY(-3px) scale(1.002);
+  box-shadow: 0 8px 32px rgba(0,0,0,.1), 0 2px 8px rgba(0,0,0,.06);
+}
+[data-theme="dark"] .card-section:hover {
+  box-shadow: 0 8px 32px rgba(0,0,0,.4), 0 2px 8px rgba(74,222,158,.04);
+}
+
+/* --- Stat cards — 3D tilt on hover --- */
+.stat-card, .kpi-card {
+  transition: transform .18s ease, box-shadow .18s ease;
+  cursor: default;
+}
+.stat-card:hover, .kpi-card:hover {
+  transform: translateY(-4px) rotateX(3deg);
+  box-shadow: 0 12px 30px rgba(0,0,0,.12), 0 4px 10px rgba(0,0,0,.06);
+}
+
+/* --- Buttons — 3D press effect --- */
+.btn {
+  transition: all .15s cubic-bezier(.34,1.2,.64,1);
+  transform-style: preserve-3d;
+  position: relative;
+}
+.btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 14px rgba(0,0,0,.12);
+}
+.btn:active {
+  transform: translateY(1px) scale(.97);
+  box-shadow: 0 1px 4px rgba(0,0,0,.1);
+}
+.btn.bg:hover {
+  box-shadow: 0 6px 18px rgba(8,80,65,.35);
+}
+
+/* --- Tab buttons — active glow --- */
+.mtab.active, .mtab:hover {
+  transform: translateY(-1px);
+}
+.mtab {
+  transition: all .15s ease;
+}
+
+/* --- Panel transitions — 3D slide in --- */
+.panel {
+  animation: panelIn .3s cubic-bezier(.34,1.1,.64,1) both;
+  transform-origin: top center;
+}
+@keyframes panelIn {
+  from { opacity: 0; transform: translateY(10px) scale(.99); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* --- Table rows hover --- */
+.score-table tr:hover td, .score-table tr:hover th {
+  background: var(--bg);
+  transform: scaleX(1.001);
+}
+
+/* --- Floating label on inputs focus --- */
+.form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 16px rgba(8,80,65,.15), 0 0 0 3px rgba(8,80,65,.08);
+}
+
+/* --- Progress bars animate --- */
+.score-bar div {
+  transition: width .8s cubic-bezier(.34,1.1,.64,1);
+}
+
+/* --- Toasts 3D entry --- */
+.toast {
+  animation: toastIn .4s cubic-bezier(.34,1.3,.64,1) both !important;
+  transform-origin: right bottom;
+}
+@keyframes toastIn {
+  from { opacity:0; transform: translateX(20px) scale(.9) rotateY(-8deg); }
+  to   { opacity:1; transform: translateX(0) scale(1) rotateY(0); }
+}
+
+/* --- Modal backdrop blur --- */
+.mbg {
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+}
+
+/* --- Ambient glow on cards with high scores --- */
+.score-win {
+  box-shadow: 0 0 0 1px rgba(8,80,65,.2), 0 4px 20px rgba(8,80,65,.1);
+}
+
+/* --- Loading spinner 3D --- */
+.spin {
+  border-color: rgba(8,80,65,.15) !important;
+  border-top-color: var(--grn) !important;
+  box-shadow: 0 0 8px rgba(8,80,65,.2);
+}
+
+/* --- Top Nav tab indicator glow --- */
+.mtab.active {
+  box-shadow: 0 2px 12px rgba(8,80,65,.2);
+  border-bottom: 2px solid var(--grn) !important;
+}
+
+/* --- Scrollbar 3D style --- */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb {
+  background: var(--bord2);
+  border-radius: 3px;
+  transition: background .2s;
+}
+::-webkit-scrollbar-thumb:hover { background: var(--mut); }
+
 </style>
 </head>
 <body>
@@ -410,7 +554,7 @@ th{position:sticky;top:0;z-index:1}
 </div>
 
 <!-- ===== LOGIN OVERLAY 3D ===== -->
-<div class="login-overlay" id="login-overlay">
+<div class="login-overlay" id="login-overlay" style="display:none">
   <!-- Canvas for particles -->
   <canvas id="login-canvas"></canvas>
 
@@ -445,7 +589,7 @@ th{position:sticky;top:0;z-index:1}
   <div class="login-scene">
     <div class="login-box" id="login-box-user">
       <span class="logo">🛍</span>
-      <h2>NOF</h2>
+      <h2>UrbanElectroStore</h2>
       <p class="sub">Entre tes identifiants pour acceder au Cockpit</p>
       <div class="login-field">
         <label>Prenom ou identifiant</label>
@@ -490,7 +634,7 @@ th{position:sticky;top:0;z-index:1}
 </div>
 
 <div class="topbar">
-  <h1>&#128722; NOF &mdash; Cockpit E-commerce</h1>
+  <h1>&#128722; UrbanElectroStore &mdash; Cockpit E-commerce</h1>
   <span id="sync-indicator" onclick="manualSync()" title="Cliquer pour synchroniser maintenant"
     style="font-size:11px;font-weight:500;padding:3px 10px;border-radius:20px;cursor:pointer;background:#e8f0fb;color:#0c3d6e;display:inline-flex;align-items:center;gap:4px">&#9729; Cloud</span>
   <div class="topr">
@@ -1077,7 +1221,7 @@ th{position:sticky;top:0;z-index:1}
       <div class="form-row" style="margin-top:.5rem">
         <div class="form-group" style="flex:1;min-width:200px">
           <label>URL de ta boutique</label>
-          <input type="text" id="wc-url" placeholder="https://NOF.com" style="width:100%">
+          <input type="text" id="wc-url" placeholder="https://urbanelectrostore.com" style="width:100%">
         </div>
       </div>
       <div class="form-row">
@@ -1628,7 +1772,7 @@ CTA : Voir l offre" style="width:100%;height:130px;padding:7px 9px;border:1px so
         </div>
         <div class="form-group">
           <label>URL de destination</label>
-          <input type="url" id="meta-dest-url" placeholder="https://NOF.com/produit/..." style="width:100%">
+          <input type="url" id="meta-dest-url" placeholder="https://urbanelectrostore.com/produit/..." style="width:100%">
         </div>
       </div>
       <div style="display:flex;gap:7px;flex-wrap:wrap">
@@ -2024,8 +2168,8 @@ function loadUserData() {
   if (savedProds) {
     PRODUCTS = savedProds;
   } else if (isAdmin) {
-    PRODUCTS = DEFAULT_PRODUCTS.slice();
-    saveProducts();
+    PRODUCTS = (typeof DEFAULT_PRODUCTS !== "undefined" ? DEFAULT_PRODUCTS : []).slice();
+    if (PRODUCTS.length) saveProducts();
   } else {
     PRODUCTS = [];
   }
@@ -3020,7 +3164,7 @@ function exportScoring() {
 
 // ============================================================
 // EXPORT WOOCOMMERCE CSV — mappage complet 64 colonnes
-// Basé sur le format réel du fichier product-export d NOF
+// Basé sur le format réel du fichier product-export d UrbanElectroStore
 // ============================================================
 function exportWooCSV() {
   // Mapping catégories cockpit → catégories WooCommerce réelles
@@ -3080,7 +3224,7 @@ function exportWooCSV() {
   ];
 
   var now = new Date().toISOString().replace("T"," ").slice(0,19);
-  var baseUrl = "https://NOF.com";
+  var baseUrl = "https://urbanelectrostore.com";
 
   var rows = PRODUCTS.map(function(r, i) {
     var d      = userScores[r[0]] || {};
@@ -3116,10 +3260,10 @@ function exportWooCSV() {
     var focuskw = name.split(" ").slice(0,4).join(" ").toLowerCase();
 
     // meta:_yoast_wpseo_title — titre SEO
-    var seoTitle = name + " | NOF";
+    var seoTitle = name + " | UrbanElectroStore";
 
     // meta:_yoast_wpseo_metadesc — meta description
-    var metadesc = "Achetez " + name + " au meilleur prix sur NOF";
+    var metadesc = "Achetez " + name + " au meilleur prix sur UrbanElectroStore";
     if (r[7] === "win" && r[6]) metadesc += " - " + price + " EUR vs " + r[6] + " ailleurs";
     metadesc += ".";
 
@@ -5561,7 +5705,7 @@ function deleteUser(idx) {
 function copyInvite(idx) {
   var u = ACCESS.users[idx];
   if (!u) return;
-  var msg = "Bonjour " + u.name + ",\n\nTu as acces au Cockpit E-commerce NOF.\n\n"
+  var msg = "Bonjour " + u.name + ",\n\nTu as acces au Cockpit E-commerce UrbanElectroStore.\n\n"
     + "Lien : " + window.location.href.split("?")[0] + "\nPrenom : " + u.name + "\nCode : " + u.code
     + (u.expiry ? "\nAcces valable jusqu au : " + u.expiry : "")
     + "\n\nBonne utilisation !";
@@ -5586,6 +5730,22 @@ function renderAdminPanel() {
   renderUsersList();
   renderLogs();
   renderSyncDashboard();
+}
+
+function previewLoginScreen() {
+  var overlay = document.getElementById("login-overlay");
+  if (!overlay) return;
+  showUserLogin();
+  overlay.style.display = "flex";
+  overlay.style.opacity = "1";
+  initLoginCanvas();
+  toastInfo("Clique n'importe ou sur le fond pour fermer l'apercu");
+  overlay.onclick = function(e) {
+    if (e.target === overlay) {
+      overlay.style.display = "none";
+      overlay.onclick = null;
+    }
+  };
 }
 
 function renderSyncDashboard() {
@@ -5775,7 +5935,7 @@ async function loadAllDataFromJB() {
       if (Array.isArray(userData.products) && userData.products.length) {
         PRODUCTS = userData.products;
       } else if (isAdmin) {
-        PRODUCTS = DEFAULT_PRODUCTS.slice();
+        PRODUCTS = (typeof DEFAULT_PRODUCTS !== "undefined" ? DEFAULT_PRODUCTS : PRODUCTS).slice();
       } else {
         PRODUCTS = [];
       }
@@ -6729,7 +6889,7 @@ function renderFeedPreview(ad, cta, ctaLabel, row) {
   return "<div style='max-width:280px;border:0.5px solid var(--bord2);border-radius:10px;overflow:hidden;background:#fff;font-family:Arial,sans-serif'>"
     + "<div style='display:flex;align-items:center;gap:7px;padding:8px 10px'>"
       + "<div style='width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#1877f2,#42b0ff);flex-shrink:0'></div>"
-      + "<div><div style='font-size:12px;font-weight:600;color:#1a1a1a'>NOF</div>"
+      + "<div><div style='font-size:12px;font-weight:600;color:#1a1a1a'>UrbanElectroStore</div>"
         + "<div style='font-size:10px;color:#8a8a8a'>Sponsorisé · &#127758;</div></div>"
     + "</div>"
     + "<div style='padding:0 10px 6px;font-size:12px;color:#1a1a1a;line-height:1.5'>" + (ad.primary_text||"").slice(0,80) + (ad.primary_text&&ad.primary_text.length>80?"…":"") + "</div>"
@@ -7129,7 +7289,7 @@ async function fetchWooImage() {
   } catch(e) {
     if (prevEl) prevEl.innerHTML = "<div class='al ao' style='margin-top:.4rem'>Erreur: " + e.message + "</div>"
       + "<div style='font-size:11px;color:var(--mut);margin-top:.3rem'>Tu peux aussi entrer l URL de l image manuellement ci-dessous.</div>"
-      + "<div class='form-group' style='margin-top:.35rem'><label>URL image manuelle</label><input type='url' id='meta-img-url-manual' placeholder='https://NOF.com/...image.jpg' style='width:100%' oninput='metaWooImageUrl=this.value'></div>";
+      + "<div class='form-group' style='margin-top:.35rem'><label>URL image manuelle</label><input type='url' id='meta-img-url-manual' placeholder='https://urbanelectrostore.com/...image.jpg' style='width:100%' oninput='metaWooImageUrl=this.value'></div>";
     toastWarn("WooCommerce: " + e.message);
   }
 }
@@ -7165,7 +7325,7 @@ async function createMetaAd() {
   var budget     = parseInt((document.getElementById("meta-daily-budget")||{}).value||"20") * 100; // en centimes
   var startDate  = (document.getElementById("meta-start-date")||{}).value;
   var endDate    = (document.getElementById("meta-end-date")||{}).value;
-  var destUrl    = (document.getElementById("meta-dest-url")||{}).value || wcConfig.url || "https://NOF.com";
+  var destUrl    = (document.getElementById("meta-dest-url")||{}).value || wcConfig.url || "https://urbanelectrostore.com";
   var objective  = metaAdsResults.objective || "OUTCOME_SALES";
   var cta        = metaAdsResults.cta || "SHOP_NOW";
 
@@ -7464,6 +7624,7 @@ function applyTheme(theme) {
   document.documentElement.setAttribute("data-theme", theme);
   darkModeActive = theme === "dark";
   localStorage.setItem("theme", theme);
+  if (ambientCanvas) { resizeAmbient(); buildAmbientStars(); }
   var icon  = document.getElementById("dark-icon");
   var label = document.getElementById("dark-label");
   if (icon)  icon.textContent  = darkModeActive ? "☀️" : "🌙";
@@ -7720,7 +7881,7 @@ function renderGAProducts(pageRows) {
     var dims   = r.dimensionValues || [];
     var mets   = r.metricValues    || [];
     var path   = dims[0]&&dims[0].value||"";
-    var title  = (dims[1]&&dims[1].value||path).replace(" - NOF","").replace(" - WooCommerce","");
+    var title  = (dims[1]&&dims[1].value||path).replace(" - UrbanElectroStore","").replace(" - WooCommerce","");
     var views  = parseInt(mets[0]&&mets[0].value||0);
     var conv   = parseInt(mets[2]&&mets[2].value||0);
     var matchedProduct = null;
@@ -7894,10 +8055,119 @@ function loginSuccessAnim(cb) {
 }
 
 
+
+// ============================================================
+// AMBIENT CANVAS — fond particules dans tout l'outil
+// ============================================================
+var ambientCanvas = null, ambientCtx = null, ambientStars = [];
+var ambientAnimId = null;
+
+function initAmbientCanvas() {
+  ambientCanvas = document.getElementById("ambient-canvas");
+  if (!ambientCanvas) return;
+  ambientCtx = ambientCanvas.getContext("2d");
+  resizeAmbient();
+  buildAmbientStars();
+  drawAmbient();
+  ambientCanvas.style.opacity = "1";
+  window.addEventListener("resize", resizeAmbient);
+}
+
+function resizeAmbient() {
+  if (!ambientCanvas) return;
+  ambientCanvas.width  = window.innerWidth;
+  ambientCanvas.height = window.innerHeight;
+}
+
+function buildAmbientStars() {
+  ambientStars = [];
+  var W = ambientCanvas.width, H = ambientCanvas.height;
+  var count = Math.min(80, Math.floor(W * H / 14000));
+  for (var i = 0; i < count; i++) {
+    ambientStars.push({
+      x: Math.random() * W, y: Math.random() * H,
+      r: Math.random() * .8 + .2,
+      a: Math.random() * .25 + .05,
+      vx: (Math.random() - .5) * .08,
+      vy: (Math.random() - .5) * .08,
+      phase: Math.random() * Math.PI * 2,
+    });
+  }
+}
+
+function drawAmbient() {
+  if (!ambientCtx || !ambientCanvas) return;
+  var W = ambientCanvas.width, H = ambientCanvas.height;
+  var isDark = document.documentElement.getAttribute("data-theme") === "dark"
+    || (!document.documentElement.getAttribute("data-theme")
+        && window.matchMedia("(prefers-color-scheme:dark)").matches);
+  if (!isDark) {
+    ambientCtx.clearRect(0, 0, W, H);
+    ambientAnimId = requestAnimationFrame(drawAmbient);
+    return;
+  }
+  ambientCtx.clearRect(0, 0, W, H);
+  ambientStars.forEach(function(s) {
+    s.phase += .012;
+    s.x += s.vx; s.y += s.vy;
+    if (s.x < 0) s.x = W; if (s.x > W) s.x = 0;
+    if (s.y < 0) s.y = H; if (s.y > H) s.y = 0;
+    var a = s.a * (.6 + Math.sin(s.phase) * .4);
+    ambientCtx.beginPath();
+    ambientCtx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+    ambientCtx.fillStyle = "rgba(74,222,158," + a + ")";
+    ambientCtx.fill();
+  });
+  // Subtle connections
+  for (var i = 0; i < ambientStars.length; i++) {
+    for (var j = i + 1; j < ambientStars.length; j++) {
+      var dx = ambientStars[i].x - ambientStars[j].x;
+      var dy = ambientStars[i].y - ambientStars[j].y;
+      var d  = Math.sqrt(dx * dx + dy * dy);
+      if (d < 100) {
+        ambientCtx.beginPath();
+        ambientCtx.moveTo(ambientStars[i].x, ambientStars[i].y);
+        ambientCtx.lineTo(ambientStars[j].x, ambientStars[j].y);
+        ambientCtx.strokeStyle = "rgba(74,222,158," + ((1 - d / 100) * .06) + ")";
+        ambientCtx.lineWidth   = .5;
+        ambientCtx.stroke();
+      }
+    }
+  }
+  ambientAnimId = requestAnimationFrame(drawAmbient);
+}
+
+// 3D tilt on card-sections (mild, professional)
+function initCardTilt() {
+  document.addEventListener("mousemove", function(e) {
+    var cards = document.querySelectorAll(".card-section");
+    cards.forEach(function(card) {
+      var rect = card.getBoundingClientRect();
+      if (e.clientX < rect.left - 60 || e.clientX > rect.right + 60 ||
+          e.clientY < rect.top  - 60 || e.clientY > rect.bottom + 60) return;
+      var cx = rect.left + rect.width  / 2;
+      var cy = rect.top  + rect.height / 2;
+      var rx = (e.clientY - cy) / rect.height * -4;
+      var ry = (e.clientX - cx) / rect.width  *  4;
+      card.style.transform = "perspective(900px) rotateX(" + rx + "deg) rotateY(" + ry + "deg) translateY(-2px)";
+      card.style.boxShadow = "0 10px 30px rgba(0,0,0,.12), " + (ry * .5) + "px " + (-rx * .5) + "px 12px rgba(8,80,65,.06)";
+    });
+  });
+  document.addEventListener("mouseleave", function() {
+    document.querySelectorAll(".card-section").forEach(function(c) {
+      c.style.transform = "";
+      c.style.boxShadow = "";
+    });
+  });
+}
+
+
 // INIT -- EN DERNIER
 // ============================================================
 initDarkMode();
 initLoginCanvas();
+initAmbientCanvas();
+initCardTilt();
 initAccessControl();
 updateApiBar();
 renderCatTabs();
