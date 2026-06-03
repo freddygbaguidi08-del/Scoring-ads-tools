@@ -2409,17 +2409,17 @@ var NOW_MONTH   = new Date().getMonth();
 // CATEGORY COLORS
 // ============================================================
 var CAT_COLORS = {
-  "Velo electrique": ["#E1F5EE","#085041"],
-  "Trottinette":     ["#EEEDFE","#26215C"],
-  "Tondeuse":        ["#EAF3DE","#173404"],
-  "Robot tondeuse":  ["#E6F1FB","#042C53"],
-  "Barbecue":        ["#FAECE7","#4A1B0C"],
-  "PC et Mac":       ["#F1EFE8","#2C2C2A"],
-  "TV":              ["#F1EFE8","#2C2C2A"],
-  "Machine a cafe":  ["#FAEEDA","#412402"],
-  "Aspirateur":      ["#FBEAF0","#4B1528"],
-  "Electromenager":  ["#E6F1FB","#042C53"],
-  "Chauffage":       ["#FCEBEB","#501313"]
+  "Velo electrique": ["rgba(16,185,129,.2)","#4ade9e"],
+  "Trottinette":     ["rgba(139,92,246,.2)","#c4b5fd"],
+  "Tondeuse":        ["rgba(34,197,94,.2)","#86efac"],
+  "Robot tondeuse":  ["rgba(59,130,246,.2)","#93c5fd"],
+  "Barbecue":        ["rgba(249,115,22,.2)","#fdba74"],
+  "PC et Mac":       ["rgba(148,163,184,.15)","#cbd5e1"],
+  "TV":              ["rgba(99,102,241,.2)","#a5b4fc"],
+  "Machine a cafe":  ["rgba(245,158,11,.2)","#fcd34d"],
+  "Aspirateur":      ["rgba(236,72,153,.2)","#f9a8d4"],
+  "Electromenager":  ["rgba(14,165,233,.2)","#7dd3fc"],
+  "Chauffage":       ["rgba(239,68,68,.2)","#fca5a5"]
 };
 
 // ============================================================
@@ -9259,6 +9259,30 @@ tbody tr:nth-child(even) td {
 }
 #tab-perf tr, #tab-rapport tr, #tab-scoring tr {
   background: transparent !important;
+}
+</style>
+<style id="badge-fix">
+/* Badges catégories — dark theme */
+.bdg {
+  display: inline-flex !important;
+  align-items: center !important;
+  padding: 3px 9px !important;
+  border-radius: 5px !important;
+  font-size: 11.5px !important;
+  font-weight: 500 !important;
+  white-space: nowrap !important;
+  border: 0.5px solid rgba(255,255,255,.15) !important;
+  backdrop-filter: blur(4px) !important;
+}
+/* Override des couleurs inline claires par des versions sombres */
+.bdg[style*="#E1F5EE"], .bdg[style*="#EEEDFE"],
+.bdg[style*="#EAF3DE"], .bdg[style*="#E6F1FB"],
+.bdg[style*="#FAECE7"], .bdg[style*="#F1EFE8"],
+.bdg[style*="#FAEEDA"], .bdg[style*="#FBEAF0"],
+.bdg[style*="#FCEBEB"] {
+  background: rgba(255,255,255,.12) !important;
+  color: #e2e8f0 !important;
+  border-color: rgba(255,255,255,.2) !important;
 }
 </style>
 </body>
