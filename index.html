@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>NOF — Cockpit E-commerce</title>
-<meta name="description" content="Scoring produits, generateur d ads IA et geo-ciblage pour NOF">
+<title>UrbanElectroStore — Cockpit E-commerce</title>
+<meta name="description" content="Scoring produits, generateur d ads IA et geo-ciblage pour UrbanElectroStore">
 <meta name="theme-color" content="#18180f">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -117,21 +117,50 @@ tr.sel td{background:#f0f8f3}
 @media print{.apibar,.topbar,.maintabs,.ctrls,.subtabs,.btn,.topr{display:none!important}.panel{display:block!important;padding:0}.rpt-block{break-inside:avoid}}
 
 /* ===== LOGIN & ACCESS CONTROL ===== */
-.login-overlay{position:fixed;inset:0;background:var(--bg);z-index:9999;display:flex;align-items:center;justify-content:center;padding:1rem;overflow-y:auto}
-.login-box{background:var(--sur);border:1px solid var(--bord);border-radius:16px;width:100%;max-width:400px;padding:2rem 2.25rem;text-align:center;box-shadow:0 8px 40px rgba(0,0,0,.12);margin:auto}
-.login-box .logo{font-size:28px;margin-bottom:.5rem}
-.login-box h2{font-size:16px;font-weight:600;margin-bottom:.25rem}
-.login-box .sub{font-size:12px;color:var(--mut);margin-bottom:1.5rem}
-.login-field{display:flex;flex-direction:column;gap:3px;margin-bottom:.75rem;text-align:left}
-.login-field label{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.4px;color:var(--mut)}
-.login-field input{padding:8px 11px;border:1px solid var(--bord2);border-radius:8px;font-size:13px;font-family:inherit;background:var(--sur);color:var(--txt);outline:none;transition:border-color .15s}
-.login-field input:focus{border-color:var(--txt)}
-.login-btn{width:100%;padding:9px;border-radius:8px;border:none;background:var(--txt);color:#fff;font-size:13px;font-weight:500;cursor:pointer;margin-top:.5rem;font-family:inherit}
-.login-btn:hover{background:#333}
-.login-btn.secondary{background:transparent;color:var(--mut);border:1px solid var(--bord2);margin-top:.4rem}
-.login-btn.secondary:hover{background:var(--bg)}
-.login-err{font-size:12px;color:#7a1a1a;margin-top:.5rem;min-height:18px}
-.login-ok{font-size:12px;color:#085041;margin-top:.5rem}
+/* ===== 3D ANIMATED LOGIN ===== */
+.login-overlay{transition:opacity .3s ease;
+  position:fixed;inset:0;z-index:9999;display:flex;align-items:center;justify-content:center;
+  padding:1rem;overflow:hidden;
+  background:radial-gradient(ellipse at 20% 50%,#0a1628 0%,#030308 50%,#0a0a05 100%);
+}
+#login-canvas{position:absolute;inset:0;pointer-events:none;z-index:0}
+.login-orb{position:absolute;border-radius:50%;filter:blur(70px);animation:orbFloat 8s ease-in-out infinite;pointer-events:none}
+.login-orb-1{width:320px;height:320px;background:rgba(8,80,65,.4);top:-100px;left:-100px;animation-delay:0s}
+.login-orb-2{width:280px;height:280px;background:rgba(24,119,242,.3);bottom:-80px;right:-80px;animation-delay:-3s}
+.login-orb-3{width:200px;height:200px;background:rgba(139,92,246,.2);top:50%;right:10%;animation-delay:-5s}
+@keyframes orbFloat{0%,100%{transform:translate(0,0) scale(1)}33%{transform:translate(20px,-30px) scale(1.08)}66%{transform:translate(-15px,20px) scale(.95)}}
+.float-card{position:absolute;background:rgba(255,255,255,.04);backdrop-filter:blur(8px);border:0.5px solid rgba(255,255,255,.1);border-radius:12px;padding:.65rem .9rem;font-size:11px;color:rgba(255,255,255,.5);pointer-events:none;animation:floatCard 12s ease-in-out infinite;font-family:-apple-system,Arial,sans-serif}
+.float-card .fc-score{font-size:20px;font-weight:700;color:rgba(74,222,158,.9);line-height:1.1}
+.float-card .fc-name{font-size:10px;color:rgba(255,255,255,.4);margin-top:2px}
+.float-card .fc-label{font-size:9px;color:rgba(255,255,255,.25);text-transform:uppercase;letter-spacing:.5px}
+.float-card-1{top:12%;left:4%;animation-delay:0s;animation-duration:14s}
+.float-card-2{top:18%;right:5%;animation-delay:-4s;animation-duration:11s}
+.float-card-3{bottom:20%;left:5%;animation-delay:-7s;animation-duration:13s}
+.float-card-4{bottom:28%;right:4%;animation-delay:-2s;animation-duration:16s}
+@keyframes floatCard{0%,100%{transform:translateY(0) rotate(-1deg);opacity:.55}50%{transform:translateY(-16px) rotate(1deg);opacity:1}}
+.login-scene{perspective:1200px;z-index:10;width:100%;max-width:420px;position:relative}
+.login-box{background:rgba(255,255,255,.07);backdrop-filter:blur(28px) saturate(180%);-webkit-backdrop-filter:blur(28px);border:1px solid rgba(255,255,255,.13);border-radius:22px;padding:2.5rem 2.25rem;text-align:center;box-shadow:0 32px 80px rgba(0,0,0,.6),0 0 0 0.5px rgba(255,255,255,.06) inset,0 2px 0 rgba(255,255,255,.12) inset;animation:loginReveal .8s cubic-bezier(.34,1.56,.64,1) both;transform-origin:center bottom;position:relative;overflow:hidden;margin:auto}
+.login-box::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(255,255,255,.4),transparent)}
+@keyframes loginReveal{from{opacity:0;transform:translateY(50px) rotateX(15deg) scale(.92)}to{opacity:1;transform:translateY(0) rotateX(0) scale(1)}}
+.login-box .logo{font-size:40px;margin-bottom:.5rem;display:block;animation:logoPop .7s .25s cubic-bezier(.34,1.56,.64,1) both}
+@keyframes logoPop{from{transform:scale(0) rotate(-20deg);opacity:0}to{transform:scale(1) rotate(0);opacity:1}}
+.login-box h2{font-size:17px;font-weight:600;color:#fff;margin-bottom:.2rem;animation:slideUp .5s .4s ease both}
+.login-box .sub{font-size:12px;color:rgba(255,255,255,.45);margin-bottom:1.5rem;animation:slideUp .5s .5s ease both}
+@keyframes slideUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+.login-field{display:flex;flex-direction:column;gap:4px;margin-bottom:.75rem;text-align:left;animation:slideUp .5s .55s ease both}
+.login-field label{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.5px;color:rgba(255,255,255,.4)}
+.login-field input{padding:11px 13px;border:1px solid rgba(255,255,255,.12);border-radius:10px;font-size:13px;font-family:inherit;background:rgba(255,255,255,.07);color:#fff;outline:none;transition:all .2s}
+.login-field input::placeholder{color:rgba(255,255,255,.22)}
+.login-field input:focus{border-color:rgba(74,222,158,.6);background:rgba(255,255,255,.11);box-shadow:0 0 0 3px rgba(74,222,158,.15)}
+.login-btn{width:100%;padding:12px;border-radius:11px;border:none;font-size:13px;font-weight:600;cursor:pointer;margin-top:.5rem;font-family:inherit;transition:all .2s;animation:slideUp .5s .65s ease both;position:relative;overflow:hidden}
+.login-btn:not(.secondary){background:linear-gradient(135deg,#085041 0%,#0d7a62 100%);color:#fff;box-shadow:0 4px 24px rgba(8,80,65,.5)}
+.login-btn:not(.secondary):hover{transform:translateY(-2px);box-shadow:0 8px 32px rgba(8,80,65,.6)}
+.login-btn:not(.secondary):active{transform:translateY(0)}
+.login-btn:not(.secondary)::after{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,255,255,.15),transparent);pointer-events:none}
+.login-btn.secondary{background:transparent;color:rgba(255,255,255,.4);border:1px solid rgba(255,255,255,.1);margin-top:.35rem}
+.login-btn.secondary:hover{background:rgba(255,255,255,.07);color:rgba(255,255,255,.7)}
+.login-err{font-size:12px;color:#f87272;margin-top:.5rem;min-height:18px}
+.login-ok{font-size:12px;color:#4ade9e;margin-top:.5rem}
 .access-badge{display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:20px;font-size:11px;background:var(--gnbg);color:var(--grn);cursor:pointer}
 .access-badge:hover{background:#d4ecdf}
 /* Admin panel */
@@ -380,35 +409,68 @@ th{position:sticky;top:0;z-index:1}
   <div style="height:.5rem"></div>
 </div>
 
-<!-- ===== LOGIN OVERLAY ===== -->
+<!-- ===== LOGIN OVERLAY 3D ===== -->
 <div class="login-overlay" id="login-overlay">
-  <div class="login-box" id="login-box-user">
-    <div class="logo">🛍</div>
-    <h2>NOF — Cockpit</h2>
-    <p class="sub">Entre tes identifiants pour acceder a l outil</p>
-    <div class="login-field">
-      <label>Ton prenom ou identifiant</label>
-      <input type="text" id="login-username" placeholder="ex: Pierre" autocomplete="username">
-    </div>
-    <div class="login-field">
-      <label>Code d acces</label>
-      <input type="password" id="login-code" placeholder="Code fourni par l admin" autocomplete="current-password" onkeydown="if(event.key==='Enter')doLogin()">
-    </div>
-    <button class="login-btn" onclick="doLogin()">Acceder a l outil</button>
-    <button class="login-btn secondary" onclick="showAdminLogin()">Admin</button>
-    <div class="login-err" id="login-err"></div>
+  <!-- Canvas for particles -->
+  <canvas id="login-canvas"></canvas>
+
+  <!-- Ambient orbs -->
+  <div class="login-orb login-orb-1"></div>
+  <div class="login-orb login-orb-2"></div>
+  <div class="login-orb login-orb-3"></div>
+
+  <!-- Floating product score cards (decorative) -->
+  <div class="float-card float-card-1">
+    <div class="fc-score">87</div>
+    <div class="fc-name">iScooter iX3</div>
+    <div class="fc-label">Score priorite</div>
   </div>
-  <div class="login-box" id="login-box-admin" style="display:none">
-    <div class="logo">🔐</div>
-    <h2>Connexion Administrateur</h2>
-    <p class="sub">Acces reserve au proprietaire de l outil</p>
-    <div class="login-field">
-      <label>Mot de passe admin</label>
-      <input type="password" id="admin-password" placeholder="Ton mot de passe admin" autocomplete="current-password" onkeydown="if(event.key==='Enter')doAdminLogin()">
+  <div class="float-card float-card-2">
+    <div class="fc-score">+34%</div>
+    <div class="fc-name">ROAS campagne</div>
+    <div class="fc-label">Cette semaine</div>
+  </div>
+  <div class="float-card float-card-3">
+    <div class="fc-score">63</div>
+    <div class="fc-name">Produits actifs</div>
+    <div class="fc-label">Prix avantageux</div>
+  </div>
+  <div class="float-card float-card-4">
+    <div class="fc-score">&#128640;</div>
+    <div class="fc-name">Meta Ads pret</div>
+    <div class="fc-label">Pub generee IA</div>
+  </div>
+
+  <!-- 3D Login scene -->
+  <div class="login-scene">
+    <div class="login-box" id="login-box-user">
+      <span class="logo">🛍</span>
+      <h2>UrbanElectroStore</h2>
+      <p class="sub">Entre tes identifiants pour acceder au Cockpit</p>
+      <div class="login-field">
+        <label>Prenom ou identifiant</label>
+        <input type="text" id="login-username" placeholder="ex: Pierre" autocomplete="username">
+      </div>
+      <div class="login-field">
+        <label>Code d acces</label>
+        <input type="password" id="login-code" placeholder="Code fourni par l admin" autocomplete="current-password" onkeydown="if(event.key==='Enter')doLogin()">
+      </div>
+      <button class="login-btn" onclick="doLogin()">Acceder au Cockpit &rarr;</button>
+      <button class="login-btn secondary" onclick="showAdminLogin()">&#128274; Mode Admin</button>
+      <div class="login-err" id="login-err"></div>
     </div>
-    <button class="login-btn" onclick="doAdminLogin()">Entrer en mode Admin</button>
-    <button class="login-btn secondary" onclick="showUserLogin()">Retour</button>
-    <div class="login-err" id="admin-err"></div>
+    <div class="login-box" id="login-box-admin" style="display:none">
+      <span class="logo">&#128274;</span>
+      <h2>Administration</h2>
+      <p class="sub">Acces reserve au proprietaire de l outil</p>
+      <div class="login-field">
+        <label>Mot de passe admin</label>
+        <input type="password" id="admin-password" placeholder="Ton mot de passe" autocomplete="current-password" onkeydown="if(event.key==='Enter')doAdminLogin()">
+      </div>
+      <button class="login-btn" onclick="doAdminLogin()">Entrer en mode Admin &rarr;</button>
+      <button class="login-btn secondary" onclick="showUserLogin()">&larr; Retour</button>
+      <div class="login-err" id="admin-err"></div>
+    </div>
   </div>
 </div>
 
@@ -428,7 +490,7 @@ th{position:sticky;top:0;z-index:1}
 </div>
 
 <div class="topbar">
-  <h1>&#128722; NOF &mdash; Cockpit E-commerce</h1>
+  <h1>&#128722; UrbanElectroStore &mdash; Cockpit E-commerce</h1>
   <span id="sync-indicator" onclick="manualSync()" title="Cliquer pour synchroniser maintenant"
     style="font-size:11px;font-weight:500;padding:3px 10px;border-radius:20px;cursor:pointer;background:#e8f0fb;color:#0c3d6e;display:inline-flex;align-items:center;gap:4px">&#9729; Cloud</span>
   <div class="topr">
@@ -1015,7 +1077,7 @@ th{position:sticky;top:0;z-index:1}
       <div class="form-row" style="margin-top:.5rem">
         <div class="form-group" style="flex:1;min-width:200px">
           <label>URL de ta boutique</label>
-          <input type="text" id="wc-url" placeholder="https://NOF.com" style="width:100%">
+          <input type="text" id="wc-url" placeholder="https://urbanelectrostore.com" style="width:100%">
         </div>
       </div>
       <div class="form-row">
@@ -1566,7 +1628,7 @@ CTA : Voir l offre" style="width:100%;height:130px;padding:7px 9px;border:1px so
         </div>
         <div class="form-group">
           <label>URL de destination</label>
-          <input type="url" id="meta-dest-url" placeholder="https://NOF.com/produit/..." style="width:100%">
+          <input type="url" id="meta-dest-url" placeholder="https://urbanelectrostore.com/produit/..." style="width:100%">
         </div>
       </div>
       <div style="display:flex;gap:7px;flex-wrap:wrap">
@@ -2958,7 +3020,7 @@ function exportScoring() {
 
 // ============================================================
 // EXPORT WOOCOMMERCE CSV — mappage complet 64 colonnes
-// Basé sur le format réel du fichier product-export d NOF
+// Basé sur le format réel du fichier product-export d UrbanElectroStore
 // ============================================================
 function exportWooCSV() {
   // Mapping catégories cockpit → catégories WooCommerce réelles
@@ -3018,7 +3080,7 @@ function exportWooCSV() {
   ];
 
   var now = new Date().toISOString().replace("T"," ").slice(0,19);
-  var baseUrl = "https://NOF.com";
+  var baseUrl = "https://urbanelectrostore.com";
 
   var rows = PRODUCTS.map(function(r, i) {
     var d      = userScores[r[0]] || {};
@@ -3054,10 +3116,10 @@ function exportWooCSV() {
     var focuskw = name.split(" ").slice(0,4).join(" ").toLowerCase();
 
     // meta:_yoast_wpseo_title — titre SEO
-    var seoTitle = name + " | NOF";
+    var seoTitle = name + " | UrbanElectroStore";
 
     // meta:_yoast_wpseo_metadesc — meta description
-    var metadesc = "Achetez " + name + " au meilleur prix sur NOF";
+    var metadesc = "Achetez " + name + " au meilleur prix sur UrbanElectroStore";
     if (r[7] === "win" && r[6]) metadesc += " - " + price + " EUR vs " + r[6] + " ailleurs";
     metadesc += ".";
 
@@ -5192,7 +5254,7 @@ function initAccessControl() {
 
 function hideLockScreen() {
   var overlay = document.getElementById("login-overlay");
-  if (overlay) overlay.style.display = "none";
+  if (overlay) { overlay.style.opacity="0"; setTimeout(function(){ overlay.style.display="none"; overlay.style.opacity=""; },300); }
   // Show user badge first (fast, no data needed)
   showUserBadge();
   // Show admin tab
@@ -5499,7 +5561,7 @@ function deleteUser(idx) {
 function copyInvite(idx) {
   var u = ACCESS.users[idx];
   if (!u) return;
-  var msg = "Bonjour " + u.name + ",\n\nTu as acces au Cockpit E-commerce NOF.\n\n"
+  var msg = "Bonjour " + u.name + ",\n\nTu as acces au Cockpit E-commerce UrbanElectroStore.\n\n"
     + "Lien : " + window.location.href.split("?")[0] + "\nPrenom : " + u.name + "\nCode : " + u.code
     + (u.expiry ? "\nAcces valable jusqu au : " + u.expiry : "")
     + "\n\nBonne utilisation !";
@@ -6169,12 +6231,24 @@ function addSuggested(sStr) {
 
 // Only block the absolute must-not-embed (legal/auth reasons)
 // For everything else we try the iframe and let the user decide
+// Sites qui bloquent les iframes (X-Frame-Options: DENY/SAMEORIGIN)
+// → affichage d'une page de fallback élégante plutôt qu'un écran blanc
 var IFRAME_HARD_BLOCKED = [
-  "accounts.google.com",
-  "login.microsoftonline.com",
-  "appleid.apple.com",
-  "paypal.com/signin",
-  "stripe.com/login"
+  // Auth pages
+  "accounts.google.com", "login.microsoftonline.com",
+  "appleid.apple.com", "paypal.com/signin", "stripe.com/login",
+  // SaaS apps
+  "notion.so", "notion.com",
+  "slack.com", "discord.com",
+  "github.com", "gitlab.com",
+  "figma.com", "miro.com",
+  "trello.com", "asana.com", "monday.com",
+  "hubspot.com", "salesforce.com",
+  "shopify.com/admin", "wordpress.com/wp-admin",
+  "google.com/analytics", "analytics.google.com",
+  "ads.google.com", "business.facebook.com",
+  "youtube.com/watch", "instagram.com",
+  "twitter.com", "x.com", "linkedin.com"
 ];
 
 function isIframeBlocked(url) {
@@ -6655,7 +6729,7 @@ function renderFeedPreview(ad, cta, ctaLabel, row) {
   return "<div style='max-width:280px;border:0.5px solid var(--bord2);border-radius:10px;overflow:hidden;background:#fff;font-family:Arial,sans-serif'>"
     + "<div style='display:flex;align-items:center;gap:7px;padding:8px 10px'>"
       + "<div style='width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#1877f2,#42b0ff);flex-shrink:0'></div>"
-      + "<div><div style='font-size:12px;font-weight:600;color:#1a1a1a'>NOF</div>"
+      + "<div><div style='font-size:12px;font-weight:600;color:#1a1a1a'>UrbanElectroStore</div>"
         + "<div style='font-size:10px;color:#8a8a8a'>Sponsorisé · &#127758;</div></div>"
     + "</div>"
     + "<div style='padding:0 10px 6px;font-size:12px;color:#1a1a1a;line-height:1.5'>" + (ad.primary_text||"").slice(0,80) + (ad.primary_text&&ad.primary_text.length>80?"…":"") + "</div>"
@@ -7055,7 +7129,7 @@ async function fetchWooImage() {
   } catch(e) {
     if (prevEl) prevEl.innerHTML = "<div class='al ao' style='margin-top:.4rem'>Erreur: " + e.message + "</div>"
       + "<div style='font-size:11px;color:var(--mut);margin-top:.3rem'>Tu peux aussi entrer l URL de l image manuellement ci-dessous.</div>"
-      + "<div class='form-group' style='margin-top:.35rem'><label>URL image manuelle</label><input type='url' id='meta-img-url-manual' placeholder='https://NOF.com/...image.jpg' style='width:100%' oninput='metaWooImageUrl=this.value'></div>";
+      + "<div class='form-group' style='margin-top:.35rem'><label>URL image manuelle</label><input type='url' id='meta-img-url-manual' placeholder='https://urbanelectrostore.com/...image.jpg' style='width:100%' oninput='metaWooImageUrl=this.value'></div>";
     toastWarn("WooCommerce: " + e.message);
   }
 }
@@ -7091,7 +7165,7 @@ async function createMetaAd() {
   var budget     = parseInt((document.getElementById("meta-daily-budget")||{}).value||"20") * 100; // en centimes
   var startDate  = (document.getElementById("meta-start-date")||{}).value;
   var endDate    = (document.getElementById("meta-end-date")||{}).value;
-  var destUrl    = (document.getElementById("meta-dest-url")||{}).value || wcConfig.url || "https://NOF.com";
+  var destUrl    = (document.getElementById("meta-dest-url")||{}).value || wcConfig.url || "https://urbanelectrostore.com";
   var objective  = metaAdsResults.objective || "OUTCOME_SALES";
   var cta        = metaAdsResults.cta || "SHOP_NOW";
 
@@ -7646,7 +7720,7 @@ function renderGAProducts(pageRows) {
     var dims   = r.dimensionValues || [];
     var mets   = r.metricValues    || [];
     var path   = dims[0]&&dims[0].value||"";
-    var title  = (dims[1]&&dims[1].value||path).replace(" - NOF","").replace(" - WooCommerce","");
+    var title  = (dims[1]&&dims[1].value||path).replace(" - UrbanElectroStore","").replace(" - WooCommerce","");
     var views  = parseInt(mets[0]&&mets[0].value||0);
     var conv   = parseInt(mets[2]&&mets[2].value||0);
     var matchedProduct = null;
@@ -7709,9 +7783,121 @@ function enrichScoresFromGA() {
 }
 
 
+
+
+// ============================================================
+// 3D LOGIN — particles + tilt
+// ============================================================
+function initLoginCanvas() {
+  var canvas = document.getElementById("login-canvas");
+  if (!canvas) return;
+  var ctx   = canvas.getContext("2d");
+  var W     = canvas.width  = window.innerWidth;
+  var H     = canvas.height = window.innerHeight;
+  var stars = [];
+  for (var i = 0; i < 160; i++) {
+    stars.push({
+      x: Math.random() * W, y: Math.random() * H,
+      r: Math.random() * 1.2 + 0.2,
+      a: Math.random(),
+      vx: (Math.random() - .5) * .15,
+      vy: (Math.random() - .5) * .15,
+      pulse: Math.random() * Math.PI * 2
+    });
+  }
+  var grid = []; // connection lines
+  var mouseX = W/2, mouseY = H/2;
+
+  function draw() {
+    ctx.clearRect(0, 0, W, H);
+    // Update + draw stars
+    stars.forEach(function(s) {
+      s.x += s.vx; s.y += s.vy; s.pulse += .02;
+      if (s.x < 0) s.x = W; if (s.x > W) s.x = 0;
+      if (s.y < 0) s.y = H; if (s.y > H) s.y = 0;
+      var alpha = (s.a * .6 + Math.sin(s.pulse) * .3);
+      ctx.beginPath();
+      ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+      ctx.fillStyle = "rgba(255,255,255," + Math.max(0, alpha) + ")";
+      ctx.fill();
+    });
+    // Draw connections between nearby stars
+    for (var i = 0; i < stars.length; i++) {
+      for (var j = i+1; j < stars.length; j++) {
+        var dx = stars[i].x - stars[j].x;
+        var dy = stars[i].y - stars[j].y;
+        var d  = Math.sqrt(dx*dx + dy*dy);
+        if (d < 80) {
+          ctx.beginPath();
+          ctx.moveTo(stars[i].x, stars[i].y);
+          ctx.lineTo(stars[j].x, stars[j].y);
+          ctx.strokeStyle = "rgba(74,222,158," + ((1 - d/80) * .12) + ")";
+          ctx.lineWidth   = .5;
+          ctx.stroke();
+        }
+      }
+    }
+    // Mouse parallax on stars
+    var mx = (mouseX / W - .5) * 2;
+    var my = (mouseY / H - .5) * 2;
+    stars.forEach(function(s) { s.vx += mx * .0004; s.vy += my * .0004; });
+    requestAnimationFrame(draw);
+  }
+  draw();
+
+  // Mouse tracking
+  document.addEventListener("mousemove", function(e) {
+    mouseX = e.clientX; mouseY = e.clientY;
+  });
+
+  // 3D tilt on login box
+  var box = document.querySelector(".login-box");
+  document.addEventListener("mousemove", function(e) {
+    if (!box) return;
+    var overlay = document.getElementById("login-overlay");
+    if (!overlay || overlay.style.display === "none") return;
+    var rect = box.getBoundingClientRect();
+    var cx = rect.left + rect.width/2;
+    var cy = rect.top  + rect.height/2;
+    var rx = (e.clientY - cy) / (window.innerHeight/2) * -5;
+    var ry = (e.clientX - cx) / (window.innerWidth/2)  *  6;
+    box.style.transform = "perspective(1200px) rotateX(" + rx + "deg) rotateY(" + ry + "deg)";
+  });
+  document.addEventListener("mouseleave", function() {
+    if (box) box.style.transform = "perspective(1200px) rotateX(0) rotateY(0)";
+  });
+
+  // Resize
+  window.addEventListener("resize", function() {
+    W = canvas.width  = window.innerWidth;
+    H = canvas.height = window.innerHeight;
+  });
+}
+
+// Success animation before hiding login
+function loginSuccessAnim(cb) {
+  var box = document.querySelector(".login-box");
+  if (box) {
+    box.style.transition = "all .4s cubic-bezier(.4,0,.2,1)";
+    box.style.transform  = "scale(1.03) translateY(-8px)";
+    box.style.opacity    = "0";
+  }
+  setTimeout(function() {
+    var overlay = document.getElementById("login-overlay");
+    if (overlay) overlay.style.opacity = "0";
+    setTimeout(function() {
+      if (overlay) overlay.style.display = "none";
+      if (box) { box.style.transform = ""; box.style.opacity = ""; }
+      if (cb) cb();
+    }, 300);
+  }, 350);
+}
+
+
 // INIT -- EN DERNIER
 // ============================================================
 initDarkMode();
+initLoginCanvas();
 initAccessControl();
 updateApiBar();
 renderCatTabs();
