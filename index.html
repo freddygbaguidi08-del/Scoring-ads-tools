@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title> — Cockpit E-commerce</title>
+<title>UrbanElectroStore — Cockpit E-commerce</title>
 <meta name="description" content="Scoring produits, generateur d ads IA et geo-ciblage pour UrbanElectroStore">
 <meta name="theme-color" content="#18180f">
 <meta name="mobile-web-app-capable" content="yes">
@@ -537,10 +537,7 @@ to{opacity:1;transform:translateY(0)}}
 }
 
 /* --- Table rows hover --- */
-.score-table tr:hover td, .score-table tr:hover th {
-  background: var(--bg);
-  transform: scaleX(1.001);
-}
+.score-table tr:hover td, .score-table tr:hover th { background: rgba(255,255,255,.04); }
 
 /* --- Floating label on inputs focus --- */
 .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
@@ -841,6 +838,66 @@ input:focus, select:focus, textarea:focus {
 .score-table tr { transition: background .1s ease; }
 
 @keyframes orbFloat{0%,100%{transform:translate(0,0) scale(1)}33%{transform:translate(18px,-25px) scale(1.06)}66%{transform:translate(-12px,18px) scale(.94)}}
+
+/* ===== CORRECTIFS LISIBILITÉ FINAUX — Glass theme ===== */
+
+/* Tous les textes dans les panels héritent blanc */
+#main-content { color: #e2e8f0 !important; }
+
+/* En-têtes de tableau (générés en JS) */
+th { color: rgba(255,255,255,.65) !important; font-size:11px !important; text-transform:uppercase; letter-spacing:.4px; }
+td { color: #e2e8f0 !important; }
+
+/* Badges colorés — forcer lisibilité sur fond sombre */
+[style*="background:#e8f4ee"], [style*="background:var(--gnbg)"] { background: rgba(74,222,158,.15) !important; color: #4ade9e !important; border-radius:5px; }
+[style*="background:#E6F1FB"], [style*="background:var(--blbg)"] { background: rgba(96,165,250,.15) !important; color: #93c5fd !important; }
+[style*="background:#fef3e2"], [style*="background:var(--orbg)"] { background: rgba(251,191,36,.15) !important; color: #fcd34d !important; }
+[style*="background:#fef2f2"], [style*="background:var(--rdbg)"] { background: rgba(248,114,114,.15) !important; color: #fca5a5 !important; }
+[style*="background:#edeafb"], [style*="background:var(--pubg)"] { background: rgba(167,139,250,.15) !important; color: #c4b5fd !important; }
+
+/* Couleurs de texte inline dans les résultats générés */
+[style*="color:#085041"] { color: #4ade9e !important; }
+[style*="color:#0c3d6e"], [style*="color:#042C53"] { color: #93c5fd !important; }
+[style*="color:#7a4a00"] { color: #fcd34d !important; }
+[style*="color:#7a1a1a"] { color: #fca5a5 !important; }
+[style*="color:#3b2a8a"] { color: #c4b5fd !important; }
+[style*="color:#18180f"] { color: #e2e8f0 !important; }
+
+/* Inputs dans le tableau scoring */
+input[type="number"], input.score-inp {
+  background: rgba(255,255,255,.08) !important;
+  color: #e2e8f0 !important;
+  border-color: rgba(255,255,255,.15) !important;
+  text-align: center !important;
+}
+
+/* Filtres catégorie actif/inactif */
+button.on[onclick*="filterCat"] {
+  background: rgba(74,222,158,.2) !important;
+  border-color: rgba(74,222,158,.35) !important;
+  color: #4ade9e !important;
+  font-weight: 600 !important;
+}
+
+/* Prix concurrent (liens bleus) */
+td [style*="color:#"], td a { color: #93c5fd !important; }
+
+/* Texte "Forte", "Faible", "Modéré" */
+td:has(.intensite-forte), .intensite-forte { color: #fcd34d !important; }
+
+/* Background des lignes du tableau */
+.score-table tbody tr { background: transparent !important; }
+.score-table tbody tr:nth-child(even) { background: rgba(255,255,255,.02) !important; }
+
+/* Selects dropdown dans topbar et partout */
+select { color: #e2e8f0 !important; }
+
+/* Recherche */
+input[type="text"] { color: #e2e8f0 !important; }
+
+/* Opportunités immédiates banner */
+[style*="orbg"], [style*="gnbg"] { backdrop-filter: blur(8px) !important; }
+
 </style>
 </head>
 <body>
@@ -2260,6 +2317,7 @@ var PROVIDERS = {
 };
 var curProvider = "groq"; // will be loaded per-user after login
 var apiKey      = "";      // will be loaded per-user after login
+var sess        = null;     // session courante — définie après login
 
 function getProv() { return PROVIDERS[curProvider] || PROVIDERS.groq; }
 function changeProvider() {
@@ -5728,7 +5786,7 @@ function initAccessControl() {
 
   // Check for saved session
   try {
-    var sess = JSON.parse(localStorage.getItem("ac_session") || "null");
+    sess = JSON.parse(localStorage.getItem("ac_session") || "null");
     if (sess && sess.expires && new Date(sess.expires) > new Date()) {
       ACCESS.currentUser = sess;
       // isAdmin detection — multiple fallbacks for backward compatibility
@@ -8431,8 +8489,7 @@ function initSidebar() {
   var sb = document.getElementById("sidebar");
   if (!sb) return;
   if (sidebarCollapsed) sb.classList.add("collapsed");
-  // Montrer admin si admin connecté
-  updateSidebarAdminVisibility();
+  try { updateSidebarAdminVisibility(); } catch(e) {}
 }
 
 function toggleSidebar() {
@@ -8446,8 +8503,12 @@ function toggleSidebar() {
 function updateSidebarAdminVisibility() {
   var adminItem = document.getElementById("sb-admin");
   if (!adminItem) return;
-  var isAdmin = sess && (sess.isAdmin === true || sess.name === "Admin");
-  adminItem.style.display = isAdmin ? "" : "none";
+  try {
+    var isAdmin = sess && (sess.isAdmin === true || sess.name === "Admin");
+    adminItem.style.display = isAdmin ? "" : "none";
+  } catch(e) {
+    adminItem.style.display = "none";
+  }
 }
 
 function updateSidebarActive(tab) {
@@ -8725,6 +8786,66 @@ h1,h2,h3,h4,label { color: #18180f !important; }
 .score-table td, .score-table th { color: #18180f !important; background: transparent !important; }
 .modal { background: #ffffff !important; color: #18180f !important; }
 .toast { background: #ffffff !important; color: #18180f !important; border: 1px solid #e5e3dc !important; }
+
+/* ===== CORRECTIFS LISIBILITÉ FINAUX — Glass theme ===== */
+
+/* Tous les textes dans les panels héritent blanc */
+#main-content { color: #e2e8f0 !important; }
+
+/* En-têtes de tableau (générés en JS) */
+th { color: rgba(255,255,255,.65) !important; font-size:11px !important; text-transform:uppercase; letter-spacing:.4px; }
+td { color: #e2e8f0 !important; }
+
+/* Badges colorés — forcer lisibilité sur fond sombre */
+[style*="background:#e8f4ee"], [style*="background:var(--gnbg)"] { background: rgba(74,222,158,.15) !important; color: #4ade9e !important; border-radius:5px; }
+[style*="background:#E6F1FB"], [style*="background:var(--blbg)"] { background: rgba(96,165,250,.15) !important; color: #93c5fd !important; }
+[style*="background:#fef3e2"], [style*="background:var(--orbg)"] { background: rgba(251,191,36,.15) !important; color: #fcd34d !important; }
+[style*="background:#fef2f2"], [style*="background:var(--rdbg)"] { background: rgba(248,114,114,.15) !important; color: #fca5a5 !important; }
+[style*="background:#edeafb"], [style*="background:var(--pubg)"] { background: rgba(167,139,250,.15) !important; color: #c4b5fd !important; }
+
+/* Couleurs de texte inline dans les résultats générés */
+[style*="color:#085041"] { color: #4ade9e !important; }
+[style*="color:#0c3d6e"], [style*="color:#042C53"] { color: #93c5fd !important; }
+[style*="color:#7a4a00"] { color: #fcd34d !important; }
+[style*="color:#7a1a1a"] { color: #fca5a5 !important; }
+[style*="color:#3b2a8a"] { color: #c4b5fd !important; }
+[style*="color:#18180f"] { color: #e2e8f0 !important; }
+
+/* Inputs dans le tableau scoring */
+input[type="number"], input.score-inp {
+  background: rgba(255,255,255,.08) !important;
+  color: #e2e8f0 !important;
+  border-color: rgba(255,255,255,.15) !important;
+  text-align: center !important;
+}
+
+/* Filtres catégorie actif/inactif */
+button.on[onclick*="filterCat"] {
+  background: rgba(74,222,158,.2) !important;
+  border-color: rgba(74,222,158,.35) !important;
+  color: #4ade9e !important;
+  font-weight: 600 !important;
+}
+
+/* Prix concurrent (liens bleus) */
+td [style*="color:#"], td a { color: #93c5fd !important; }
+
+/* Texte "Forte", "Faible", "Modéré" */
+td:has(.intensite-forte), .intensite-forte { color: #fcd34d !important; }
+
+/* Background des lignes du tableau */
+.score-table tbody tr { background: transparent !important; }
+.score-table tbody tr:nth-child(even) { background: rgba(255,255,255,.02) !important; }
+
+/* Selects dropdown dans topbar et partout */
+select { color: #e2e8f0 !important; }
+
+/* Recherche */
+input[type="text"] { color: #e2e8f0 !important; }
+
+/* Opportunités immédiates banner */
+[style*="orbg"], [style*="gnbg"] { backdrop-filter: blur(8px) !important; }
+
 </style>
 <style id="glass-theme">
 /* ============================================================
@@ -8822,10 +8943,11 @@ input::placeholder { color: rgba(255,255,255,.25) !important; }
 select option { background: #161b27 !important; color: #e2e8f0 !important; }
 label { color: rgba(255,255,255,.5) !important; }
 
-/* Table */
-.score-table th { color: rgba(255,255,255,.35) !important; border-bottom: 0.5px solid rgba(255,255,255,.07) !important; }
-.score-table td { color: var(--txt) !important; border-bottom: 0.5px solid rgba(255,255,255,.04) !important; }
-.score-table tr:hover td { background: rgba(255,255,255,.03) !important; }
+/* Table — contraste renforcé */
+.score-table th { color: rgba(255,255,255,.6) !important; border-bottom: 0.5px solid rgba(255,255,255,.1) !important; font-size:11px !important; letter-spacing:.4px !important; }
+.score-table td { color: #e2e8f0 !important; border-bottom: 0.5px solid rgba(255,255,255,.06) !important; font-size:12.5px !important; }
+.score-table tr:hover td { background: rgba(255,255,255,.04) !important; }
+.score-table { background: transparent !important; }
 
 /* Modal glass */
 .mbg { background: rgba(0,0,0,.65) !important; backdrop-filter: blur(6px) !important; }
@@ -8859,24 +8981,285 @@ label { color: rgba(255,255,255,.5) !important; }
 #dark-toggle { background: rgba(255,255,255,.08) !important; border-color: rgba(255,255,255,.14) !important; color: rgba(255,255,255,.7) !important; }
 #dark-toggle:hover { background: rgba(255,255,255,.14) !important; }
 
-/* Score categories pills */
-.cat-pill, [onclick*="filterCat"] {
-  background: rgba(255,255,255,.07) !important;
-  border: 0.5px solid rgba(255,255,255,.12) !important;
-  color: rgba(255,255,255,.7) !important;
+/* Filtres catégories — lisibles */
+.cat-pill, [onclick*="filterCat"],
+button[onclick*="filterCat"], .cat-btn {
+  background: rgba(255,255,255,.09) !important;
+  border: 0.5px solid rgba(255,255,255,.18) !important;
+  color: rgba(255,255,255,.85) !important;
+}
+button[onclick*="filterCat"].on,
+.cat-btn.on {
+  background: rgba(74,222,158,.2) !important;
+  border-color: rgba(74,222,158,.4) !important;
+  color: #4ade9e !important;
 }
 
 /* Scrollbar */
 ::-webkit-scrollbar { width: 5px; height: 5px; }
 ::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: rgba(255,255,255,.12); border-radius: 3px; }
-::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,.22); }
+::-webkit-scrollbar-thumb { background: rgba(255,255,255,.15); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,.28); }
+/* Inputs dans les cellules (CTR, Panier, Ventes, Social) */
+.score-table input, .score-table select {
+  background: rgba(255,255,255,.08) !important;
+  border: 0.5px solid rgba(255,255,255,.15) !important;
+  color: #e2e8f0 !important;
+  text-align: center !important;
+}
+/* Texte concurrent price */
+td a, td span[style*="color:#"] { color: #93c5fd !important; }
+/* Avantage prix badge */
+[style*="gnbg"], [style*="green"] { color: #4ade9e !important; }
+/* Intensite ads */
+td:last-child, .intensite { color: rgba(255,255,255,.75) !important; }
+/* Toutes les couleurs inline dans les td */
+.score-table td * { color: inherit; }
+/* Texte FORTE/FAIBLE */
+.score-table td:nth-child(8) { color: rgba(255,255,255,.8) !important; }
 
 /* Empty states */
 .ads-empty { border-color: rgba(255,255,255,.08) !important; color: rgba(255,255,255,.3) !important; }
 
-/* Form groups */
-.form-group label { color: rgba(255,255,255,.45) !important; }
+/* Labels et textes — plus lisibles */
+.form-group label { color: rgba(255,255,255,.65) !important; font-weight:500 !important; }
+.muted, .sub { color: rgba(255,255,255,.5) !important; }
+/* Stat labels */
+.stat-l { color: rgba(255,255,255,.5) !important; font-size:10px !important; }
+.stat-n { color: #4ade9e !important; font-size:22px !important; font-weight:600 !important; }
+/* Texte dans les cards */
+.card-section p, .card-section span, .card-section div { color: inherit; }
+/* Filtre recherche placeholder */
+input[placeholder*="Recherch"]::placeholder { color: rgba(255,255,255,.4) !important; }
+/* Colonnes tableau header */
+th, .score-table th, [class*="col-"] { color: rgba(255,255,255,.65) !important; }
+/* Texte général dans les panels */
+.panel, .panel.on { color: #e2e8f0 !important; }
+.panel p, .panel span, .panel label, .panel td { color: inherit; }
+/* Badges catégories dans le tableau */
+.bdg { font-weight:500 !important; }
+/* Prix concurrent */
+.concurrent-price, [class*="conc"] { color: #93c5fd !important; }
+
+/* ===== CORRECTIFS LISIBILITÉ FINAUX — Glass theme ===== */
+
+/* Tous les textes dans les panels héritent blanc */
+#main-content { color: #e2e8f0 !important; }
+
+/* En-têtes de tableau (générés en JS) */
+th { color: rgba(255,255,255,.65) !important; font-size:11px !important; text-transform:uppercase; letter-spacing:.4px; }
+td { color: #e2e8f0 !important; }
+
+/* Badges colorés — forcer lisibilité sur fond sombre */
+[style*="background:#e8f4ee"], [style*="background:var(--gnbg)"] { background: rgba(74,222,158,.15) !important; color: #4ade9e !important; border-radius:5px; }
+[style*="background:#E6F1FB"], [style*="background:var(--blbg)"] { background: rgba(96,165,250,.15) !important; color: #93c5fd !important; }
+[style*="background:#fef3e2"], [style*="background:var(--orbg)"] { background: rgba(251,191,36,.15) !important; color: #fcd34d !important; }
+[style*="background:#fef2f2"], [style*="background:var(--rdbg)"] { background: rgba(248,114,114,.15) !important; color: #fca5a5 !important; }
+[style*="background:#edeafb"], [style*="background:var(--pubg)"] { background: rgba(167,139,250,.15) !important; color: #c4b5fd !important; }
+
+/* Couleurs de texte inline dans les résultats générés */
+[style*="color:#085041"] { color: #4ade9e !important; }
+[style*="color:#0c3d6e"], [style*="color:#042C53"] { color: #93c5fd !important; }
+[style*="color:#7a4a00"] { color: #fcd34d !important; }
+[style*="color:#7a1a1a"] { color: #fca5a5 !important; }
+[style*="color:#3b2a8a"] { color: #c4b5fd !important; }
+[style*="color:#18180f"] { color: #e2e8f0 !important; }
+
+/* Inputs dans le tableau scoring */
+input[type="number"], input.score-inp {
+  background: rgba(255,255,255,.08) !important;
+  color: #e2e8f0 !important;
+  border-color: rgba(255,255,255,.15) !important;
+  text-align: center !important;
+}
+
+/* Filtres catégorie actif/inactif */
+button.on[onclick*="filterCat"] {
+  background: rgba(74,222,158,.2) !important;
+  border-color: rgba(74,222,158,.35) !important;
+  color: #4ade9e !important;
+  font-weight: 600 !important;
+}
+
+/* Prix concurrent (liens bleus) */
+td [style*="color:#"], td a { color: #93c5fd !important; }
+
+/* Texte "Forte", "Faible", "Modéré" */
+td:has(.intensite-forte), .intensite-forte { color: #fcd34d !important; }
+
+/* Background des lignes du tableau */
+.score-table tbody tr { background: transparent !important; }
+.score-table tbody tr:nth-child(even) { background: rgba(255,255,255,.02) !important; }
+
+/* Selects dropdown dans topbar et partout */
+select { color: #e2e8f0 !important; }
+
+/* Recherche */
+input[type="text"] { color: #e2e8f0 !important; }
+
+/* Opportunités immédiates banner */
+[style*="orbg"], [style*="gnbg"] { backdrop-filter: blur(8px) !important; }
+
+</style>
+<style id="glass-fixes">
+/* ===== CORRECTIFS ÉLÉMENTS BLANCS ===== */
+
+/* 1. Boutons réseaux (Meta, Google Shopping, TikTok, Pinterest) */
+.ntab {
+  background: rgba(255,255,255,.08) !important;
+  border: 0.5px solid rgba(255,255,255,.15) !important;
+  color: rgba(255,255,255,.8) !important;
+  backdrop-filter: blur(8px) !important;
+}
+.ntab:hover {
+  background: rgba(255,255,255,.14) !important;
+  color: #fff !important;
+}
+.ntab.on {
+  background: rgba(74,222,158,.18) !important;
+  border-color: rgba(74,222,158,.4) !important;
+  color: #4ade9e !important;
+  font-weight: 600 !important;
+}
+
+/* 2. Grandes zones de résultat IA (fond blanc) */
+.ads-result-item, [id*="result"], [id*="content"],
+[id*="rapport-content"], [id*="output"], [id*="generated"] {
+  background: transparent !important;
+  color: #e2e8f0 !important;
+}
+
+/* 3. Tous les pre, code, textarea dans les résultats */
+pre, code {
+  background: rgba(255,255,255,.06) !important;
+  border: 0.5px solid rgba(255,255,255,.1) !important;
+  color: #e2e8f0 !important;
+  border-radius: 8px !important;
+  padding: .5rem .75rem !important;
+}
+textarea {
+  background: rgba(255,255,255,.07) !important;
+  color: #e2e8f0 !important;
+  border: 0.5px solid rgba(255,255,255,.12) !important;
+}
+
+/* 4. Toast default (fond blanc) */
+.toast-item.default {
+  background: rgba(20,25,40,.9) !important;
+  border-color: rgba(255,255,255,.1) !important;
+  color: #e2e8f0 !important;
+  backdrop-filter: blur(20px) !important;
+}
+
+/* 5. Toute zone avec background blanc explicite */
+[style*="background:#fff"],
+[style*="background: #fff"],
+[style*="background:white"] {
+  background: rgba(255,255,255,.07) !important;
+  color: #e2e8f0 !important;
+}
+
+/* 6. Zones de résultats générés par l'IA */
+.result-zone, .ai-zone, .gen-zone,
+[class*="result"], [class*="output"] {
+  background: transparent !important;
+  color: #e2e8f0 !important;
+}
+
+/* 7. Les divs avec fond blanc inline dans les panels */
+.panel div[style*="background:#fff"],
+.panel div[style*="background:var(--sur)"] {
+  background: rgba(255,255,255,.07) !important;
+}
+
+/* 8. Sélecteurs de langue, ton, marché dans Ads */
+.lang-select, .ton-select, [class*="select-"] {
+  background: rgba(255,255,255,.08) !important;
+  color: #e2e8f0 !important;
+}
+
+/* 9. Zones d'affichage des ads générées */
+.ad-card, .ad-result, .variation-card {
+  background: rgba(255,255,255,.06) !important;
+  border: 0.5px solid rgba(255,255,255,.1) !important;
+  color: #e2e8f0 !important;
+  backdrop-filter: blur(12px) !important;
+}
+
+/* 10. Aperçu simulé (Feed preview dans Meta Ads) */
+[style*="background:#fff;font-family:Arial"],
+[style*="font-family:Arial,sans-serif"] {
+  background: rgba(20,25,40,.85) !important;
+  color: #e2e8f0 !important;
+  border: 0.5px solid rgba(255,255,255,.12) !important;
+}
+</style>
+<style id="table-fix">
+.score-inp, input.sinp, td input[type="number"], td input[type="text"] {
+  background: rgba(255,255,255,.1) !important;
+  border: 0.5px solid rgba(255,255,255,.15) !important;
+  color: #e2e8f0 !important;
+  border-radius: 5px !important;
+  text-align: center !important;
+}
+td input:focus {
+  background: rgba(255,255,255,.15) !important;
+  border-color: rgba(74,222,158,.5) !important;
+}
+
+/* Conteneurs avec scroll — toujours transparents */
+[style*="overflow-x:auto"], [style*="overflow-x: auto"],
+[style*="overflow:auto"], [style*="overflow: auto"] {
+  background: transparent !important;
+}
+/* Wrapper de la table de scoring */
+.table-container, .tbl-wrap {
+  background: transparent !important;
+}
+
+/* ===== FIX TABLES — Toutes transparentes ===== */
+table, thead, tbody, tfoot, tr, th, td {
+  background: transparent !important;
+  color: #e2e8f0 !important;
+  border-color: rgba(255,255,255,.07) !important;
+}
+thead tr, thead th {
+  background: rgba(255,255,255,.04) !important;
+  color: rgba(255,255,255,.6) !important;
+  font-size: 11px !important;
+  text-transform: uppercase !important;
+  letter-spacing: .4px !important;
+  border-bottom: 0.5px solid rgba(255,255,255,.1) !important;
+}
+tbody tr:hover, tbody tr:hover td {
+  background: rgba(255,255,255,.04) !important;
+}
+tbody tr:nth-child(even) td {
+  background: rgba(255,255,255,.015) !important;
+}
+/* Overflow fix — conteneur table */
+.score-table-wrap, [class*="table-wrap"], [style*="overflow-x"] {
+  background: transparent !important;
+  border-radius: 8px !important;
+  overflow: hidden !important;
+}
+/* Zone score table principale */
+#scoring-table-container, .scoring-wrap {
+  background: transparent !important;
+}
+/* La grande zone blanche = div wrappant la table */
+.panel > div > table,
+.card-section > table,
+.card-section > div > table {
+  background: transparent !important;
+}
+/* Fix spécifique Performance + Rapport */
+#tab-perf table, #tab-rapport table, #tab-scoring table {
+  background: transparent !important;
+}
+#tab-perf tr, #tab-rapport tr, #tab-scoring tr {
+  background: transparent !important;
+}
 </style>
 </body>
 </html>
