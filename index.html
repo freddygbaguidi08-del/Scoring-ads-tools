@@ -7716,14 +7716,32 @@ function copyMetaIds() {
 var darkModeActive = false;
 
 function initDarkMode() {
+  // Thème clair par défaut TOUJOURS — dark uniquement si l utilisateur l a choisi
   var saved = localStorage.getItem("theme");
-  if (saved) applyTheme(saved);
+  if (saved === "dark") {
+    applyTheme("dark");
+  } else {
+    // Forcer le thème clair
+    document.documentElement.removeAttribute("data-theme");
+    darkModeActive = false;
+    localStorage.removeItem("theme");
+    var icon  = document.getElementById("dark-icon");
+    var label = document.getElementById("dark-label");
+    if (icon)  icon.textContent  = "🌙";
+    if (label) label.textContent = "Sombre";
+  }
 }
 
 function applyTheme(theme) {
-  document.documentElement.setAttribute("data-theme", theme);
-  darkModeActive = (theme === "dark");
-  localStorage.setItem("theme", theme);
+  if (theme === "dark") {
+    document.documentElement.setAttribute("data-theme", "dark");
+    darkModeActive = true;
+    localStorage.setItem("theme", "dark");
+  } else {
+    document.documentElement.removeAttribute("data-theme");
+    darkModeActive = false;
+    localStorage.removeItem("theme");
+  }
   var icon  = document.getElementById("dark-icon");
   var label = document.getElementById("dark-label");
   if (icon)  icon.textContent  = darkModeActive ? "☀️" : "🌙";
