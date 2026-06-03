@@ -391,28 +391,14 @@ th{position:sticky;top:0;z-index:1}
 }
 
 /* --- Card sections — depth + hover lift --- */
-.card-section {
-  transition: transform .22s cubic-bezier(.34,1.2,.64,1), box-shadow .22s ease;
-  will-change: transform;
-  transform-style: preserve-3d;
-}
-.card-section:hover {
-  transform: translateY(-3px) scale(1.002);
-  box-shadow: 0 8px 32px rgba(0,0,0,.1), 0 2px 8px rgba(0,0,0,.06);
-}
+
+
 [data-theme="dark"] .card-section:hover {
   box-shadow: 0 8px 32px rgba(0,0,0,.4), 0 2px 8px rgba(74,222,158,.04);
 }
 
 /* --- Stat cards — 3D tilt on hover --- */
-.stat-card, .kpi-card {
-  transition: transform .18s ease, box-shadow .18s ease;
-  cursor: default;
-}
-.stat-card:hover, .kpi-card:hover {
-  transform: translateY(-4px) rotateX(3deg);
-  box-shadow: 0 12px 30px rgba(0,0,0,.12), 0 4px 10px rgba(0,0,0,.06);
-}
+
 
 /* --- Buttons — 3D press effect --- */
 .btn {
@@ -420,32 +406,18 @@ th{position:sticky;top:0;z-index:1}
   transform-style: preserve-3d;
   position: relative;
 }
-.btn:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 14px rgba(0,0,0,.12);
-}
-.btn:active {
-  transform: translateY(1px) scale(.97);
-  box-shadow: 0 1px 4px rgba(0,0,0,.1);
-}
-.btn.bg:hover {
-  box-shadow: 0 6px 18px rgba(8,80,65,.35);
-}
+
+
 
 /* --- Tab buttons — active glow --- */
-.mtab.active, .mtab:hover {
-  transform: translateY(-1px);
-}
+.mtab.active, 
 .mtab {
   transition: all .15s ease;
 }
 
 /* --- Panel transitions — 3D slide in --- */
-.panel {
-  animation: panelIn .3s cubic-bezier(.34,1.1,.64,1) both;
-  transform-origin: top center;
-}
-@keyframes panelIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+.panel{display:none;padding:.75rem 1rem 4rem}
+to{opacity:1;transform:translateY(0)}}
   to   { opacity: 1; transform: translateY(0) scale(1); }
 }
 
@@ -468,11 +440,8 @@ th{position:sticky;top:0;z-index:1}
 
 /* --- Toasts 3D entry --- */
 .toast {
-  animation: toastIn .4s cubic-bezier(.34,1.3,.64,1) both !important;
-  transform-origin: right bottom;
 }
-@keyframes toastIn {
-  from { opacity:0; transform: translateX(20px) scale(.9) rotateY(-8deg); }
+
   to   { opacity:1; transform: translateX(0) scale(1) rotateY(0); }
 }
 
@@ -668,142 +637,6 @@ select option{background:var(--sur);color:var(--txt)}
 
 
 
-/* ============================================================
-   3D PREMIUM EFFECTS — CSS uniquement, fond blanc conservé
-   Inspiré : Linear, Vercel, Stripe Dashboard
-   ============================================================ */
-
-/* Transitions globales */
-*, *::before, *::after { box-sizing: border-box; }
-
-/* --- Panel : entrée fluide --- */
-.panel {
-  animation: panelIn .22s cubic-bezier(.4,0,.2,1) both;
-}
-@keyframes panelIn {
-  from { opacity: 0; transform: translateY(8px); }
-  to   { opacity: 1; transform: translateY(0); }
-}
-
-/* --- Cards : lévitation + tilt 3D au survol --- */
-.card-section {
-  transition: transform .2s cubic-bezier(.34,1.2,.64,1),
-              box-shadow .2s ease,
-              border-color .2s ease;
-  transform-style: preserve-3d;
-  will-change: transform;
-}
-.card-section:hover {
-  transform: translateY(-3px) perspective(800px) rotateX(1deg);
-  box-shadow: 0 8px 28px rgba(0,0,0,.09), 0 2px 8px rgba(0,0,0,.05);
-  border-color: var(--bord2);
-}
-
-/* --- Stat cards --- */
-.stat {
-  transition: transform .2s cubic-bezier(.34,1.2,.64,1), box-shadow .2s ease;
-}
-.stat:hover {
-  transform: translateY(-4px) scale(1.01);
-  box-shadow: 0 8px 24px rgba(0,0,0,.1);
-}
-
-/* --- Boutons : press 3D + lévitation --- */
-.btn {
-  transition: transform .15s cubic-bezier(.34,1.2,.64,1),
-              box-shadow .15s ease,
-              background .15s ease;
-  position: relative;
-  overflow: hidden;
-}
-.btn::after {
-  content: '';
-  position: absolute; inset: 0;
-  background: linear-gradient(135deg, rgba(255,255,255,.18), transparent);
-  pointer-events: none; border-radius: inherit;
-}
-.btn:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 14px rgba(0,0,0,.1);
-}
-.btn:active {
-  transform: translateY(1px) scale(.98);
-  box-shadow: 0 1px 4px rgba(0,0,0,.08);
-}
-.btn.bg:hover {
-  box-shadow: 0 5px 18px rgba(8,80,65,.3);
-}
-
-/* --- Onglets : glissement doux --- */
-.mtab {
-  transition: color .15s ease, background .15s ease, transform .15s ease;
-}
-.mtab:hover {
-  transform: translateY(-1px);
-}
-
-/* --- Table rows : highlight subtil --- */
-.score-table tr {
-  transition: background .12s ease;
-}
-
-/* --- Inputs : focus lift --- */
-input[type=text]:focus,
-input[type=number]:focus,
-input[type=password]:focus,
-input[type=date]:focus,
-input[type=url]:focus,
-input[type=email]:focus,
-select:focus,
-textarea:focus {
-  transform: translateY(-1px);
-  box-shadow: 0 4px 14px rgba(8,80,65,.12), 0 0 0 3px rgba(8,80,65,.08);
-}
-
-/* --- Toasts : entrée 3D depuis la droite --- */
-.toast {
-  animation: toastIn .35s cubic-bezier(.34,1.3,.64,1) both;
-  transform-origin: right bottom;
-}
-@keyframes toastIn {
-  from { opacity: 0; transform: translateX(24px) rotateY(-6deg) scale(.95); }
-  to   { opacity: 1; transform: translateX(0) rotateY(0) scale(1); }
-}
-
-/* --- Modales : entrée en profondeur --- */
-.modal {
-  animation: modalIn .3s cubic-bezier(.34,1.2,.64,1) both;
-}
-@keyframes modalIn {
-  from { opacity: 0; transform: scale(.95) translateY(16px); }
-  to   { opacity: 1; transform: scale(1) translateY(0); }
-}
-
-/* --- Topbar : ombre subtile sticky --- */
-.topbar {
-  box-shadow: 0 1px 0 var(--bord), 0 4px 20px rgba(0,0,0,.04);
-  transition: box-shadow .2s ease;
-}
-
-/* --- Score bars : animation d'entrée --- */
-.score-bar > div {
-  transition: width .7s cubic-bezier(.34,1.1,.64,1);
-}
-
-/* --- Badges/tags : micro-rebond au hover --- */
-.bdg, .tag {
-  transition: transform .15s cubic-bezier(.34,1.4,.64,1);
-  display: inline-block;
-}
-.bdg:hover, .tag:hover {
-  transform: scale(1.06);
-}
-
-/* --- Scrollbar premium --- */
-::-webkit-scrollbar { width: 5px; height: 5px; }
-::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: var(--bord2); border-radius: 3px; }
-::-webkit-scrollbar-thumb:hover { background: var(--mut); }
 
 </style>
 </head>
@@ -8325,39 +8158,12 @@ function loginSuccessAnim(cb) {
 
 
 
-// ============================================================
-// CARD TILT 3D — CSS-driven, pas de canvas
-// ============================================================
-function initCardTilt() {
-  document.addEventListener("mousemove", function(e) {
-    var cards = document.querySelectorAll(".card-section");
-    cards.forEach(function(card) {
-      var rect = card.getBoundingClientRect();
-      var inZone = e.clientX > rect.left - 40 && e.clientX < rect.right + 40
-                && e.clientY > rect.top  - 40 && e.clientY < rect.bottom + 40;
-      if (!inZone) return;
-      var cx = rect.left + rect.width / 2;
-      var cy = rect.top  + rect.height / 2;
-      var rx = (e.clientY - cy) / rect.height * -5;
-      var ry = (e.clientX - cx) / rect.width  *  6;
-      card.style.transform = "perspective(900px) rotateX(" + rx + "deg) rotateY(" + ry + "deg) translateY(-2px)";
-      card.style.boxShadow = "0 10px 32px rgba(0,0,0,.1), " + (ry * .4) + "px " + (-rx * .4) + "px 12px rgba(8,80,65,.06)";
-    });
-  });
-  document.addEventListener("mouseleave", function() {
-    document.querySelectorAll(".card-section").forEach(function(c) {
-      c.style.transform = "";
-      c.style.boxShadow = "";
-    });
-  });
-}
 
 
 // INIT -- EN DERNIER
 // ============================================================
 initDarkMode();
 initLoginCanvas();
-initCardTilt();
 initAccessControl();
 updateApiBar();
 renderCatTabs();
