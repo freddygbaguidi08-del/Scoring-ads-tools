@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>NOF — Cockpit E-commerce</title>
-<meta name="description" content="Scoring produits, generateur d ads IA et geo-ciblage pour NOF">
+<title>UrbanElectroStore — Cockpit E-commerce</title>
+<meta name="description" content="Scoring produits, generateur d ads IA et geo-ciblage pour UrbanElectroStore">
 <meta name="theme-color" content="#18180f">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -15,9 +15,59 @@
 <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192x192.png">
 <link rel="icon" type="image/png" sizes="512x512" href="icons/icon-512x512.png">
 <style>
-:root{--bg:#f7f6f3;--sur:#fff;--bord:#e5e3dc;--bord2:#d0cec5;--txt:#18180f;--mut:#7a7870;--grn:#085041;--gnbg:#e8f4ee;--orn:#7a4a00;--orbg:#fef3e2;--red:#7a1a1a;--rdbg:#fef2f2;--blu:#0c3d6e;--blbg:#e8f0fb;--pur:#3b2a8a;--pubg:#edeafb;--r:9px}
+:root{
+  /* === SPACE DARK THEME — default === */
+  --bg:rgba(0,0,0,0);
+  --sur:rgba(255,255,255,.06);
+  --bord:rgba(255,255,255,.1);
+  --bord2:rgba(255,255,255,.16);
+  --txt:#f0ede4;
+  --mut:rgba(255,255,255,.45);
+  --grn:#4ade9e;
+  --gnbg:rgba(74,222,158,.1);
+  --orn:#fbbf24;
+  --orbg:rgba(251,191,36,.1);
+  --red:#f87272;
+  --rdbg:rgba(248,114,114,.1);
+  --blu:#60a5fa;
+  --blbg:rgba(96,165,250,.1);
+  --pur:#a78bfa;
+  --pubg:rgba(167,139,250,.1);
+  --r:12px;
+  /* glass surfaces */
+  --glass:rgba(255,255,255,.07);
+  --glass-hover:rgba(255,255,255,.11);
+  --glass-border:rgba(255,255,255,.12);
+  --glass-strong:rgba(255,255,255,.12);
+}
+[data-theme="light"]{
+  --bg:rgba(245,244,240,.6);
+  --sur:rgba(255,255,255,.75);
+  --bord:rgba(0,0,0,.1);
+  --bord2:rgba(0,0,0,.16);
+  --txt:#18180f;
+  --mut:#7a7870;
+  --grn:#085041;
+  --gnbg:rgba(8,80,65,.09);
+  --orn:#7a4a00;
+  --orbg:rgba(251,191,36,.12);
+  --red:#7a1a1a;
+  --rdbg:rgba(248,114,114,.1);
+  --blu:#0c3d6e;
+  --blbg:rgba(96,165,250,.1);
+  --pur:#3b2a8a;
+  --pubg:rgba(167,139,250,.1);
+  --glass:rgba(255,255,255,.65);
+  --glass-hover:rgba(255,255,255,.8);
+  --glass-border:rgba(0,0,0,.1);
+  --glass-strong:rgba(255,255,255,.8);
+}
 *{box-sizing:border-box;margin:0;padding:0}
-body{font-family:-apple-system,Arial,sans-serif;background:var(--bg);color:var(--txt);font-size:13px;padding-bottom:env(safe-area-inset-bottom,0px)}
+body{font-family:'Inter',-apple-system,BlinkMacSystemFont,Arial,sans-serif;
+  font-size:13px;color:var(--txt);line-height:1.5;
+  background:radial-gradient(ellipse at 15% 40%,#0b1e36 0%,#020307 45%,#080805 100%);
+  min-height:100vh;
+}
 .apibar{display:flex;align-items:center;gap:8px;padding:.5rem 1rem;background:var(--orbg);border-bottom:1px solid #f0d9a0;flex-wrap:wrap;transition:all .25s ease}
 .apibar.ok{background:var(--gnbg);border-color:#b0d8be}
 .apibar.collapsed{padding:.3rem 1rem;background:var(--gnbg);border-color:#b0d8be;cursor:pointer}
@@ -32,7 +82,16 @@ body{font-family:-apple-system,Arial,sans-serif;background:var(--bg);color:var(-
 .apibar.ok .apist{color:var(--grn)}
 .apisel{padding:5px 8px;border:1px solid var(--bord2);border-radius:7px;font-size:12px;background:#fff;cursor:pointer}
 .apiinp{flex:2;min-width:140px;padding:5px 8px;border:1px solid var(--bord2);border-radius:7px;font-size:12px;font-family:inherit}
-.topbar{display:flex;align-items:center;justify-content:space-between;padding:.55rem 1rem;padding-top:calc(.55rem + env(safe-area-inset-top,0px));background:var(--sur);border-bottom:1px solid var(--bord);gap:8px;flex-wrap:wrap}
+.topbar{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:.55rem 1rem;padding-top:calc(.55rem + env(safe-area-inset-top,0px));
+  background:rgba(8,14,26,.72);
+  backdrop-filter:blur(28px) saturate(180%);
+  -webkit-backdrop-filter:blur(28px);
+  border-bottom:1px solid rgba(255,255,255,.08);
+  box-shadow:0 1px 30px rgba(0,0,0,.35),0 1px 0 rgba(255,255,255,.05) inset;
+  position:sticky;top:0;z-index:100;
+}
 .topbar h1{font-size:14px;font-weight:600}
 .topr{display:flex;gap:5px;flex-wrap:wrap}
 .maintabs{display:flex;background:var(--sur);border-bottom:1px solid var(--bord);flex-wrap:wrap;gap:0}
@@ -49,7 +108,16 @@ body{font-family:-apple-system,Arial,sans-serif;background:var(--bg);color:var(-
 .ctrls{display:flex;gap:5px;margin-bottom:.55rem;flex-wrap:wrap;align-items:center}
 .ctrls input,.ctrls select{padding:5px 8px;border:1px solid var(--bord2);border-radius:7px;background:var(--sur);color:var(--txt);font-size:12px;outline:none}
 .ctrls input{min-width:150px}
-.btn{display:inline-flex;align-items:center;gap:4px;padding:5px 11px;border-radius:7px;border:1px solid var(--bord2);background:var(--sur);color:var(--txt);font-size:12px;cursor:pointer;white-space:nowrap;font-family:inherit}
+.btn{
+  display:inline-flex;align-items:center;gap:4px;padding:5px 12px;
+  border-radius:8px;border:1px solid rgba(255,255,255,.15);
+  background:rgba(255,255,255,.08);
+  backdrop-filter:blur(12px);
+  color:var(--txt);font-size:12px;font-family:inherit;cursor:pointer;
+  transition:all .18s cubic-bezier(.34,1.2,.64,1);white-space:nowrap;
+}
+.btn:hover{background:rgba(255,255,255,.14);transform:translateY(-2px);box-shadow:0 4px 16px rgba(0,0,0,.2)}
+.btn:active{transform:translateY(1px);box-shadow:none}
 .btn:hover{background:var(--bg)}
 .bg{background:var(--gnbg);color:var(--grn);border-color:transparent}.bg:hover{background:#d4ecdf}
 .bb{background:var(--blbg);color:var(--blu);border-color:transparent}.bb:hover{background:#d5e7f6}
@@ -94,7 +162,11 @@ tr.sel td{background:#f0f8f3}
 .spin{width:14px;height:14px;border:2px solid var(--bord2);border-top-color:var(--txt);border-radius:50%;animation:sp .7s linear infinite}
 @keyframes sp{to{transform:rotate(360deg)}}
 .mbg{position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:100;display:flex;align-items:center;justify-content:center;padding:1rem}
-.modal{background:var(--sur);border-radius:12px;width:100%;max-width:490px;padding:1.3rem;max-height:80vh;overflow-y:auto}
+.modal{
+  background:rgba(12,16,28,.88);
+  backdrop-filter:blur(32px) saturate(180%);
+  border:1px solid rgba(255,255,255,.12);
+  box-shadow:0 40px 100px rgba(0,0,0,.6);}
 .modal h2{font-size:14px;font-weight:600;margin-bottom:.8rem}
 .fdrop{border:2px dashed var(--bord2);border-radius:var(--r);padding:1.75rem;text-align:center;cursor:pointer}
 .fdrop:hover,.fdrop.drag{border-color:var(--txt)}
@@ -110,7 +182,20 @@ tr.sel td{background:#f0f8f3}
 .form-group{display:flex;flex-direction:column;gap:3px}
 .form-group label{font-size:10px;color:var(--mut);text-transform:uppercase;letter-spacing:.3px}
 .form-group input,.form-group select{padding:5px 8px;border:1px solid var(--bord2);border-radius:7px;font-size:12px;font-family:inherit;background:var(--sur);color:var(--txt)}
-.card-section{background:var(--sur);border:1px solid var(--bord);border-radius:var(--r);padding:.85rem 1rem;margin-bottom:.75rem}
+.card-section{
+  background:var(--glass);
+  backdrop-filter:blur(20px) saturate(160%);
+  -webkit-backdrop-filter:blur(20px);
+  border:1px solid var(--glass-border);
+  border-radius:var(--r);
+  padding:.85rem 1rem;margin-bottom:.75rem;
+  box-shadow:0 4px 24px rgba(0,0,0,.15),0 1px 0 rgba(255,255,255,.06) inset;
+  transition:transform .22s cubic-bezier(.34,1.2,.64,1),box-shadow .22s ease;
+}
+.card-section:hover{
+  transform:translateY(-2px);
+  box-shadow:0 8px 32px rgba(0,0,0,.25),0 1px 0 rgba(255,255,255,.08) inset;
+}
 .card-section h3{font-size:13px;font-weight:500;margin-bottom:.65rem}
 .rpt-block{background:var(--sur);border:1px solid var(--bord);border-radius:var(--r);padding:1rem 1.1rem;margin-bottom:.75rem}
 .rpt-block h3{font-size:13px;font-weight:500;margin-bottom:.6rem;padding-bottom:.4rem;border-bottom:1px solid var(--bord)}
@@ -528,6 +613,19 @@ th{position:sticky;top:0;z-index:1}
 }
 ::-webkit-scrollbar-thumb:hover { background: var(--mut); }
 
+
+/* Glass text overrides for readability */
+label { color: rgba(255,255,255,.55) !important; }
+select option { background:#1a1a1e; color:#f0ede4; }
+.ads-empty { color: rgba(255,255,255,.35); background: rgba(255,255,255,.03); border: 1px dashed rgba(255,255,255,.1); }
+.al { border-radius: var(--r); padding: .5rem .75rem; }
+.ae { background: rgba(248,114,114,.1); border: 1px solid rgba(248,114,114,.2); color: #f87272; }
+.ao { background: rgba(248,114,114,.1); border: 1px solid rgba(248,114,114,.2); color: #f87272; }
+.ag { background: rgba(74,222,158,.1); border: 1px solid rgba(74,222,158,.2); color: #4ade9e; }
+.ab { background: rgba(96,165,250,.1); border: 1px solid rgba(96,165,250,.2); color: #60a5fa; }
+.aw { background: rgba(251,191,36,.1); border: 1px solid rgba(251,191,36,.2); color: #fbbf24; }
+h3 { color: var(--txt) !important; }
+
 </style>
 </head>
 <body>
@@ -589,7 +687,7 @@ th{position:sticky;top:0;z-index:1}
   <div class="login-scene">
     <div class="login-box" id="login-box-user">
       <span class="logo">🛍</span>
-      <h2>NOF</h2>
+      <h2>UrbanElectroStore</h2>
       <p class="sub">Entre tes identifiants pour acceder au Cockpit</p>
       <div class="login-field">
         <label>Prenom ou identifiant</label>
@@ -634,7 +732,7 @@ th{position:sticky;top:0;z-index:1}
 </div>
 
 <div class="topbar">
-  <h1>&#128722; NOF &mdash; Cockpit E-commerce</h1>
+  <h1>&#128722; UrbanElectroStore &mdash; Cockpit E-commerce</h1>
   <span id="sync-indicator" onclick="manualSync()" title="Cliquer pour synchroniser maintenant"
     style="font-size:11px;font-weight:500;padding:3px 10px;border-radius:20px;cursor:pointer;background:#e8f0fb;color:#0c3d6e;display:inline-flex;align-items:center;gap:4px">&#9729; Cloud</span>
   <div class="topr">
@@ -1221,7 +1319,7 @@ th{position:sticky;top:0;z-index:1}
       <div class="form-row" style="margin-top:.5rem">
         <div class="form-group" style="flex:1;min-width:200px">
           <label>URL de ta boutique</label>
-          <input type="text" id="wc-url" placeholder="https://NOF.com" style="width:100%">
+          <input type="text" id="wc-url" placeholder="https://urbanelectrostore.com" style="width:100%">
         </div>
       </div>
       <div class="form-row">
@@ -1772,7 +1870,7 @@ CTA : Voir l offre" style="width:100%;height:130px;padding:7px 9px;border:1px so
         </div>
         <div class="form-group">
           <label>URL de destination</label>
-          <input type="url" id="meta-dest-url" placeholder="https://NOF.com/produit/..." style="width:100%">
+          <input type="url" id="meta-dest-url" placeholder="https://urbanelectrostore.com/produit/..." style="width:100%">
         </div>
       </div>
       <div style="display:flex;gap:7px;flex-wrap:wrap">
@@ -3164,7 +3262,7 @@ function exportScoring() {
 
 // ============================================================
 // EXPORT WOOCOMMERCE CSV — mappage complet 64 colonnes
-// Basé sur le format réel du fichier product-export d NOF
+// Basé sur le format réel du fichier product-export d UrbanElectroStore
 // ============================================================
 function exportWooCSV() {
   // Mapping catégories cockpit → catégories WooCommerce réelles
@@ -3224,7 +3322,7 @@ function exportWooCSV() {
   ];
 
   var now = new Date().toISOString().replace("T"," ").slice(0,19);
-  var baseUrl = "https://NOF.com";
+  var baseUrl = "https://urbanelectrostore.com";
 
   var rows = PRODUCTS.map(function(r, i) {
     var d      = userScores[r[0]] || {};
@@ -3260,10 +3358,10 @@ function exportWooCSV() {
     var focuskw = name.split(" ").slice(0,4).join(" ").toLowerCase();
 
     // meta:_yoast_wpseo_title — titre SEO
-    var seoTitle = name + " | NOF";
+    var seoTitle = name + " | UrbanElectroStore";
 
     // meta:_yoast_wpseo_metadesc — meta description
-    var metadesc = "Achetez " + name + " au meilleur prix sur NOF";
+    var metadesc = "Achetez " + name + " au meilleur prix sur UrbanElectroStore";
     if (r[7] === "win" && r[6]) metadesc += " - " + price + " EUR vs " + r[6] + " ailleurs";
     metadesc += ".";
 
@@ -5705,7 +5803,7 @@ function deleteUser(idx) {
 function copyInvite(idx) {
   var u = ACCESS.users[idx];
   if (!u) return;
-  var msg = "Bonjour " + u.name + ",\n\nTu as acces au Cockpit E-commerce NOF.\n\n"
+  var msg = "Bonjour " + u.name + ",\n\nTu as acces au Cockpit E-commerce UrbanElectroStore.\n\n"
     + "Lien : " + window.location.href.split("?")[0] + "\nPrenom : " + u.name + "\nCode : " + u.code
     + (u.expiry ? "\nAcces valable jusqu au : " + u.expiry : "")
     + "\n\nBonne utilisation !";
@@ -6889,7 +6987,7 @@ function renderFeedPreview(ad, cta, ctaLabel, row) {
   return "<div style='max-width:280px;border:0.5px solid var(--bord2);border-radius:10px;overflow:hidden;background:#fff;font-family:Arial,sans-serif'>"
     + "<div style='display:flex;align-items:center;gap:7px;padding:8px 10px'>"
       + "<div style='width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#1877f2,#42b0ff);flex-shrink:0'></div>"
-      + "<div><div style='font-size:12px;font-weight:600;color:#1a1a1a'>NOF</div>"
+      + "<div><div style='font-size:12px;font-weight:600;color:#1a1a1a'>UrbanElectroStore</div>"
         + "<div style='font-size:10px;color:#8a8a8a'>Sponsorisé · &#127758;</div></div>"
     + "</div>"
     + "<div style='padding:0 10px 6px;font-size:12px;color:#1a1a1a;line-height:1.5'>" + (ad.primary_text||"").slice(0,80) + (ad.primary_text&&ad.primary_text.length>80?"…":"") + "</div>"
@@ -7289,7 +7387,7 @@ async function fetchWooImage() {
   } catch(e) {
     if (prevEl) prevEl.innerHTML = "<div class='al ao' style='margin-top:.4rem'>Erreur: " + e.message + "</div>"
       + "<div style='font-size:11px;color:var(--mut);margin-top:.3rem'>Tu peux aussi entrer l URL de l image manuellement ci-dessous.</div>"
-      + "<div class='form-group' style='margin-top:.35rem'><label>URL image manuelle</label><input type='url' id='meta-img-url-manual' placeholder='https://NOF.com/...image.jpg' style='width:100%' oninput='metaWooImageUrl=this.value'></div>";
+      + "<div class='form-group' style='margin-top:.35rem'><label>URL image manuelle</label><input type='url' id='meta-img-url-manual' placeholder='https://urbanelectrostore.com/...image.jpg' style='width:100%' oninput='metaWooImageUrl=this.value'></div>";
     toastWarn("WooCommerce: " + e.message);
   }
 }
@@ -7325,7 +7423,7 @@ async function createMetaAd() {
   var budget     = parseInt((document.getElementById("meta-daily-budget")||{}).value||"20") * 100; // en centimes
   var startDate  = (document.getElementById("meta-start-date")||{}).value;
   var endDate    = (document.getElementById("meta-end-date")||{}).value;
-  var destUrl    = (document.getElementById("meta-dest-url")||{}).value || wcConfig.url || "https://NOF.com";
+  var destUrl    = (document.getElementById("meta-dest-url")||{}).value || wcConfig.url || "https://urbanelectrostore.com";
   var objective  = metaAdsResults.objective || "OUTCOME_SALES";
   var cta        = metaAdsResults.cta || "SHOP_NOW";
 
@@ -7881,7 +7979,7 @@ function renderGAProducts(pageRows) {
     var dims   = r.dimensionValues || [];
     var mets   = r.metricValues    || [];
     var path   = dims[0]&&dims[0].value||"";
-    var title  = (dims[1]&&dims[1].value||path).replace(" - NOF","").replace(" - WooCommerce","");
+    var title  = (dims[1]&&dims[1].value||path).replace(" - UrbanElectroStore","").replace(" - WooCommerce","");
     var views  = parseInt(mets[0]&&mets[0].value||0);
     var conv   = parseInt(mets[2]&&mets[2].value||0);
     var matchedProduct = null;
@@ -8098,14 +8196,7 @@ function buildAmbientStars() {
 function drawAmbient() {
   if (!ambientCtx || !ambientCanvas) return;
   var W = ambientCanvas.width, H = ambientCanvas.height;
-  var isDark = document.documentElement.getAttribute("data-theme") === "dark"
-    || (!document.documentElement.getAttribute("data-theme")
-        && window.matchMedia("(prefers-color-scheme:dark)").matches);
-  if (!isDark) {
-    ambientCtx.clearRect(0, 0, W, H);
-    ambientAnimId = requestAnimationFrame(drawAmbient);
-    return;
-  }
+  // Always draw ambient particles
   ambientCtx.clearRect(0, 0, W, H);
   ambientStars.forEach(function(s) {
     s.phase += .012;
@@ -8115,7 +8206,8 @@ function drawAmbient() {
     var a = s.a * (.6 + Math.sin(s.phase) * .4);
     ambientCtx.beginPath();
     ambientCtx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
-    ambientCtx.fillStyle = "rgba(74,222,158," + a + ")";
+    var c = Math.random() > .8 ? "96,165,250" : Math.random() > .7 ? "167,139,250" : "74,222,158";
+    ambientCtx.fillStyle = "rgba("+c+"," + a + ")";
     ambientCtx.fill();
   });
   // Subtle connections
