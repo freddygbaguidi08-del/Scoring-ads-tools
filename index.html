@@ -1092,6 +1092,172 @@ input[type="text"] { color: #e2e8f0 !important; }
   .login-field { margin-bottom: .5rem !important; }
 }
 
+
+/* ===== LOGIN REDESIGN — Centré, professionnel ===== */
+
+/* Overlay = conteneur plein écran flex centré */
+.login-overlay {
+  transition: opacity .3s ease;
+  position: fixed !important;
+  inset: 0 !important;
+  z-index: 9999 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  min-height: 100dvh;
+  padding: 1.25rem;
+  overflow-y: auto;
+  background: radial-gradient(ellipse at 20% 50%, #0a1628 0%, #030308 50%, #0a0a05 100%) !important;
+}
+
+/* Wrapper décoratif — position absolue, ne perturbe pas le flex */
+.login-decorations {
+  position: absolute !important;
+  inset: 0 !important;
+  pointer-events: none;
+  z-index: 0;
+  overflow: hidden;
+}
+
+/* Scene = formulaire centré */
+.login-scene {
+  position: relative !important;
+  z-index: 10 !important;
+  width: min(420px, 100%) !important;
+  margin: 0 !important;
+  flex-shrink: 0;
+  perspective: 1200px;
+}
+
+/* Login box — épuré et professionnel */
+.login-box {
+  background: rgba(255,255,255,.08) !important;
+  backdrop-filter: blur(32px) saturate(180%) !important;
+  -webkit-backdrop-filter: blur(32px) !important;
+  border: 1px solid rgba(255,255,255,.12) !important;
+  border-radius: 20px !important;
+  padding: 2.5rem 2rem !important;
+  text-align: center !important;
+  box-shadow: 0 32px 80px rgba(0,0,0,.55),
+              0 0 0 0.5px rgba(255,255,255,.05) inset,
+              0 1px 0 rgba(255,255,255,.15) inset !important;
+  animation: loginReveal .7s cubic-bezier(.34,1.4,.64,1) both !important;
+  transform-origin: center center !important;
+  position: relative !important;
+  overflow: hidden !important;
+  width: 100% !important;
+  margin: 0 !important;
+}
+
+/* Logo + titre */
+.login-box .logo {
+  font-size: 48px !important;
+  margin-bottom: .5rem !important;
+  display: block !important;
+  animation: logoPop .6s .2s cubic-bezier(.34,1.6,.64,1) both !important;
+  filter: drop-shadow(0 0 20px rgba(74,222,158,.5)) !important;
+}
+.login-box h2 {
+  font-size: 18px !important;
+  font-weight: 600 !important;
+  color: #fff !important;
+  margin-bottom: .2rem !important;
+  letter-spacing: -.2px;
+}
+.login-box .sub {
+  font-size: 12.5px !important;
+  color: rgba(255,255,255,.4) !important;
+  margin-bottom: 1.5rem !important;
+}
+
+/* Champs */
+.login-field {
+  text-align: left !important;
+  margin-bottom: .75rem !important;
+}
+.login-field label {
+  font-size: 10px !important;
+  font-weight: 600 !important;
+  text-transform: uppercase !important;
+  letter-spacing: .5px !important;
+  color: rgba(255,255,255,.4) !important;
+  margin-bottom: 5px !important;
+  display: block !important;
+}
+.login-field input {
+  width: 100% !important;
+  padding: 11px 14px !important;
+  background: rgba(255,255,255,.07) !important;
+  border: 1px solid rgba(255,255,255,.12) !important;
+  border-radius: 10px !important;
+  color: #fff !important;
+  font-size: 14px !important;
+  font-family: inherit !important;
+  outline: none !important;
+  transition: border-color .15s, box-shadow .15s !important;
+}
+.login-field input:focus {
+  border-color: rgba(74,222,158,.5) !important;
+  box-shadow: 0 0 0 3px rgba(74,222,158,.1) !important;
+}
+.login-field input::placeholder {
+  color: rgba(255,255,255,.2) !important;
+}
+
+/* Bouton principal */
+.login-btn {
+  width: 100% !important;
+  padding: 13px !important;
+  border-radius: 11px !important;
+  border: none !important;
+  background: linear-gradient(135deg, #10b981, #059669) !important;
+  color: #fff !important;
+  font-size: 14px !important;
+  font-weight: 600 !important;
+  cursor: pointer !important;
+  margin-top: .75rem !important;
+  transition: all .2s !important;
+  box-shadow: 0 4px 16px rgba(16,185,129,.3) !important;
+  font-family: inherit !important;
+  letter-spacing: .1px;
+}
+.login-btn:hover {
+  transform: translateY(-1px) !important;
+  box-shadow: 0 8px 24px rgba(16,185,129,.4) !important;
+}
+.login-btn:active {
+  transform: translateY(1px) !important;
+}
+
+/* Cartes flottantes */
+#login-canvas { position: absolute !important; inset: 0 !important; pointer-events: none !important; z-index: 0 !important; }
+.login-orb { position: absolute !important; border-radius: 50% !important; filter: blur(70px) !important; animation: orbFloat 8s ease-in-out infinite !important; pointer-events: none !important; }
+.login-orb-1 { width: 320px; height: 320px; background: rgba(8,80,65,.4); top: -100px; left: -100px; animation-delay: 0s; }
+.login-orb-2 { width: 280px; height: 280px; background: rgba(24,119,242,.3); bottom: -80px; right: -80px; animation-delay: -3s; }
+.login-orb-3 { width: 200px; height: 200px; background: rgba(139,92,246,.2); top: 50%; right: 10%; animation-delay: -5s; }
+.float-card { position: absolute !important; background: rgba(255,255,255,.05) !important; backdrop-filter: blur(8px) !important; border: 0.5px solid rgba(255,255,255,.1) !important; border-radius: 12px !important; padding: .65rem .9rem !important; font-size: 11px !important; color: rgba(255,255,255,.5) !important; pointer-events: none !important; animation: floatCard 12s ease-in-out infinite !important; }
+.fc-score { font-size: 20px !important; font-weight: 700 !important; color: rgba(74,222,158,.9) !important; line-height: 1.1 !important; }
+.fc-name  { font-size: 10px !important; color: rgba(255,255,255,.4) !important; margin-top: 2px !important; }
+.fc-label { font-size: 9px !important; color: rgba(255,255,255,.25) !important; text-transform: uppercase !important; letter-spacing: .5px !important; }
+.float-card-1 { top: 15%; left: 6%; animation-delay: 0s; }
+.float-card-2 { top: 20%; right: 6%; animation-delay: -4s; animation-duration: 11s; }
+.float-card-3 { bottom: 22%; left: 6%; animation-delay: -7s; animation-duration: 13s; }
+.float-card-4 { bottom: 28%; right: 6%; animation-delay: -2s; animation-duration: 16s; }
+
+/* Mobile */
+@media (max-width: 480px) {
+  .login-box { padding: 1.75rem 1.25rem !important; border-radius: 16px !important; }
+  .login-box .logo { font-size: 38px !important; }
+  .login-box h2 { font-size: 16px !important; }
+  .float-card { display: none !important; }
+  .login-field input { font-size: 16px !important; }
+}
+@media (max-height: 680px) {
+  .login-box { padding: 1.5rem 1.25rem !important; }
+  .login-box .logo { font-size: 32px !important; margin-bottom: .3rem !important; }
+  .login-box .sub { margin-bottom: 1rem !important; }
+}
+
 </style>
 </head>
 <body>
@@ -1117,37 +1283,35 @@ input[type="text"] { color: #e2e8f0 !important; }
 
 <!-- ===== LOGIN OVERLAY 3D ===== -->
 <div class="login-overlay" id="login-overlay" style="display:none">
-  <!-- Canvas for particles -->
-  <canvas id="login-canvas"></canvas>
-
-  <!-- Ambient orbs -->
-  <div class="login-orb login-orb-1"></div>
-  <div class="login-orb login-orb-2"></div>
-  <div class="login-orb login-orb-3"></div>
-
-  <!-- Floating product score cards (decorative) -->
-  <div class="float-card float-card-1">
-    <div class="fc-score">87</div>
-    <div class="fc-name">iScooter iX3</div>
-    <div class="fc-label">Score priorite</div>
-  </div>
-  <div class="float-card float-card-2">
-    <div class="fc-score">+34%</div>
-    <div class="fc-name">ROAS campagne</div>
-    <div class="fc-label">Cette semaine</div>
-  </div>
-  <div class="float-card float-card-3">
-    <div class="fc-score">63</div>
-    <div class="fc-name">Produits actifs</div>
-    <div class="fc-label">Prix avantageux</div>
-  </div>
-  <div class="float-card float-card-4">
-    <div class="fc-score">&#128640;</div>
-    <div class="fc-name">Meta Ads pret</div>
-    <div class="fc-label">Pub generee IA</div>
+  <!-- Décorations en position absolue — n'affectent PAS le centrage -->
+  <div class="login-decorations" aria-hidden="true">
+    <canvas id="login-canvas"></canvas>
+    <div class="login-orb login-orb-1"></div>
+    <div class="login-orb login-orb-2"></div>
+    <div class="login-orb login-orb-3"></div>
+    <div class="float-card float-card-1">
+      <div class="fc-score">87</div>
+      <div class="fc-name">iScooter iX3</div>
+      <div class="fc-label">Score priorite</div>
+    </div>
+    <div class="float-card float-card-2">
+      <div class="fc-score">+34%</div>
+      <div class="fc-name">ROAS campagne</div>
+      <div class="fc-label">Cette semaine</div>
+    </div>
+    <div class="float-card float-card-3">
+      <div class="fc-score">63</div>
+      <div class="fc-name">Produits actifs</div>
+      <div class="fc-label">Prix avantageux</div>
+    </div>
+    <div class="float-card float-card-4">
+      <div class="fc-score">&#128640;</div>
+      <div class="fc-name">Meta Ads pret</div>
+      <div class="fc-label">Pub generee IA</div>
+    </div>
   </div>
 
-  <!-- 3D Login scene -->
+  <!-- Formulaire — seul élément en flux = centré parfaitement -->
   <div class="login-scene">
     <div class="login-box" id="login-box-user">
       <span class="logo">🛍</span>
