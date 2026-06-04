@@ -157,10 +157,7 @@ body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-
   margin: .4rem .9rem;
 }
 /* Mobile — sidebar se cache, bottom bar reste */
-@media (max-width: 768px) {
-  #sidebar { display: none; }
-  #app-layout { display: block; }
-}
+
 
 
 
@@ -897,6 +894,150 @@ input[type="text"] { color: #e2e8f0 !important; }
 
 /* Opportunités immédiates banner */
 [style*="orbg"], [style*="gnbg"] { backdrop-filter: blur(8px) !important; }
+
+
+/* ===================================================
+   RESPONSIVE MOBILE — Option A : Bottom Navigation
+   =================================================== */
+@media (max-width: 768px) {
+
+  /* Layout : sidebar cachée, contenu plein écran */
+  #sidebar     { display: none !important; }
+  #app-layout  { display: block !important; }
+  #main-content{ padding-bottom: 70px }
+
+  /* Topbar compacte mobile */
+  .topbar {
+    padding: .35rem .75rem !important;
+    gap: 5px !important;
+  }
+  .topbar h1 {
+    font-size: 12px !important;
+    max-width: 120px !important;
+  }
+  /* Cacher les boutons secondaires sur mobile */
+  .topbar .topr .btn:not(.bg):not(.bb):not([onclick*="Cloud"]):not([onclick*="Import"]) {
+    display: none !important;
+  }
+
+  /* Panels padding réduit */
+  .panel { padding: .6rem .75rem 80px !important; }
+
+  /* Cards pleine largeur */
+  .card-section { margin-bottom: .5rem !important; border-radius: 8px !important; }
+
+  /* KPI stats en grille 2x2 */
+  .stats-row, .kpi-row, [id*="kpi-"] {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr !important;
+    gap: 6px !important;
+  }
+
+  /* Tables scrollables horizontalement */
+  .score-table-wrap, .table-wrap, [style*="overflow-x"] {
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+  }
+  .score-table { min-width: 600px !important; font-size: 11.5px !important; }
+  .score-table th, .score-table td { padding: 6px 7px !important; }
+
+  /* Formulaires en colonne */
+  .form-row, .fields-row, [style*="display:flex"][style*="gap"] {
+    flex-wrap: wrap !important;
+  }
+
+  /* Filtres catégories scrollables */
+  .cat-filters { overflow-x: auto; -webkit-overflow-scrolling: touch; white-space: nowrap; flex-wrap: nowrap !important; }
+
+  /* Inputs pleine largeur */
+  input[type="text"], input[type="number"], select, textarea {
+    max-width: 100% !important;
+  }
+
+  /* Bottom bar visible */
+  .bbar {
+    display: flex !important;
+    position: fixed !important;
+    bottom: 0; left: 0; right: 0;
+    z-index: 200;
+    padding-bottom: env(safe-area-inset-bottom, 8px);
+  }
+}
+
+/* ===== BOTTOM BAR CSS ===== */
+.bbar {
+  display: none;
+  align-items: stretch;
+  justify-content: space-around;
+  background: rgba(8,12,24,.97);
+  border-top: 0.5px solid rgba(255,255,255,.1);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+}
+.bn-item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  padding: 8px 4px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-family: inherit;
+  transition: all .15s ease;
+  position: relative;
+}
+.bn-item i  { font-size: 22px; color: rgba(255,255,255,.35); transition: color .15s; }
+.bn-item span { font-size: 9px; color: rgba(255,255,255,.35); transition: color .15s; }
+.bn-item::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 20%; right: 20%;
+  height: 2.5px;
+  border-radius: 0 0 3px 3px;
+  background: transparent;
+  transition: background .15s;
+}
+.bn-item.on i    { color: #4ade9e; }
+.bn-item.on span { color: #4ade9e; }
+.bn-item.on::before { background: #4ade9e; }
+.bn-item:active { transform: scale(.94); }
+
+/* Bottom sheet */
+.bottom-sheet {
+  background: rgba(10,14,28,.97);
+  border-top: 0.5px solid rgba(255,255,255,.12);
+  backdrop-filter: blur(32px);
+  -webkit-backdrop-filter: blur(32px);
+}
+.bs-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 10px 6px;
+  background: rgba(255,255,255,.06);
+  border: 0.5px solid rgba(255,255,255,.09);
+  border-radius: 10px;
+  cursor: pointer;
+  font-family: inherit;
+  transition: all .15s;
+}
+.bs-item i    { font-size: 20px; color: rgba(255,255,255,.6); }
+.bs-item span { font-size: 9.5px; color: rgba(255,255,255,.5); text-align: center; line-height: 1.3; }
+.bs-item:hover, .bs-item:active { background: rgba(74,222,158,.12); border-color: rgba(74,222,158,.25); }
+.bs-item:hover i, .bs-item:hover span { color: #4ade9e; }
+
+@keyframes slideUp {
+  from { transform: translateY(100%); opacity: 0; }
+  to   { transform: translateY(0);    opacity: 1; }
+}
+@keyframes slideDown {
+  from { transform: translateY(0);    opacity: 1; }
+  to   { transform: translateY(100%); opacity: 0; }
+}
 
 </style>
 </head>
@@ -2845,6 +2986,7 @@ function updateSelPanel() {
 var TAB_IDS = ["scoring","ads","metaads","marge","saisonnal","perf","contenu","rapport","dashboard","checklist","geo","spy","tendances","calculateurs","guidads","woocommerce","translator","analytics","integrations","admin"];
 function showMain(t) {
   updateSidebarActive(t);
+  try { updateBNActive(t); } catch(e) {}
   document.querySelectorAll(".mtab").forEach(function(b, i){
     var isOn = TAB_IDS[i] === t;
     b.classList.toggle("on", isOn);
@@ -6612,21 +6754,21 @@ function toastLoad(msg) { toast(msg, "default", 10000); return Date.now(); }
 var BN_MAIN = ["scoring","ads","marge","tendances"];
 
 var BN_MORE_TABS = [
-  {id:"saisonnal",  icon:"ti-calendar",        label:"Saison"},
-  {id:"perf",       icon:"ti-chart-line",       label:"Perf"},
-  {id:"contenu",    icon:"ti-pencil",           label:"Contenu"},
-  {id:"rapport",    icon:"ti-file-text",        label:"Rapport"},
-  {id:"dashboard",  icon:"ti-layout-dashboard", label:"Dashboard"},
-  {id:"checklist",  icon:"ti-check",            label:"Checklist"},
-  {id:"geo",        icon:"ti-map-pin",          label:"Geo"},
-  {id:"spy",        icon:"ti-eye",              label:"Espion"},
-  {id:"calculateurs",icon:"ti-calculator",      label:"Calcul"},
-  {id:"guidads",    icon:"ti-target",           label:"Guide"},
-  {id:"woocommerce",icon:"ti-shopping-cart",    label:"Woo"},
-  {id:"translator", icon:"ti-language",         label:"Traduct"},
-  {id:"analytics",   icon:"ti-chart-bar",       label:"Analytics"},
-  {id:"integrations",icon:"ti-puzzle",          label:"Outils"},
-  {id:"metaads",     icon:"ti-brand-meta",      label:"Meta Ads"}
+  {id:"dashboard",     icon:"ti-layout-dashboard", label:"Dashboard"},
+  {id:"tendances",     icon:"ti-trending-up",       label:"Tendances"},
+  {id:"saisonnal",     icon:"ti-calendar",           label:"Saison"},
+  {id:"perf",          icon:"ti-chart-line",          label:"Perf"},
+  {id:"analytics",     icon:"ti-brand-google-analytics", label:"Analytics"},
+  {id:"contenu",       icon:"ti-pencil",              label:"Contenu AI"},
+  {id:"guidads",       icon:"ti-target",              label:"Guide Ads"},
+  {id:"spy",           icon:"ti-eye",                 label:"Espion Ads"},
+  {id:"rapport",       icon:"ti-file-text",           label:"Rapport"},
+  {id:"checklist",     icon:"ti-check",               label:"Checklist"},
+  {id:"geo",           icon:"ti-globe",               label:"Géo"},
+  {id:"woocommerce",   icon:"ti-shopping-cart",       label:"WooCom."},
+  {id:"calculateurs",  icon:"ti-calculator",          label:"Calculs"},
+  {id:"translator",    icon:"ti-language",            label:"Traducteur"},
+  {id:"integrations",  icon:"ti-plug",                label:"Intégrations"}
 ];
 
 function initBottomNav() {
@@ -8917,6 +9059,74 @@ function adminResetCode(userName) {
 }
 
 
+
+// ============================================================
+// BOTTOM NAVIGATION MOBILE — Option A
+// ============================================================
+
+function openBottomSheet() {
+  var sheet   = document.getElementById("bottom-sheet");
+  var overlay = document.getElementById("bs-overlay");
+  if (!sheet) return;
+  sheet.style.display   = "block";
+  sheet.style.animation = "slideUp .28s cubic-bezier(.4,0,.2,1) both";
+  if (overlay) overlay.style.display = "block";
+  document.body.style.overflow = "hidden";
+}
+
+function closeBottomSheet() {
+  var sheet   = document.getElementById("bottom-sheet");
+  var overlay = document.getElementById("bs-overlay");
+  if (!sheet) return;
+  sheet.style.animation = "slideDown .22s cubic-bezier(.4,0,.2,1) both";
+  setTimeout(function() { sheet.style.display = "none"; }, 220);
+  if (overlay) overlay.style.display = "none";
+  document.body.style.overflow = "";
+}
+
+function selectMoreTab(tabId) {
+  closeBottomSheet();
+  showMain(tabId);
+  // Marquer "Plus" comme actif dans la bbar
+  var items = document.querySelectorAll(".bn-item");
+  items.forEach(function(el) { el.classList.remove("on"); });
+  var moreBtn = document.querySelector(".bn-item[data-tab='__more']");
+  if (moreBtn) moreBtn.classList.add("on");
+}
+
+function setBNActive(btn) {
+  document.querySelectorAll(".bn-item").forEach(function(el) { el.classList.remove("on"); });
+  if (btn) btn.classList.add("on");
+  closeBottomSheet();
+}
+
+function updateBNActive(tabId) {
+  var mainTabs = ["scoring","ads","metaads","marge"];
+  var items    = document.querySelectorAll(".bn-item");
+  items.forEach(function(el) { el.classList.remove("on"); });
+  var target = document.querySelector(".bn-item[data-tab='" + tabId + "']");
+  if (target) {
+    target.classList.add("on");
+  } else if (mainTabs.indexOf(tabId) < 0) {
+    var moreBtn = document.querySelector(".bn-item[data-tab='__more']");
+    if (moreBtn) moreBtn.classList.add("on");
+  }
+}
+
+// Swipe to close bottom sheet
+(function() {
+  var startY = 0;
+  document.addEventListener("touchstart", function(e) {
+    startY = e.touches[0].clientY;
+  }, { passive: true });
+  document.addEventListener("touchend", function(e) {
+    var dy = e.changedTouches[0].clientY - startY;
+    var sheet = document.getElementById("bottom-sheet");
+    if (sheet && sheet.style.display !== "none" && dy > 60) closeBottomSheet();
+  }, { passive: true });
+})();
+
+
 // INIT -- EN DERNIER
 // ============================================================
 initDarkMode();
@@ -8924,6 +9134,7 @@ initLoginCanvas();
 initAmbientCanvas();
 initSidebar();
 initCardTilt();
+initBottomNav();
 initAccessControl();
 updateApiBar();
 renderCatTabs();
@@ -9580,5 +9791,23 @@ tbody tr:nth-child(even) td {
   border-color: rgba(255,255,255,.2) !important;
 }
 </style>
+
+<!-- ===== BOTTOM NAV MOBILE ===== -->
+<div class="bbar" id="bbar">
+  <button class="bn-item on" data-tab="scoring"   onclick="showMain('scoring');setBNActive(this)"><i class="ti ti-chart-bar" aria-hidden="true"></i><span>Produits</span></button>
+  <button class="bn-item"    data-tab="ads"        onclick="showMain('ads');setBNActive(this)"><i class="ti ti-speakerphone" aria-hidden="true"></i><span>Ads</span></button>
+  <button class="bn-item"    data-tab="metaads"    onclick="showMain('metaads');setBNActive(this)"><i class="ti ti-brand-meta" aria-hidden="true"></i><span>Meta</span></button>
+  <button class="bn-item"    data-tab="marge"      onclick="showMain('marge');setBNActive(this)"><i class="ti ti-coin" aria-hidden="true"></i><span>Marge</span></button>
+  <button class="bn-item"    data-tab="__more"     onclick="openBottomSheet()"><i class="ti ti-dots" aria-hidden="true"></i><span>Plus</span></button>
+</div>
+
+<!-- Bottom sheet "Plus" -->
+<div id="bs-overlay" onclick="closeBottomSheet()" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:299;backdrop-filter:blur(3px)"></div>
+<div class="bottom-sheet" id="bottom-sheet" style="display:none;position:fixed;bottom:0;left:0;right:0;z-index:300;border-radius:16px 16px 0 0;padding:12px 12px 24px">
+  <div style="width:36px;height:4px;border-radius:2px;background:rgba(255,255,255,.2);margin:0 auto 12px"></div>
+  <div style="font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.6px;color:rgba(255,255,255,.3);margin-bottom:10px;padding:0 4px">Tous les onglets</div>
+  <div id="bs-grid" style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px"></div>
+</div>
+
 </body>
 </html>
