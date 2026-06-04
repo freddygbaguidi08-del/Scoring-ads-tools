@@ -5956,7 +5956,22 @@ async function doLogin() {
 
   err.style.color = "#085041";
   err.textContent = "Acces accorde! Chargement...";
-  setTimeout(hideLockScreen, 800);
+
+  // Vérifier si l'utilisateur doit changer son code
+  if (user.mustChangeCode === true) {
+    setTimeout(function() {
+      // Mettre à jour ACCESS.currentUser avec les vraies données user
+      ACCESS.currentUser = {
+        name: user.name, code: user.code, role: user.role,
+        expires: expiry.toISOString(), isAdmin: false,
+        mustChangeCode: true
+      };
+      sess = ACCESS.currentUser;
+      showChangeCodeScreen(user.name);
+    }, 600);
+  } else {
+    setTimeout(hideLockScreen, 800);
+  }
 }
 
 function doAdminLogin() {
@@ -8789,12 +8804,27 @@ function confirmNewCode() {
   localStorage.setItem("ac_users", JSON.stringify(ACCESS.users));
   scheduleSync();
 
-  // Masquer l'écran et ouvrir l'outil
+  // Mettre à jour la session localStorage avec le nouveau code
+  var currentSession = JSON.parse(localStorage.getItem("ac_session") || "null");
+  if (currentSession) {
+    currentSession.code          = v1;
+    currentSession.mustChangeCode = false;
+    currentSession.codeIsPersonal = true;
+    localStorage.setItem("ac_session", JSON.stringify(currentSession));
+    sess = currentSession;
+    ACCESS.currentUser = currentSession;
+  }
+
+  // Pousser vers JSONBin
+  pushLogToJB && pushLogToJB();
+  scheduleSync && scheduleSync();
+
+  // Masquer l'écran de changement et ouvrir l'outil
   var box = document.getElementById("login-box-change");
   if (box) box.style.display = "none";
   hideLockScreen();
   loadUserData();
-  toastOK({title:"Code personnel créé !", msg:"Ton nouveau code sera utilisé à chaque connexion."});
+  toastOK({title:"Code personnel créé ✅", msg:"Ton nouveau code est actif. Utilise-le à ta prochaine connexion."});
 }
 
 // ---- Changer son code depuis les paramètres (utilisateur connecté) ----
