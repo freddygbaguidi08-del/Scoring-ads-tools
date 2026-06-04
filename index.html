@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>NOF — Cockpit E-commerce</title>
-<meta name="description" content="Scoring produits, generateur d ads IA et geo-ciblage pour NOF">
+<title>UrbanElectroStore — Cockpit E-commerce</title>
+<meta name="description" content="Scoring produits, generateur d ads IA et geo-ciblage pour UrbanElectroStore">
 <meta name="theme-color" content="#18180f">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -963,7 +963,7 @@ input[type="text"] { color: #e2e8f0 !important; }
   <div class="login-scene">
     <div class="login-box" id="login-box-user">
       <span class="logo">🛍</span>
-      <h2>NOF</h2>
+      <h2>UrbanElectroStore</h2>
       <p class="sub">Entre tes identifiants pour acceder au Cockpit</p>
       <div class="login-field">
         <label>Prenom ou identifiant</label>
@@ -1008,7 +1008,7 @@ input[type="text"] { color: #e2e8f0 !important; }
 </div>
 
 <div class="topbar">
-  <h1 style="font-size:13px;font-weight:600;white-space:nowrap;margin:0;flex-shrink:0">&#128722; NOF</h1>
+  <h1 style="font-size:13px;font-weight:600;white-space:nowrap;margin:0;flex-shrink:0">&#128722; UrbanElectroStore</h1>
     <span id="api-topbar-badge" onclick="toggleApiPanel()" title="Cliquer pour configurer la clé IA" style="display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:20px;font-size:11px;cursor:pointer;flex-shrink:0;transition:all .15s;background:rgba(251,191,36,.15);border:0.5px solid rgba(251,191,36,.3);color:#fbbf24">&#9888; IA non configurée</span>
   <div class="topr" style="display:flex;align-items:center;gap:4px;flex-wrap:nowrap;flex:1;justify-content:flex-end;overflow:hidden">
     <span id="sync-indicator" onclick="manualSync()" title="Synchroniser" style="font-size:11px;font-weight:500;padding:3px 8px;border-radius:20px;cursor:pointer;background:var(--blbg);color:var(--blu);display:inline-flex;align-items:center;gap:3px;white-space:nowrap;flex-shrink:0">&#9729;</span>
@@ -1067,6 +1067,8 @@ input[type="text"] { color: #e2e8f0 !important; }
   <div class="sb-item" id="sb-translator"  onclick="showMain('translator')"  aria-label="Traducteur"><span class="sb-icon">&#127758;</span><span class="sb-label">Traducteur</span></div>
   <div class="sb-item" id="sb-integrations" onclick="showMain('integrations')" aria-label="Intégrations"><span class="sb-icon">&#128279;</span><span class="sb-label">Intégrations</span></div>
 
+  <div class="sb-sep"></div>
+  <div class="sb-item" id="sb-change-code" onclick="openChangeCodeModal()" aria-label="Changer mon code" title="Changer mon code d acces"><span class="sb-icon">&#128273;</span><span class="sb-label">Mon code</span></div>
   <div class="sb-sep"></div>
   <div class="sb-item" id="sb-admin"      onclick="showMain('admin')"      aria-label="Admin" style="display:none"><span class="sb-icon">&#128274;</span><span class="sb-label">Admin Accès</span></div>
 </nav>
@@ -1621,7 +1623,7 @@ input[type="text"] { color: #e2e8f0 !important; }
       <div class="form-row" style="margin-top:.5rem">
         <div class="form-group" style="flex:1;min-width:200px">
           <label>URL de ta boutique</label>
-          <input type="text" id="wc-url" placeholder="https://NOF.com" style="width:100%">
+          <input type="text" id="wc-url" placeholder="https://urbanelectrostore.com" style="width:100%">
         </div>
       </div>
       <div class="form-row">
@@ -1846,7 +1848,16 @@ CTA : Voir l offre" style="width:100%;height:130px;padding:7px 9px;border:1px so
         </select>
       </div>
     </div>
-    <button class="btn bg" onclick="addUser()" style="margin-top:.35rem">+ Ajouter cet utilisateur</button>
+      <div class="form-group" style="margin-top:.5rem">
+        <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:12.5px;text-transform:none;letter-spacing:0;opacity:1">
+          <input type="checkbox" id="new-user-force-change" checked style="width:15px;height:15px;accent-color:var(--grn);cursor:pointer">
+          <span>Forcer le changement de code à la 1ère connexion</span>
+          <span style="font-size:10.5px;color:var(--mut)">(recommandé)</span>
+        </label>
+      </div>
+    <div style="display:flex;gap:7px;margin-top:.5rem">
+      <button class="btn bg" onclick="addUser()">+ Ajouter cet utilisateur</button>
+    </div>
   </div>
 
   <!-- Liste des utilisateurs -->
@@ -3594,7 +3605,7 @@ function exportScoring() {
 
 // ============================================================
 // EXPORT WOOCOMMERCE CSV — mappage complet 64 colonnes
-// Basé sur le format réel du fichier product-export d NOF
+// Basé sur le format réel du fichier product-export d UrbanElectroStore
 // ============================================================
 function exportWooCSV() {
   // Mapping catégories cockpit → catégories WooCommerce réelles
@@ -3690,7 +3701,7 @@ function exportWooCSV() {
     var focuskw = name.split(" ").slice(0,4).join(" ").toLowerCase();
 
     // meta:_yoast_wpseo_title — titre SEO
-    var seoTitle = name + " | NOF";
+    var seoTitle = name + " | UrbanElectroStore";
 
     // meta:_yoast_wpseo_metadesc — meta description
     var metadesc = "Achetez " + name + " au meilleur prix sur UrbanElectroStore";
@@ -6119,14 +6130,27 @@ function addUser() {
       ACCESS.users.splice(i, 1); break;
     }
   }
-  ACCESS.users.push({name:name, code:code, role:role, expiry:expiry, active:true, created:new Date().toISOString(), lastAccess:null});
+  var forceChange = (document.getElementById("new-user-force-change")||{}).checked !== false;
+  ACCESS.users.push({
+    name:name, code:code, role:role, expiry:expiry,
+    active:true, created:new Date().toISOString(), lastAccess:null,
+    mustChangeCode: forceChange,
+    codeIsPersonal: false
+  });
   localStorage.setItem("ac_users", JSON.stringify(ACCESS.users));
+  scheduleSync();
   // Clear form
   var el;
   el = document.getElementById("new-user-name"); if(el) el.value = "";
   el = document.getElementById("new-user-code"); if(el) el.value = "";
+  var fc = document.getElementById("new-user-force-change"); if(fc) fc.checked = true;
   renderAdminPanel();
-  toastInfo("Utilisateur " + name + " ajoute! Code: " + code + "\nPartage ces informations: Prenom: " + name + " | Code: " + code + (expiry?" | Expire le: "+expiry:""));
+  var msg = "Utilisateur " + name + " ajouté !\n\n"
+    + "Prénom : " + name + "\n"
+    + "Code provisoire : " + code + (expiry ? "\nExpire le : " + expiry : "")
+    + (forceChange ? "\n\n⚠️ L utilisateur devra changer son code à la 1ère connexion." : "");
+  toastOK({title:"Utilisateur créé", msg:name + " — Code : " + code + (forceChange ? " (provisoire)" : "")});
+  if (navigator.clipboard) navigator.clipboard.writeText("Prénom : " + name + "\nCode : " + code).catch(function(){});
 }
 
 function toggleUserAccess(idx) {
@@ -6148,7 +6172,7 @@ function deleteUser(idx) {
 function copyInvite(idx) {
   var u = ACCESS.users[idx];
   if (!u) return;
-  var msg = "Bonjour " + u.name + ",\n\nTu as acces au Cockpit E-commerce NOF.\n\n"
+  var msg = "Bonjour " + u.name + ",\n\nTu as acces au Cockpit E-commerce UrbanElectroStore.\n\n"
     + "Lien : " + window.location.href.split("?")[0] + "\nPrenom : " + u.name + "\nCode : " + u.code
     + (u.expiry ? "\nAcces valable jusqu au : " + u.expiry : "")
     + "\n\nBonne utilisation !";
@@ -6216,9 +6240,12 @@ function renderUsersList() {
     var statusCl = !u.active ? "#7a1a1a" : expired ? "#7a4a00" : "#085041";
     var statusLbl= !u.active ? "Revoque"  : expired ? "Expire"  : "Actif";
     var lastAcc  = u.lastAccess ? new Date(u.lastAccess).toLocaleDateString("fr-FR") : "Jamais";
+    var codeBadge = u.mustChangeCode
+      ? "<span style='font-size:10px;padding:1px 7px;border-radius:4px;background:rgba(251,191,36,.15);color:#fbbf24;border:0.5px solid rgba(251,191,36,.3)'>⚠️ Provisoire</span>"
+      : (u.codeIsPersonal ? "<span style='font-size:10px;padding:1px 7px;border-radius:4px;background:rgba(74,222,158,.12);color:#4ade9e;border:0.5px solid rgba(74,222,158,.25)'>✅ Personnel</span>" : "");
     return "<div class='user-row'>"
       + "<span class='uname'>" + u.name + "</span>"
-      + "<span class='ucode'>" + u.code + "</span>"
+      + "<span class='ucode'>" + u.code + " " + codeBadge + "</span>"
       + "<span class='ustatus' style='background:" + statusBg + ";color:" + statusCl + "'>" + statusLbl + "</span>"
       + "<span class='uexp'>" + (u.expiry ? "Expire " + u.expiry : "Sans expiration") + "</span>"
       + "<span class='uexp'>" + roleLabel[u.role||"viewer"] + "</span>"
@@ -6227,6 +6254,7 @@ function renderUsersList() {
         + "<button class='btn bsm bg' onclick='copyInvite(" + i + ")' title='Copier invitation'>&#128231;</button>"
         + "<button class='btn bsm' onclick='toggleUserAccess(" + i + ")' title='" + (u.active?"Revoquer l acces":"Reactiver l acces") + "' style='color:" + (u.active?"#7a1a1a":"#085041") + "'>"
           + (u.active ? "&#128683; Revoquer" : "&#9989; Reactiver") + "</button>"
+        + "<button class='btn bsm' onclick='adminResetCode(ACCESS.users[" + i + "].name)' title='Réinitialiser le code provisoire' style='font-size:11px'>&#128273; Reset</button>"
         + "<button class='btn bsm' onclick='deleteUser(" + i + ")' title='Supprimer' style='color:var(--red)'>&#128465;</button>"
       + "</div>"
       + "</div>";
@@ -7332,7 +7360,7 @@ function renderFeedPreview(ad, cta, ctaLabel, row) {
   return "<div style='max-width:280px;border:0.5px solid var(--bord2);border-radius:10px;overflow:hidden;background:var(--sur);font-family:Arial,sans-serif'>"
     + "<div style='display:flex;align-items:center;gap:7px;padding:8px 10px'>"
       + "<div style='width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#1877f2,#42b0ff);flex-shrink:0'></div>"
-      + "<div><div style='font-size:12px;font-weight:600;color:#1a1a1a'>NOF</div>"
+      + "<div><div style='font-size:12px;font-weight:600;color:#1a1a1a'>UrbanElectroStore</div>"
         + "<div style='font-size:10px;color:#8a8a8a'>Sponsorisé · &#127758;</div></div>"
     + "</div>"
     + "<div style='padding:0 10px 6px;font-size:12px;color:#1a1a1a;line-height:1.5'>" + (ad.primary_text||"").slice(0,80) + (ad.primary_text&&ad.primary_text.length>80?"…":"") + "</div>"
@@ -8656,6 +8684,206 @@ function toggleApiPanel() {
   bar.style.cssText = isHidden
     ? "display:flex !important;align-items:center;gap:8px;padding:.5rem 1rem;background:rgba(13,17,23,.85);border-bottom:0.5px solid rgba(255,255,255,.1);flex-wrap:wrap;backdrop-filter:blur(20px)"
     : "display:none !important";
+}
+
+
+// ============================================================
+// CHANGEMENT DE CODE — Écran dédié + Paramètres utilisateur
+// ============================================================
+
+// ---- Écran changement de code (1ère connexion) ----
+function showChangeCodeScreen(userName) {
+  var overlay = document.getElementById("login-overlay");
+  var boxUser  = document.getElementById("login-box-user");
+  var boxAdmin = document.getElementById("login-box-admin");
+  if (boxUser)  boxUser.style.display  = "none";
+  if (boxAdmin) boxAdmin.style.display = "none";
+
+  // Créer l'écran de changement si absent
+  var box = document.getElementById("login-box-change");
+  if (!box) {
+    box = document.createElement("div");
+    box.className = "login-box";
+    box.id = "login-box-change";
+    var scene = document.querySelector(".login-scene");
+    if (scene) scene.appendChild(box);
+    else if (overlay) overlay.appendChild(box);
+  }
+
+  box.innerHTML = ""
+    + "<span class='logo' style='filter:drop-shadow(0 0 16px rgba(251,191,36,.5))'>&#128274;</span>"
+    + "<h2>Choisir mon code d acces</h2>"
+    + "<p class='sub'>Code provisoire utilisé. Crée ton code personnel maintenant.</p>"
+    + "<div class='login-field'>"
+      + "<label>Nouveau code d acces</label>"
+      + "<input type='password' id='new-code-1' placeholder='Min. 6 caractères' autocomplete='new-password' oninput='validateNewCode()'>"
+    + "</div>"
+    + "<div class='login-field'>"
+      + "<label>Confirmer le code</label>"
+      + "<input type='password' id='new-code-2' placeholder='Répète ton code' autocomplete='new-password' onkeydown='if(event.key===\"Enter\")confirmNewCode()' oninput='validateNewCode()'>"
+    + "</div>"
+    + "<div id='change-code-strength' style='margin-bottom:.5rem;font-size:11.5px;min-height:18px'></div>"
+    + "<button class='login-btn' id='confirm-code-btn' onclick='confirmNewCode()' disabled style='opacity:.5'>Confirmer mon code</button>"
+    + "<div class='login-err' id='change-code-err'></div>";
+
+  box.style.display = "";
+  if (overlay) overlay.style.display = "flex";
+  setTimeout(function() {
+    var inp = document.getElementById("new-code-1");
+    if (inp) inp.focus();
+  }, 100);
+}
+
+function validateNewCode() {
+  var v1    = (document.getElementById("new-code-1")||{}).value || "";
+  var v2    = (document.getElementById("new-code-2")||{}).value || "";
+  var btn   = document.getElementById("confirm-code-btn");
+  var str   = document.getElementById("change-code-strength");
+  var err   = document.getElementById("change-code-err");
+  if (err) err.textContent = "";
+
+  // Force indicator
+  var strength = 0;
+  if (v1.length >= 6)  strength++;
+  if (v1.length >= 8)  strength++;
+  if (/[0-9]/.test(v1)) strength++;
+  if (/[A-Z]/.test(v1)) strength++;
+  var colors = ["","#ef4444","#f59e0b","#10b981","#10b981"];
+  var labels = ["","Trop court","Faible","Bon","Fort"];
+  if (str && v1.length > 0) {
+    str.innerHTML = "<span style='color:" + (colors[strength]||"#64748b") + "'>"
+      + "● ".repeat(Math.min(strength, 4)) + "○ ".repeat(Math.max(0, 4-strength))
+      + " " + (labels[strength]||"") + "</span>";
+  } else if (str) { str.innerHTML = ""; }
+
+  var ok = v1.length >= 6 && v1 === v2;
+  if (btn) { btn.disabled = !ok; btn.style.opacity = ok ? "1" : ".5"; }
+}
+
+function confirmNewCode() {
+  var v1  = ((document.getElementById("new-code-1")||{}).value || "").trim().toUpperCase();
+  var v2  = ((document.getElementById("new-code-2")||{}).value || "").trim().toUpperCase();
+  var err = document.getElementById("change-code-err");
+  if (!v1 || v1.length < 6) { if(err) err.textContent = "Le code doit avoir au moins 6 caractères."; return; }
+  if (v1 !== v2)            { if(err) err.textContent = "Les deux codes ne correspondent pas."; return; }
+
+  // Mettre à jour le code de l'utilisateur
+  var user = ACCESS.currentUser;
+  if (!user) return;
+  var updated = false;
+  for (var i = 0; i < ACCESS.users.length; i++) {
+    if (ACCESS.users[i].name.toLowerCase() === user.name.toLowerCase()) {
+      ACCESS.users[i].code          = v1;
+      ACCESS.users[i].mustChangeCode = false;
+      ACCESS.users[i].codeIsPersonal = true;
+      updated = true;
+      break;
+    }
+  }
+  if (!updated) { if(err) err.textContent = "Erreur — utilisateur introuvable."; return; }
+
+  // Mettre à jour la session
+  ACCESS.currentUser.code          = v1;
+  ACCESS.currentUser.mustChangeCode = false;
+  ACCESS.currentUser.codeIsPersonal = true;
+  localStorage.setItem("ac_users", JSON.stringify(ACCESS.users));
+  scheduleSync();
+
+  // Masquer l'écran et ouvrir l'outil
+  var box = document.getElementById("login-box-change");
+  if (box) box.style.display = "none";
+  hideLockScreen();
+  loadUserData();
+  toastOK({title:"Code personnel créé !", msg:"Ton nouveau code sera utilisé à chaque connexion."});
+}
+
+// ---- Changer son code depuis les paramètres (utilisateur connecté) ----
+function openChangeCodeModal() {
+  var existing = document.getElementById("modal-change-code");
+  if (existing) { existing.parentElement.style.display = "flex"; return; }
+
+  var bg = document.createElement("div");
+  bg.className = "mbg";
+  bg.style.display = "flex";
+  bg.id = "modal-change-code-bg";
+  bg.innerHTML = "<div class='modal' id='modal-change-code' style='max-width:380px'>"
+    + "<h3 style='margin-bottom:1rem;font-size:15px'>&#128274; Changer mon code d acces</h3>"
+    + "<div class='form-group' style='margin-bottom:.65rem'>"
+      + "<label>Code actuel</label>"
+      + "<input type='password' id='cc-current' placeholder='Ton code actuel' style='width:100%'>"
+    + "</div>"
+    + "<div class='form-group' style='margin-bottom:.65rem'>"
+      + "<label>Nouveau code (min. 6 caractères)</label>"
+      + "<input type='password' id='cc-new1' placeholder='Nouveau code' style='width:100%'>"
+    + "</div>"
+    + "<div class='form-group' style='margin-bottom:.85rem'>"
+      + "<label>Confirmer le nouveau code</label>"
+      + "<input type='password' id='cc-new2' placeholder='Confirmer' style='width:100%' onkeydown='if(event.key===\"Enter\")submitChangeCode()'>"
+    + "</div>"
+    + "<div id='cc-err' style='font-size:12px;color:var(--red);min-height:18px;margin-bottom:.5rem'></div>"
+    + "<div style='display:flex;gap:8px'>"
+      + "<button class='btn bg' onclick='submitChangeCode()'>Changer mon code</button>"
+      + "<button class='btn' onclick='this.closest(\".mbg\").style.display=\"none\"'>Annuler</button>"
+    + "</div>"
+    + "</div>";
+  document.body.appendChild(bg);
+}
+
+function submitChangeCode() {
+  var current = ((document.getElementById("cc-current")||{}).value || "").trim().toUpperCase();
+  var new1    = ((document.getElementById("cc-new1")||{}).value    || "").trim().toUpperCase();
+  var new2    = ((document.getElementById("cc-new2")||{}).value    || "").trim().toUpperCase();
+  var err     = document.getElementById("cc-err");
+  if (err) err.textContent = "";
+
+  var user = ACCESS && ACCESS.currentUser;
+  if (!user) { if(err) err.textContent = "Session invalide."; return; }
+
+  // Vérifier code actuel
+  var found = null;
+  for (var i = 0; i < ACCESS.users.length; i++) {
+    if (ACCESS.users[i].name.toLowerCase() === user.name.toLowerCase()) {
+      found = ACCESS.users[i]; break;
+    }
+  }
+  if (!found || found.code.toUpperCase() !== current) {
+    if (err) err.textContent = "Code actuel incorrect."; return;
+  }
+  if (new1.length < 6) { if(err) err.textContent = "Le nouveau code doit avoir au moins 6 caractères."; return; }
+  if (new1 !== new2)   { if(err) err.textContent = "Les deux codes ne correspondent pas."; return; }
+  if (new1 === current){ if(err) err.textContent = "Le nouveau code doit être différent de l actuel."; return; }
+
+  // Sauvegarder
+  found.code          = new1;
+  found.mustChangeCode = false;
+  found.codeIsPersonal = true;
+  localStorage.setItem("ac_users", JSON.stringify(ACCESS.users));
+  scheduleSync();
+
+  var bg = document.getElementById("modal-change-code-bg");
+  if (bg) bg.style.display = "none";
+  toastOK({title:"Code changé avec succès !", msg:"Ton nouveau code est actif immédiatement."});
+}
+
+// ---- Reset code par l'admin ----
+function adminResetCode(userName) {
+  var newCode = prompt("Nouveau code provisoire pour " + userName + " :", "");
+  if (!newCode || newCode.trim().length < 4) { toastWarn("Code trop court (min 4 caractères)"); return; }
+  newCode = newCode.trim().toUpperCase();
+  for (var i = 0; i < ACCESS.users.length; i++) {
+    if (ACCESS.users[i].name.toLowerCase() === userName.toLowerCase()) {
+      ACCESS.users[i].code          = newCode;
+      ACCESS.users[i].mustChangeCode = true;
+      ACCESS.users[i].codeIsPersonal = false;
+      localStorage.setItem("ac_users", JSON.stringify(ACCESS.users));
+      scheduleSync();
+      renderAdminPanel();
+      toastOK({title:"Code réinitialisé", msg:userName + " → " + newCode + " (provisoire)"});
+      if (navigator.clipboard) navigator.clipboard.writeText("Prénom : " + userName + "\nCode : " + newCode + "\n⚠️ Code provisoire — à changer à la 1ère connexion").catch(function(){});
+      return;
+    }
+  }
+  toastErr("Utilisateur introuvable");
 }
 
 
