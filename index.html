@@ -6142,6 +6142,24 @@ function initAccessControl() {
     ACCESS.users    = JSON.parse(localStorage.getItem("ac_users") || "[]");
     ACCESS.logs     = JSON.parse(localStorage.getItem("ac_logs")  || "[]");
   } catch(e) {}
+  // Récupérer adminPwd depuis JSONBin si perdu localement
+  if (!ACCESS.adminPwd && ACCESS.jbBinId && ACCESS.jbKey) {
+    setTimeout(async function() {
+      try {
+        var r = await fetch("https://api.jsonbin.io/v3/b/" + ACCESS.jbBinId + "/latest", {
+          headers: {"X-Master-Key": ACCESS.jbKey, "X-Bin-Meta": "false"}
+        });
+        var d = await r.json();
+        if (d && d.adminPwd) {
+          ACCESS.adminPwd = d.adminPwd;
+          var cfg2 = JSON.parse(localStorage.getItem("ac_config") || "{}");
+          cfg2.adminPwd = d.adminPwd;
+          localStorage.setItem("ac_config", JSON.stringify(cfg2));
+          console.log("[Admin] Mot de passe récupéré depuis le cloud");
+        }
+      } catch(e) {}
+    }, 1000);
+  }
 
   // Check for saved session
   try {
@@ -6319,7 +6337,57 @@ function doAdminLogin() {
   var err = document.getElementById("admin-err");
   if (!pwd) { err.textContent = "Entre le mot de passe admin."; return; }
   if (!ACCESS.adminPwd) {
-    // First time — set the password
+    // Vérifier si on est en train de récupérer depuis le cloud
+    if (ACCESS.jbBinId && ACCESS.jbKey) {
+      err.style.color = "var(--orn)";
+      err.textContent = "⏳ Récupération du mot de passe depuis le cloud...";
+      setTimeout(async function() {
+        try {
+          var r = await fetch("https://api.jsonbin.io/v3/b/" + ACCESS.jbBinId + "/latest", {
+            headers: {"X-Master-Key": ACCESS.jbKey, "X-Bin-Meta": "false"}
+          });
+          var d = await r.json();
+          if (d && d.adminPwd) {
+            ACCESS.adminPwd = d.adminPwd;
+            var cfg2 = JSON.parse(localStorage.getItem("ac_config") || "{}");
+            cfg2.adminPwd = d.adminPwd;
+            localStorage.setItem("ac_config", JSON.stringify(cfg2));
+            // Réessayer avec le pwd récupéré
+            if (pwd === ACCESS.adminPwd) {
+              err.textContent = "";
+              var expiry = new Date(); expiry.setDate(expiry.getDate() + 365);
+              var session = {name:"Admin", code:"ADMIN", role:"full", expires:expiry.toISOString(), isAdmin:true};
+              localStorage.setItem("ac_session", JSON.stringify(session));
+              ACCESS.currentUser = session; ACCESS.isAdmin = true;
+              hideLockScreen();
+            } else {
+              err.style.color = "var(--red)";
+              err.textContent = "Mot de passe incorrect.";
+            }
+          } else {
+            // Vraiment première fois — définir le mot de passe
+            ACCESS.adminPwd = pwd;
+            saveJBConfig();
+            var expiry = new Date(); expiry.setDate(expiry.getDate() + 365);
+            var session = {name:"Admin", code:"ADMIN", role:"full", expires:expiry.toISOString(), isAdmin:true};
+            localStorage.setItem("ac_session", JSON.stringify(session));
+            ACCESS.currentUser = session; ACCESS.isAdmin = true;
+            hideLockScreen();
+          }
+        } catch(e) {
+          // Pas de cloud → vraiment première fois
+          ACCESS.adminPwd = pwd;
+          saveJBConfig();
+          var expiry = new Date(); expiry.setDate(expiry.getDate() + 365);
+          var session = {name:"Admin", code:"ADMIN", role:"full", expires:expiry.toISOString(), isAdmin:true};
+          localStorage.setItem("ac_session", JSON.stringify(session));
+          ACCESS.currentUser = session; ACCESS.isAdmin = true;
+          hideLockScreen();
+        }
+      }, 500);
+      return;
+    }
+    // Pas de cloud configuré → première installation
     ACCESS.adminPwd = pwd;
     saveJBConfig();
     var expiry = new Date(); expiry.setDate(expiry.getDate() + 365);
