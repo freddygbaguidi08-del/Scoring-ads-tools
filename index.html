@@ -1,19 +1,3 @@
-<!DOCTYPE html>
-<html lang="fr">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>UrbanElectroStore — Cockpit E-commerce</title>
-<meta name="description" content="Scoring produits, generateur d ads IA et geo-ciblage pour UrbanElectroStore">
-<meta name="theme-color" content="#18180f">
-<meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="Cockpit Ads">
-<link rel="manifest" href="manifest.json">
-<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
-<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192x192.png">
-<link rel="icon" type="image/png" sizes="512x512" href="icons/icon-512x512.png">
 <style>
 :root{
   --bg:#0d1117;
@@ -158,9 +142,6 @@ body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-
 }
 /* Mobile — sidebar se cache, bottom bar reste */
 
-
-
-
 .panel{display:none;padding:.65rem .9rem 2rem}
 .panel.on{display:block}
 .al{padding:.5rem .8rem;border-radius:var(--r);font-size:11.5px;margin-bottom:.55rem}
@@ -254,7 +235,7 @@ tr.sel td{background:#f0f8f3}
   display: flex;
   align-items: center;
   justify-content: center;
-  min-height: 100dvh;
+  min-height: 100vh; min-height: 100vh; height: 100dvh;
   padding: 1.5rem;
   overflow-y: auto;
   overflow-x: hidden;
@@ -267,6 +248,7 @@ tr.sel td{background:#f0f8f3}
 .login-orb-3{width:200px;height:200px;background:rgba(139,92,246,.2);top:50%;right:10%;animation-delay:-5s}
 }
 .float-card{position:absolute;background:rgba(255,255,255,.04);backdrop-filter:blur(8px);border:0.5px solid rgba(255,255,255,.1);border-radius:12px;padding:.65rem .9rem;font-size:11px;color:rgba(255,255,255,.5);pointer-events:none;animation:floatCard 12s ease-in-out infinite;font-family:-apple-system,Arial,sans-serif}
+.float-card{position:absolute;background:rgba(255,255,255,.04);-webkit-backdrop-filter:blur(8px);border:0.5px solid rgba(255,255,255,.1);border-radius:12px;padding:.65rem .9rem;font-size:11px;color:rgba(255,255,255,.5);pointer-events:none;animation:floatCard 12s ease-in-out infinite;font-family:-apple-system,Arial,sans-serif}
 .float-card .fc-score{font-size:20px;font-weight:700;color:rgba(74,222,158,.9);line-height:1.1}
 .float-card .fc-name{font-size:10px;color:rgba(255,255,255,.4);margin-top:2px}
 .float-card .fc-label{font-size:9px;color:rgba(255,255,255,.25);text-transform:uppercase;letter-spacing:.5px}
@@ -286,6 +268,7 @@ tr.sel td{background:#f0f8f3}
 .login-box{
   background: rgba(255,255,255,.07);
   backdrop-filter: blur(28px) saturate(180%);
+  -webkit-backdrop-filter: blur(28px) saturate(180%);
   -webkit-backdrop-filter: blur(28px);
   border: 1px solid rgba(255,255,255,.13);
   border-radius: 22px;
@@ -505,12 +488,7 @@ th{position:sticky;top:0;z-index:1}
   #integ-iframe{height:calc(100vh - 180px);min-height:350px}
 }
 
-
-
 /* Dark mode specific overrides */
-
-
-
 
 /* Dark mode chart overrides */
 
@@ -524,12 +502,10 @@ th{position:sticky;top:0;z-index:1}
 #dark-toggle:hover{background:var(--bg)}
 #dark-toggle .label{font-size:11px;font-weight:500}
 
-
-
-
 /* --- Topbar glassmorphism --- */
 .topbar {
   backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
   -webkit-backdrop-filter: blur(20px);
   background: rgba(var(--sur-rgb, 255,255,255), .82) !important;
   border-bottom: 1px solid rgba(var(--bord-rgb, 0,0,0),.08) !important;
@@ -538,9 +514,6 @@ th{position:sticky;top:0;z-index:1}
 
 
 /* --- Card sections — depth + hover lift --- */
-
-
-
 
 /* --- Stat cards — 3D tilt on hover --- */
 
@@ -551,8 +524,6 @@ th{position:sticky;top:0;z-index:1}
   transform-style: preserve-3d;
   position: relative;
 }
-
-
 
 /* --- Tab buttons — active glow --- */
 .mtab.active, 
@@ -591,6 +562,7 @@ to{opacity:1;transform:translateY(0)}}
 .mbg {
   backdrop-filter: blur(4px);
   -webkit-backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
 }
 
 /* --- Ambient glow on cards with high scores --- */
@@ -617,8 +589,6 @@ to{opacity:1;transform:translateY(0)}}
 ::-webkit-scrollbar-thumb{background:var(--bord2);border-radius:3px}::-webkit-scrollbar-thumb:hover{background:var(--mut)}
 ::-webkit-scrollbar-thumb:hover { background: var(--mut); }
 
-
-
 select option { background:#1a1a1e; color:#f0ede4; }
 .ads-empty { color: rgba(255,255,255,.35); background: rgba(255,255,255,.03); border: 1px dashed rgba(255,255,255,.1); }
 .al { border-radius: var(--r); padding: .5rem .75rem; }
@@ -628,8 +598,6 @@ select option { background:#1a1a1e; color:#f0ede4; }
 .ab { background: rgba(96,165,250,.1); border: 1px solid rgba(96,165,250,.2); color: #60a5fa; }
 .aw { background: rgba(251,191,36,.1); border: 1px solid rgba(251,191,36,.2); color: #fbbf24; }
 h3 { color: var(--txt) !important; }
-
-
 
 html {
   background: radial-gradient(ellipse at 15% 40%, #0b1e36 0%, #020307 45%, #080805 100%) !important;
@@ -654,6 +622,7 @@ body {
 .card-section, .stat, .kpi-card {
   background: rgba(255,255,255,.07) !important;
   backdrop-filter: blur(20px) !important;
+  -webkit-backdrop-filter: blur(20px) !important;
   -webkit-backdrop-filter: blur(20px) !important;
   border: 1px solid rgba(255,255,255,.11) !important;
   color: var(--txt) !important;
@@ -682,22 +651,26 @@ select option {
 /* Tag/badge backgrounds */
 .bdg, .badge, .tag {
   backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
 }
 /* Bottom sheet glass */
 .bottom-sheet {
   background: rgba(6,10,20,.9) !important;
   backdrop-filter: blur(32px) !important;
+  -webkit-backdrop-filter: blur(32px) !important;
   border-top: 1px solid rgba(255,255,255,.1) !important;
 }
 /* Modal glass */
 .modal {
   background: rgba(6,10,20,.88) !important;
   backdrop-filter: blur(32px) !important;
+  -webkit-backdrop-filter: blur(32px) !important;
   border: 1px solid rgba(255,255,255,.12) !important;
 }
 /* Alert boxes */
 .al {
   backdrop-filter: blur(8px) !important;
+  -webkit-backdrop-filter: blur(8px) !important;
 }
 /* API bar */
 .api-bar {
@@ -770,16 +743,6 @@ label{color:var(--txt2) !important}
 
 /* Select dropdown */
 select option{background:var(--sur);color:var(--txt)}
-
-
-
-
-
-
-
-
-
-
 
 /* ===== EFFETS 3D SIDEBAR + PANELS ===== */
 
@@ -927,6 +890,7 @@ input[type="text"] { color: #e2e8f0 !important; }
 
 /* Opportunités immédiates banner */
 [style*="orbg"], [style*="gnbg"] { backdrop-filter: blur(8px) !important; }
+[style*="orbg"], [style*="gnbg"] { -webkit-backdrop-filter: blur(8px) !important; }
 
 
 /* ===================================================
@@ -948,8 +912,10 @@ input[type="text"] { color: #e2e8f0 !important; }
     font-size: 12px !important;
     max-width: 120px !important;
   }
-  /* Cacher les boutons secondaires sur mobile */
-  .topbar .topr .btn:not(.bg):not(.bb):not([onclick*="Cloud"]):not([onclick*="Import"]) {
+  /* Topbar mobile — icônes seulement */
+  .topbar .topr .btn[title="Rapport"],
+  .topbar .topr .btn[title="Reset"],
+  .topbar .topr .btn[title="Dédoublonner"] {
     display: none !important;
   }
 
@@ -1006,6 +972,7 @@ input[type="text"] { color: #e2e8f0 !important; }
   border-top: 0.5px solid rgba(255,255,255,.1);
   backdrop-filter: blur(24px);
   -webkit-backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
 }
 .bn-item {
   flex: 1;
@@ -1043,6 +1010,7 @@ input[type="text"] { color: #e2e8f0 !important; }
   background: rgba(10,14,28,.97);
   border-top: 0.5px solid rgba(255,255,255,.12);
   backdrop-filter: blur(32px);
+  -webkit-backdrop-filter: blur(32px);
   -webkit-backdrop-filter: blur(32px);
 }
 .bs-item {
@@ -1104,7 +1072,7 @@ input[type="text"] { color: #e2e8f0 !important; }
   display: flex !important;
   align-items: center !important;
   justify-content: center !important;
-  min-height: 100dvh;
+  min-height: 100vh; min-height: 100vh; height: 100dvh;
   padding: 1.25rem;
   overflow-y: auto;
   background: radial-gradient(ellipse at 20% 50%, #0a1628 0%, #030308 50%, #0a0a05 100%) !important;
@@ -1123,7 +1091,7 @@ input[type="text"] { color: #e2e8f0 !important; }
 .login-scene {
   position: relative !important;
   z-index: 10 !important;
-  width: min(420px, 100%) !important;
+  width: 420px !important; max-width: 100% !important;
   margin: 0 !important;
   flex-shrink: 0;
   perspective: 1200px;
@@ -1133,6 +1101,7 @@ input[type="text"] { color: #e2e8f0 !important; }
 .login-box {
   background: rgba(255,255,255,.08) !important;
   backdrop-filter: blur(32px) saturate(180%) !important;
+  -webkit-backdrop-filter: blur(32px) saturate(180%) !important;
   -webkit-backdrop-filter: blur(32px) !important;
   border: 1px solid rgba(255,255,255,.12) !important;
   border-radius: 20px !important;
@@ -1236,6 +1205,7 @@ input[type="text"] { color: #e2e8f0 !important; }
 .login-orb-2 { width: 280px; height: 280px; background: rgba(24,119,242,.3); bottom: -80px; right: -80px; animation-delay: -3s; }
 .login-orb-3 { width: 200px; height: 200px; background: rgba(139,92,246,.2); top: 50%; right: 10%; animation-delay: -5s; }
 .float-card { position: absolute !important; background: rgba(255,255,255,.05) !important; backdrop-filter: blur(8px) !important; border: 0.5px solid rgba(255,255,255,.1) !important; border-radius: 12px !important; padding: .65rem .9rem !important; font-size: 11px !important; color: rgba(255,255,255,.5) !important; pointer-events: none !important; animation: floatCard 12s ease-in-out infinite !important; }
+.float-card { position: absolute !important; background: rgba(255,255,255,.05) !important; -webkit-backdrop-filter: blur(8px) !important; border: 0.5px solid rgba(255,255,255,.1) !important; border-radius: 12px !important; padding: .65rem .9rem !important; font-size: 11px !important; color: rgba(255,255,255,.5) !important; pointer-events: none !important; animation: floatCard 12s ease-in-out infinite !important; }
 .fc-score { font-size: 20px !important; font-weight: 700 !important; color: rgba(74,222,158,.9) !important; line-height: 1.1 !important; }
 .fc-name  { font-size: 10px !important; color: rgba(255,255,255,.4) !important; margin-top: 2px !important; }
 .fc-label { font-size: 9px !important; color: rgba(255,255,255,.25) !important; text-transform: uppercase !important; letter-spacing: .5px !important; }
@@ -1256,6 +1226,18 @@ input[type="text"] { color: #e2e8f0 !important; }
   .login-box { padding: 1.5rem 1.25rem !important; }
   .login-box .logo { font-size: 32px !important; margin-bottom: .3rem !important; }
   .login-box .sub { margin-bottom: 1rem !important; }
+}
+
+
+@media (max-width: 768px) {
+  /* Stats en 2 colonnes */
+  .stats-wrap { display: grid !important; grid-template-columns: 1fr 1fr !important; gap: 8px !important; }
+  /* Filtre catégories scrollable */
+  #cat-filters { overflow-x: auto !important; flex-wrap: nowrap !important; padding-bottom: 4px !important; }
+  /* Formulaires en colonne */
+  .flex-row { flex-direction: column !important; }
+  /* Boutons pleine largeur sur mobile */
+  .btn-row { flex-wrap: wrap !important; }
 }
 
 </style>
@@ -2265,8 +2247,6 @@ CTA : Voir l offre" style="width:100%;height:130px;padding:7px 9px;border:1px so
 </div>
 
 <!-- MODAL AJOUT INTEGRATION -->
-
-
 
 <!-- TAB META ADS AGENT -->
 <div class="panel" id="tab-metaads">
@@ -5570,8 +5550,6 @@ function exportGuideAds() {
   a.download = "guide_ads_" + r[1].slice(0,20).replace(/\s/g,"_") + ".txt"; a.click();
 }
 
-
-
 // ============================================================
 // WOOCOMMERCE API
 // ============================================================
@@ -6076,8 +6054,6 @@ function clearTranslations() {
   var e = document.getElementById("tr-empty");  if(e) e.style.display = "block";
 }
 
-
-
 // ============================================================
 // DEDUPLICATION
 // ============================================================
@@ -6272,9 +6248,20 @@ async function doLogin() {
 
   err.textContent = "Verification...";
 
-  // Try to fetch from JSONBin first (live check)
-  var liveUsers = await fetchUsersFromJB();
-  var usersToCheck = (liveUsers && liveUsers.length) ? liveUsers : ACCESS.users;
+  // Connexion offline-first : utiliser les users locaux immédiatement
+  // Puis vérifier JSONBin en arrière-plan (ne bloque pas la connexion)
+  var usersToCheck = ACCESS.users;
+  try {
+    var liveUsers = await fetchUsersFromJB();
+    if (liveUsers && liveUsers.length) {
+      usersToCheck = liveUsers;
+      ACCESS.users = liveUsers;
+      localStorage.setItem("ac_users", JSON.stringify(liveUsers));
+    }
+  } catch(e) {
+    // JSONBin inaccessible (réseau lent/hors ligne) → on continue avec users locaux
+    console.warn("JSONBin unavailable, using local users:", e.message);
+  }
 
   var user = null;
   for (var i = 0; i < usersToCheck.length; i++) {
@@ -6285,7 +6272,7 @@ async function doLogin() {
   }
 
   if (!user) {
-    err.textContent = "Prenom ou code incorrect. Contacte l administrateur.";
+    err.textContent = "Prénom ou code incorrect. Si c'est ta première connexion, demande ton code à l'admin.";
     return;
   }
   if (!user.active) {
@@ -6419,7 +6406,11 @@ function saveJBConfig() {
 async function fetchUsersFromJB() {
   if (!ACCESS.jbBinId || !ACCESS.jbKey) return null;
   try {
+    // Timeout 8s pour connexions lentes (Afrique, mobile)
+    var controller = typeof AbortController !== "undefined" ? new AbortController() : null;
+    var timeoutId  = controller ? setTimeout(function() { controller.abort(); }, 8000) : null;
     var resp = await fetch("https://api.jsonbin.io/v3/b/" + ACCESS.jbBinId + "/latest", {
+      signal: controller ? controller.signal : undefined,
       headers: {"X-Master-Key": ACCESS.jbKey, "X-Bin-Meta": "false"}
     });
     if (!resp.ok) return null;
@@ -6650,8 +6641,6 @@ function exportUsersCSV() {
   });
   dl(rows.map(function(r){ return r.join(","); }).join("\n"), "utilisateurs_acces.csv");
 }
-
-
 
 // ============================================================
 // CLOUD SYNC — JSONBin.io (cross-device)
@@ -7097,8 +7086,6 @@ document.addEventListener("keydown", function(e) {
   // Ctrl+Shift+A — admin (already handled elsewhere)
 });
 
-
-
 // ============================================================
 // INTEGRATIONS SYSTEM
 // ============================================================
@@ -7445,8 +7432,6 @@ document.addEventListener("keydown", function(e) {
 
 // Also add integrations key to perUserKeys (update getUserKey)
 // done at perUserKeys array definition
-
-
 
 // ============================================================
 // META ADS AGENT
@@ -7872,8 +7857,6 @@ function exportMetaAds() {
   dl("\uFEFF"+rows.join("\n"), "meta_ads_"+r[1].slice(0,20).replace(/\s/g,"_")+"_"+new Date().toISOString().slice(0,10)+".csv");
   toastOK("Export CSV Meta Ads pret");
 }
-
-
 
 // ============================================================
 // META MARKETING API — création directe de pubs
@@ -8426,8 +8409,6 @@ function copyField(id) {
   });
 }
 
-
-
 function copyMetaIds() {
   if (!lastMetaAdResult) return;
   var txt = "Campaign ID: " + lastMetaAdResult.campaignId + "\nAdSet ID: " + lastMetaAdResult.adSetId + "\nCreative ID: " + lastMetaAdResult.creativeId + "\nAd ID: " + lastMetaAdResult.adId;
@@ -8437,22 +8418,20 @@ function copyMetaIds() {
 // loadMetaConfig est appelé depuis loadUserApiKeys au login
 // Ne pas redéfinir initMetaAdsAgent ici
 
-
-
 // ============================================================
 // DARK MODE
 // ============================================================
 var darkModeActive = false;
 
 function initDarkMode() {
-  // Thème clair toujours par défaut
-  document.documentElement.removeAttribute("data-theme");
-  darkModeActive = false;
-  localStorage.removeItem("theme");
+  // Space glass theme — always dark by default
+  darkModeActive = true;
+  document.documentElement.setAttribute("data-theme", "dark");
+  localStorage.setItem("theme", "dark");
   var icon  = document.getElementById("dark-icon");
   var label = document.getElementById("dark-label");
-  if (icon)  icon.textContent  = "🌙";
-  if (label) label.textContent = "Sombre";
+  if (icon)  icon.textContent  = "☀️";
+  if (label) label.textContent = "Clair";
 }
 
 function applyTheme(theme) {
@@ -8782,9 +8761,6 @@ function enrichScoresFromGA() {
   toastOK({title: enriched + " produits enrichis depuis Google Analytics", msg: "Scores CTR et Ventes mis a jour avec les vraies donnees"});
 }
 
-
-
-
 // ============================================================
 // 3D LOGIN — particles + tilt
 // ============================================================
@@ -8893,15 +8869,6 @@ function loginSuccessAnim(cb) {
   }, 350);
 }
 
-
-
-
-
-
-
-
-
-
 // ============================================================
 // SIDEBAR NAVIGATION
 // ============================================================
@@ -8944,8 +8911,6 @@ function updateSidebarActive(tab) {
 // Patch showMain pour mettre à jour la sidebar
 var _origShowMain = typeof showMain === "function" ? showMain : null;
 
-
-
 // ============================================================
 // CARD TILT 3D — effet subtil au survol
 // ============================================================
@@ -8970,8 +8935,6 @@ function initCardTilt() {
     });
   });
 }
-
-
 
 // ============================================================
 // AMBIENT CANVAS — Particules fond spatial permanent
@@ -9042,8 +9005,6 @@ function drawAmbient() {
   }
   requestAnimationFrame(drawAmbient);
 }
-
-
 
 function toggleApiPanel() {
   var bar = document.getElementById("apibar");
@@ -9269,8 +9230,6 @@ function adminResetCode(userName) {
   toastErr("Utilisateur introuvable");
 }
 
-
-
 // ============================================================
 // BOTTOM NAVIGATION MOBILE — Option A
 // ============================================================
@@ -9363,8 +9322,6 @@ buildReport();
 document.getElementById("c-date").value = new Date().toISOString().slice(0,10);
 // Show bottom nav only after login (hideLockScreen calls initBottomNav)
 // Pre-build sheet for when login screen closes
-
-
 
 // ============================================================
 // SERVICE WORKER + PWA
@@ -10020,5 +9977,81 @@ tbody tr:nth-child(even) td {
   <div id="bs-grid" style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px"></div>
 </div>
 
+<style id="polish">
+/* ===== POLISH FINAL ===== */
+
+/* Topbar — badge API compact */
+#api-topbar-badge {
+  transition: all .2s ease !important;
+  cursor: pointer !important;
+  flex-shrink: 0 !important;
+}
+#api-topbar-badge:hover { opacity: .85 !important; }
+
+/* Sidebar toggle btn */
+.sb-toggle-btn {
+  font-size: 18px !important;
+  padding: 5px !important;
+  border-radius: 6px !important;
+  transition: all .15s !important;
+}
+
+/* Smooth panel transitions */
+.panel.on {
+  animation: panelIn .18s ease both !important;
+}
+@keyframes panelIn {
+  from { opacity: 0; transform: translateY(5px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Score stars color */
+.stars { color: var(--orn) !important; }
+
+/* Opportunity banners */
+.al.ag { color: #4ade9e !important; }
+.al.aw { color: #fbbf24 !important; }
+.al.ae { color: #f87272 !important; }
+.al.ab { color: #60a5fa !important; }
+
+/* Stat section */
+.stat-n { color: #4ade9e !important; font-size: 24px !important; font-weight: 600 !important; }
+.stat-l { color: rgba(255,255,255,.45) !important; font-size: 10px !important; }
+
+/* Input group labels */
+.form-group > label:first-child {
+  font-size: 10.5px !important;
+  color: rgba(255,255,255,.5) !important;
+  font-weight: 500 !important;
+  letter-spacing: .3px !important;
+  text-transform: uppercase !important;
+}
+
+/* Sidebar badge item Mon code */
+#sb-change-code { cursor: pointer !important; }
+#sb-change-code:hover { background: rgba(96,165,250,.1) !important; color: #60a5fa !important; }
+
+/* Table zebra light */
+.score-table tbody tr:nth-child(even) td {
+  background: rgba(255,255,255,.018) !important;
+}
+
+/* Focus ring global */
+*:focus-visible {
+  outline: 2px solid rgba(74,222,158,.5) !important;
+  outline-offset: 2px !important;
+}
+
+/* Sélection texte */
+::selection {
+  background: rgba(74,222,158,.25) !important;
+  color: #e2e8f0 !important;
+}
+
+/* Scroll snap sur mobile */
+@media (max-width: 768px) {
+  .panel { scroll-margin-top: 50px; }
+}
+</style>
 </body>
 </html>
