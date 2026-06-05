@@ -3265,6 +3265,8 @@ function showMain(t) {
   if (t === "metaads")       initMetaAdsAgent();
   // Update bottom nav active state
   if (typeof updateBNActiveFromTab === "function") updateBNActiveFromTab();
+  // Sauvegarder l'onglet actif pour restauration après F5
+  try { localStorage.setItem("lastTab", t); } catch(e) {}
 }
 function sendToAds() { showMain("ads"); }
 function toggleNet(btn) {
@@ -6245,10 +6247,15 @@ function hideLockScreen() {
   // Restaurer le dernier onglet visité
   setTimeout(function() {
     var lastTab = localStorage.getItem("lastTab");
+    // Ne pas restaurer l'onglet admin si l'utilisateur n'est pas admin
+    if (lastTab === "admin" && !ACCESS.isAdmin) lastTab = "scoring";
+    if (lastTab === "integrations" && !ACCESS.isAdmin) lastTab = "scoring";
     if (lastTab && document.getElementById("tab-" + lastTab)) {
       showMain(lastTab);
+    } else {
+      showMain("scoring"); // Fallback
     }
-  }, 150);
+  }, 200);
   var overlay = document.getElementById("login-overlay");
   if (overlay) {
     overlay.style.opacity = "0";
