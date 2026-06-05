@@ -1,4 +1,6 @@
 <style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
+
 :root{
   --bg:#0d1117;
   --sur:rgba(255,255,255,.07);
@@ -362,7 +364,6 @@ tr.sel td{background:#f0f8f3}
 
 
 /* ===== INTER FONT ===== */
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
 body{font-family:'Inter',-apple-system,Arial,sans-serif}
 
 /* ===== DESIGN TOKENS PREMIUM ===== */
@@ -955,7 +956,7 @@ input[type="text"] { color: #e2e8f0 !important; }
 
   /* Bottom bar visible */
   .bbar {
-    display: flex !important;
+    display: flex;
     position: fixed !important;
     bottom: 0; left: 0; right: 0;
     z-index: 200;
@@ -1069,7 +1070,7 @@ input[type="text"] { color: #e2e8f0 !important; }
   position: fixed !important;
   inset: 0 !important;
   z-index: 9999 !important;
-  display: flex !important;
+  display: flex;
   align-items: center !important;
   justify-content: center !important;
   min-height: 100vh; min-height: 100vh; height: 100dvh;
@@ -6231,7 +6232,7 @@ function initAccessControl() {
   } catch(e) {}
 
   // No valid session — show login
-  document.getElementById("login-overlay").style.display = "flex";
+  document.getElementById("login-overlay").style.removeProperty("display");
 }
 
 function hideLockScreen() {
@@ -6249,7 +6250,13 @@ function hideLockScreen() {
     }
   }, 150);
   var overlay = document.getElementById("login-overlay");
-  if (overlay) { overlay.style.opacity="0"; setTimeout(function(){ overlay.style.display="none"; overlay.style.opacity=""; },300); }
+  if (overlay) {
+    overlay.style.opacity = "0";
+    setTimeout(function() {
+      overlay.style.setProperty("display", "none", "important");
+      overlay.style.opacity = "";
+    }, 300);
+  }
   // Show user badge first (fast, no data needed)
   showUserBadge();
   // Show admin tab
@@ -6358,9 +6365,11 @@ async function doLogin() {
   localStorage.setItem("ac_session", JSON.stringify(session));
   ACCESS.currentUser = session;
 
-  // Log access
-  logAccess(user.name, "connexion");
-  if (liveUsers) pushLogToJB();
+  // Log access (différé pour ne pas bloquer)
+  setTimeout(function() {
+    try { logAccess && logAccess(user.name, "connexion"); } catch(e2) {}
+    try { if (typeof liveUsers !== "undefined" && liveUsers) pushLogToJB(); } catch(e2) {}
+  }, 1500);
 
   err.style.color = "#085041";
   err.textContent = "Acces accorde! Chargement...";
@@ -6417,9 +6426,12 @@ function loginAdmin() {
     sess = session;
     ACCESS.currentUser = session;
     ACCESS.isAdmin = true;
-    try { scheduleSync && scheduleSync(); } catch(e2) {}
-    try { logAccess && logAccess("Admin", "connexion admin"); } catch(e2) {}
     hideLockScreen();
+    // Sync en différé — après que le dashboard soit affiché
+    setTimeout(function() {
+      try { logAccess && logAccess("Admin", "connexion admin"); } catch(e2) {}
+      try { scheduleSync && scheduleSync(); } catch(e2) {}
+    }, 2000);
   } catch(e) {
     console.error("loginAdmin error:", e);
     alert("Erreur loginAdmin: " + e.message);
@@ -6458,7 +6470,7 @@ function doLogout() {
   document.getElementById("login-username").value = "";
   document.getElementById("login-code").value = "";
   document.getElementById("login-err").textContent = "";
-  document.getElementById("login-overlay").style.display = "flex";
+  document.getElementById("login-overlay").style.removeProperty("display");
   // Reset renders
   render();
   // Show confirmation message on login screen
@@ -9102,7 +9114,7 @@ function toggleApiPanel() {
   if (!bar) return;
   var isHidden = bar.style.display === "none" || getComputedStyle(bar).display === "none";
   bar.style.cssText = isHidden
-    ? "display:flex !important;align-items:center;gap:8px;padding:.5rem 1rem;background:rgba(13,17,23,.85);border-bottom:0.5px solid rgba(255,255,255,.1);flex-wrap:wrap;backdrop-filter:blur(20px)"
+    ? "display:flex;align-items:center;gap:8px;padding:.5rem 1rem;background:rgba(13,17,23,.85);border-bottom:0.5px solid rgba(255,255,255,.1);flex-wrap:wrap;backdrop-filter:blur(20px)"
     : "display:none !important";
 }
 
