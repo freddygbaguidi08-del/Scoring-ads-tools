@@ -6332,46 +6332,47 @@ async function doLogin() {
 }
 
 function doAdminLogin() {
-  var pwd = (document.getElementById("admin-password").value || "").trim();
-  var err = document.getElementById("admin-err");
-  if (!err) err = { textContent: "" };
-  err.textContent = "";
-  if (!pwd) { err.textContent = "Entre le mot de passe admin."; return; }
+  try {
+    var pwd = (document.getElementById("admin-password").value || "").trim();
+    var err = document.getElementById("admin-err");
+    if (!pwd) { if(err) err.textContent = "Entre le mot de passe admin."; return; }
+    if (err) err.textContent = "";
 
-  var storedPwd = ACCESS.adminPwd;
+    var storedPwd = ACCESS.adminPwd || "";
 
-  // Si aucun mot de passe enregistré → première installation / reset
-  if (!storedPwd) {
-    ACCESS.adminPwd = pwd;
-    var cfg2 = JSON.parse(localStorage.getItem("ac_config") || "{}");
-    cfg2.adminPwd = pwd;
-    localStorage.setItem("ac_config", JSON.stringify(cfg2));
-    toastOK && toastOK({title:"Mot de passe admin défini", msg:"Conserve-le précieusement."});
-    loginAdmin();
-    return;
+    if (!storedPwd || pwd === storedPwd) {
+      // Nouveau mdp OU mdp correct
+      ACCESS.adminPwd = pwd;
+      try {
+        var cfg2 = JSON.parse(localStorage.getItem("ac_config") || "{}");
+        cfg2.adminPwd = pwd;
+        localStorage.setItem("ac_config", JSON.stringify(cfg2));
+      } catch(e2) {}
+      loginAdmin();
+    } else {
+      if (err) err.textContent = "Mot de passe incorrect.";
+    }
+  } catch(e) {
+    console.error("doAdminLogin error:", e);
+    alert("Erreur login: " + e.message);
   }
-
-  // Vérification normale
-  if (pwd !== storedPwd) {
-    err.textContent = "Mot de passe incorrect.";
-    var inp = document.getElementById("admin-password");
-    if (inp) { inp.style.borderColor = "rgba(248,114,114,.5)"; setTimeout(function(){ inp.style.borderColor = ""; }, 2000); }
-    return;
-  }
-  loginAdmin();
 }
 
 function loginAdmin() {
-  var expiry = new Date(); expiry.setDate(expiry.getDate() + 365);
-  var session = {name:"Admin", code:"ADMIN", role:"full", expires:expiry.toISOString(), isAdmin:true};
-  localStorage.setItem("ac_session", JSON.stringify(session));
-  sess = session;
-  ACCESS.currentUser = session;
-  ACCESS.isAdmin = true;
-  // Sync adminPwd vers JSONBin
-  scheduleSync && scheduleSync();
-  logAccess && logAccess("Admin", "connexion admin");
-  hideLockScreen();
+  try {
+    var expiry = new Date(); expiry.setDate(expiry.getDate() + 365);
+    var session = {name:"Admin", code:"ADMIN", role:"full", expires:expiry.toISOString(), isAdmin:true};
+    localStorage.setItem("ac_session", JSON.stringify(session));
+    sess = session;
+    ACCESS.currentUser = session;
+    ACCESS.isAdmin = true;
+    try { scheduleSync && scheduleSync(); } catch(e2) {}
+    try { logAccess && logAccess("Admin", "connexion admin"); } catch(e2) {}
+    hideLockScreen();
+  } catch(e) {
+    console.error("loginAdmin error:", e);
+    alert("Erreur loginAdmin: " + e.message);
+  }
 }
 
 function doLogout() {
@@ -9334,6 +9335,47 @@ function updateBNActive(tabId) {
     if (sheet && sheet.style.display !== "none" && dy > 60) closeBottomSheet();
   }, { passive: true });
 })();
+
+
+
+// ============================================================
+// RÉCUPÉRATION CLOUD — Sans être connecté
+// ============================================================
+async function recoverFromCloud() {
+  var binId  = (document.getElementById("recovery-binid").value || "").trim();
+  var key    = (document.getElementById("recovery-key").value   || "").trim();
+  var result = document.getElementById("recovery-result");
+  if (!binId || !key) { result.textContent = "Entre le Bin ID et la Master Key."; result.style.color = "#fbbf24"; return; }
+  result.textContent = "Connexion..."; result.style.color = "rgba(255,255,255,.5)";
+  try {
+    var resp = await fetch("https://api.jsonbin.io/v3/b/" + binId + "/latest", {
+      headers: {"X-Master-Key": key, "X-Bin-Meta": "false"}
+    });
+    if (!resp.ok) throw new Error("Erreur " + resp.status);
+    var data = await resp.json();
+    // Sauvegarder les credentials
+    var cfg = JSON.parse(localStorage.getItem("ac_config") || "{}");
+    cfg.jbBinId = binId; cfg.jbKey = key;
+    if (data.adminPwd) cfg.adminPwd = data.adminPwd;
+    localStorage.setItem("ac_config", JSON.stringify(cfg));
+    ACCESS.jbBinId  = binId;
+    ACCESS.jbKey    = key;
+    if (data.adminPwd) ACCESS.adminPwd = data.adminPwd;
+    // Charger les utilisateurs
+    if (data.users && data.users.length) {
+      ACCESS.users = data.users;
+      localStorage.setItem("ac_users", JSON.stringify(data.users));
+      result.textContent = "✅ " + data.users.length + " utilisateur(s) chargé(s). Tu peux maintenant te connecter.";
+      result.style.color = "#4ade9e";
+    } else {
+      result.textContent = "✅ Cloud connecté. Aucun utilisateur trouvé.";
+      result.style.color = "#fbbf24";
+    }
+  } catch(e) {
+    result.textContent = "❌ Erreur: " + e.message;
+    result.style.color = "#f87272";
+  }
+}
 
 
 // INIT -- EN DERNIER
