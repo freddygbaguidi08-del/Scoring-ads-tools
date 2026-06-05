@@ -1282,6 +1282,9 @@ input[type="text"] { color: #e2e8f0 !important; }
 }
 
 </style>
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
 </head>
 <body>
 <div id="bg-orb-1" style="position:fixed;width:500px;height:500px;border-radius:50%;filter:blur(90px);background:rgba(8,80,65,.28);top:-150px;left:-150px;pointer-events:none;z-index:0;animation:orbFloat 12s ease-in-out infinite"></div>
@@ -3009,7 +3012,7 @@ function loadUserData() {
   // 2. Then try to load fresher data from cloud (async, in background)
   if (ACCESS.jbBinId && ACCESS.jbKey) {
     showSyncStatus("syncing");
-    loadAllDataFromJB().then(function(ok) {
+    loadAllDataFromCloud().then(function(ok) {
       if (ok) {
         showSyncStatus("ok");
         if (typeof renderCatTabs === "function")      renderCatTabs();
@@ -6181,8 +6184,56 @@ var ACCESS = {
   jbKey:     "",
   adminPwd:  "",
   currentUser: null,
-  isAdmin:   false
+  isAdmin:   false,
+  // Firebase config
+  fbApiKey:     "",
+  fbProjectId:  "",
+  fbAppId:      ""
 };
+
+// Firebase instance
+var db = null;
+
+// ============================================================
+// FIREBASE — Initialisation
+// ============================================================
+function initFirebase(cfg) {
+  if (!cfg || !cfg.fbProjectId) return false;
+  try {
+    if (!firebase.apps.length) {
+      firebase.initializeApp({
+        apiKey:     cfg.fbApiKey     || "AIza-placeholder",
+        authDomain: cfg.fbProjectId  + ".firebaseapp.com",
+        projectId:  cfg.fbProjectId,
+        appId:      cfg.fbAppId      || "1:placeholder"
+      });
+    }
+    db = firebase.firestore();
+    console.log("[Firebase] Connecté au projet:", cfg.fbProjectId);
+    return true;
+  } catch(e) {
+    console.warn("[Firebase] Init failed:", e.message);
+    return false;
+  }
+}
+
+// Firebase : lire les données
+async function fbGet(collection, docId) {
+  if (!db) return null;
+  try {
+    var snap = await db.collection(collection).doc(docId).get();
+    return snap.exists ? snap.data() : null;
+  } catch(e) { console.warn("[Firebase] Get error:", e.message); return null; }
+}
+
+// Firebase : écrire les données
+async function fbSet(collection, docId, data) {
+  if (!db) return false;
+  try {
+    await db.collection(collection).doc(docId).set(data, {merge: true});
+    return true;
+  } catch(e) { console.warn("[Firebase] Set error:", e.message); return false; }
+}
 
 // ---- INIT ----
 var SESSION_VERSION = "v2"; // increment to force re-login
@@ -6190,9 +6241,13 @@ var SESSION_VERSION = "v2"; // increment to force re-login
 function initAccessControl() {
   try {
     var cfg = JSON.parse(localStorage.getItem("ac_config") || "{}");
-    ACCESS.jbBinId  = cfg.jbBinId  || "";
-    ACCESS.jbKey    = cfg.jbKey    || "";
-    ACCESS.adminPwd = cfg.adminPwd || "";
+    ACCESS.jbBinId    = cfg.jbBinId    || "";
+    ACCESS.jbKey      = cfg.jbKey      || "";
+    ACCESS.adminPwd   = cfg.adminPwd   || "";
+    ACCESS.fbProjectId = cfg.fbProjectId || "";
+    ACCESS.fbApiKey    = cfg.fbApiKey    || "";
+    // Initialiser Firebase si configuré
+    if (cfg.fbProjectId) { try { initFirebase(cfg); } catch(e) {} }
     ACCESS.users    = JSON.parse(localStorage.getItem("ac_users") || "[]");
     ACCESS.logs     = JSON.parse(localStorage.getItem("ac_logs")  || "[]");
   } catch(e) {}
@@ -6334,7 +6389,7 @@ async function doLogin() {
   // Puis vérifier JSONBin en arrière-plan (ne bloque pas la connexion)
   var usersToCheck = ACCESS.users;
   try {
-    var liveUsers = await fetchUsersFromJB();
+    var liveUsers = await fetchUsersFromCloud();
     if (liveUsers && liveUsers.length) {
       usersToCheck = liveUsers;
       ACCESS.users = liveUsers;
@@ -6449,7 +6504,7 @@ function doLogout() {
   if (!confirm("Te deconnecter ? Tes donnees seront sauvegardees.")) return;
   // Final sync before logout
   if (ACCESS.jbBinId && ACCESS.jbKey) {
-    pushAllDataToJB().catch(function(){});
+    pushAllDataToCloud().catch(function(){});
   }
   localStorage.removeItem("ac_session");
   // Ne pas effacer les donnees localStorage — elles sont sauvegardees par utilisateur
@@ -6494,6 +6549,7 @@ function loadJBConfig() {
   el = document.getElementById("jb-bin-id");    if(el) el.value = ACCESS.jbBinId;
   el = document.getElementById("jb-master-key"); if(el) el.value = ACCESS.jbKey;
   el = document.getElementById("jb-admin-pwd");  if(el) el.value = ACCESS.adminPwd;
+  loadFBConfig && loadFBConfig();
 }
 
 function saveJBConfig() {
@@ -6784,7 +6840,7 @@ function scheduleSync() {
   clearTimeout(syncTimer);
   showSyncStatus("syncing");
   syncTimer = setTimeout(function(){
-    pushAllDataToJB().then(function(){
+    pushAllDataToCloud().then(function(){
       showSyncStatus("ok", new Date().toLocaleTimeString("fr-FR", {hour:"2-digit",minute:"2-digit"}));
     }).catch(function(e){
       showSyncStatus("error");
@@ -9444,6 +9500,214 @@ async function recoverFromCloud() {
   } catch(e) {
     result.textContent = "❌ Erreur: " + e.message;
     result.style.color = "#f87272";
+  }
+}
+
+
+
+// ============================================================
+// CLOUD HYBRIDE — Firebase (principal) + JSONBin (fallback)
+// ============================================================
+
+function useFirebase() {
+  return db !== null && ACCESS.fbProjectId;
+}
+
+// Charger les users depuis Firebase ou JSONBin
+async function fetchUsersFromCloud() {
+  // Essayer Firebase d'abord
+  if (useFirebase()) {
+    try {
+      var data = await fbGet("config", "main");
+      if (data && data.users && data.users.length) {
+        if (data.adminPwd && !ACCESS.adminPwd) {
+          ACCESS.adminPwd = data.adminPwd;
+          var cfg = JSON.parse(localStorage.getItem("ac_config") || "{}");
+          cfg.adminPwd = data.adminPwd;
+          localStorage.setItem("ac_config", JSON.stringify(cfg));
+        }
+        return data.users;
+      }
+    } catch(e) { console.warn("[Firebase] fetchUsers:", e.message); }
+  }
+  // Fallback JSONBin
+  return await fetchUsersFromJB();
+}
+
+// Pousser toutes les données vers Firebase ou JSONBin
+async function pushAllDataToCloud() {
+  if (useFirebase()) {
+    try {
+      var userKey = ACCESS.currentUser
+        ? ACCESS.currentUser.name.toLowerCase().replace(/[^a-z0-9]/g,"_")
+        : "guest";
+      // 1. Sauvegarder config/users
+      await fbSet("config", "main", {
+        users:    ACCESS.users,
+        logs:     ACCESS.logs.slice(-100),
+        adminPwd: ACCESS.adminPwd || "",
+        updated:  new Date().toISOString()
+      });
+      // 2. Sauvegarder données utilisateur
+      loadIntegrations();
+      await fbSet("userdata", userKey, {
+        products:     PRODUCTS,
+        scores:       userScores,
+        margins:      margins,
+        campaigns:    campaigns,
+        integrations: integrations,
+        meta_config:  {adAccount: metaConfig.adAccount, pageId: metaConfig.pageId, pixelId: metaConfig.pixelId},
+        updated:      new Date().toISOString()
+      });
+      lastSyncTime = new Date();
+      return true;
+    } catch(e) {
+      console.warn("[Firebase] pushAll:", e.message);
+    }
+  }
+  // Fallback JSONBin
+  return await pushAllDataToJB();
+}
+
+// Charger les données utilisateur depuis Firebase ou JSONBin
+async function loadAllDataFromCloud() {
+  if (useFirebase()) {
+    try {
+      var userKey = ACCESS.currentUser
+        ? ACCESS.currentUser.name.toLowerCase().replace(/[^a-z0-9]/g,"_")
+        : "guest";
+      var isAdmin = ACCESS.isAdmin;
+
+      // 1. Config / users
+      var cfg = await fbGet("config", "main");
+      if (cfg) {
+        if (cfg.adminPwd && !ACCESS.adminPwd) {
+          ACCESS.adminPwd = cfg.adminPwd;
+          var lsCfg = JSON.parse(localStorage.getItem("ac_config") || "{}");
+          lsCfg.adminPwd = cfg.adminPwd;
+          localStorage.setItem("ac_config", JSON.stringify(lsCfg));
+        }
+        if (cfg.users && cfg.users.length) {
+          ACCESS.users = cfg.users;
+          localStorage.setItem("ac_users", JSON.stringify(cfg.users));
+        }
+      }
+
+      // 2. Données utilisateur
+      var udata = await fbGet("userdata", userKey);
+      if (!udata && isAdmin) udata = await fbGet("userdata", "admin");
+      if (udata) {
+        if (Array.isArray(udata.products) && udata.products.length) {
+          PRODUCTS = udata.products;
+          localStorage.setItem("products_catalogue__" + userKey, JSON.stringify(PRODUCTS));
+        }
+        if (udata.scores)       { userScores = udata.scores; localStorage.setItem("userScores__" + userKey, JSON.stringify(userScores)); }
+        if (udata.margins)      { margins    = udata.margins; localStorage.setItem("margins__" + userKey, JSON.stringify(margins)); }
+        if (udata.campaigns)    { campaigns  = udata.campaigns; localStorage.setItem("campaigns__" + userKey, JSON.stringify(campaigns)); }
+        if (udata.integrations) { integrations = udata.integrations; }
+      }
+      return true;
+    } catch(e) {
+      console.warn("[Firebase] loadAll:", e.message);
+    }
+  }
+  // Fallback JSONBin
+  return await loadAllDataFromJB();
+}
+
+// Test connexion Firebase
+async function testFirebaseConnection() {
+  var el = document.getElementById("fb-test-result");
+  if (!db) {
+    if (el) { el.textContent = "Firebase non configuré."; el.style.color = "var(--red)"; }
+    return;
+  }
+  if (el) { el.textContent = "Test en cours..."; el.style.color = "var(--mut)"; }
+  try {
+    var data = await fbGet("config", "main");
+    var users = (data && data.users) ? data.users : [];
+    if (el) {
+      el.textContent = "✅ Firebase connecté ! " + users.length + " utilisateur(s) trouvé(s).";
+      el.style.color = "var(--grn)";
+    }
+    if (users.length) {
+      ACCESS.users = users;
+      localStorage.setItem("ac_users", JSON.stringify(users));
+      renderAdminPanel && renderAdminPanel();
+    }
+  } catch(e) {
+    if (el) { el.textContent = "❌ Erreur: " + e.message; el.style.color = "var(--red)"; }
+  }
+}
+
+
+
+function saveFBConfig() {
+  var projectId = (document.getElementById("fb-project-id")||{}).value || "";
+  var apiKey    = (document.getElementById("fb-api-key")||{}).value || "";
+  ACCESS.fbProjectId = projectId;
+  ACCESS.fbApiKey    = apiKey;
+  var cfg = JSON.parse(localStorage.getItem("ac_config") || "{}");
+  cfg.fbProjectId = projectId;
+  cfg.fbApiKey    = apiKey;
+  localStorage.setItem("ac_config", JSON.stringify(cfg));
+}
+
+function loadFBConfig() {
+  var cfg = JSON.parse(localStorage.getItem("ac_config") || "{}");
+  var el;
+  el = document.getElementById("fb-project-id"); if(el) el.value = cfg.fbProjectId || "";
+  el = document.getElementById("fb-api-key");    if(el) el.value = cfg.fbApiKey    || "";
+}
+
+async function initAndTestFirebase() {
+  saveFBConfig();
+  var cfg = JSON.parse(localStorage.getItem("ac_config") || "{}");
+  if (!cfg.fbProjectId) {
+    var el = document.getElementById("fb-test-result");
+    if (el) { el.textContent = "Entre d'abord le Project ID."; el.style.color = "var(--red)"; }
+    return;
+  }
+  var ok = initFirebase(cfg);
+  if (ok) {
+    // Migrer les données de JSONBin vers Firebase si nécessaire
+    var el = document.getElementById("fb-test-result");
+    if (el) { el.textContent = "Connexion..."; el.style.color = "var(--mut)"; }
+    await migrateToFirebase();
+    await testFirebaseConnection();
+    scheduleSync && scheduleSync();
+  } else {
+    var el = document.getElementById("fb-test-result");
+    if (el) { el.textContent = "Erreur d'initialisation. Vérifie le Project ID et l'API Key."; el.style.color = "var(--red)"; }
+  }
+}
+
+// Migration JSONBin → Firebase (une seule fois)
+async function migrateToFirebase() {
+  if (!db || !ACCESS.jbBinId || !ACCESS.jbKey) return;
+  var el = document.getElementById("fb-test-result");
+  if (el) { el.textContent = "Migration depuis JSONBin..."; el.style.color = "var(--orn)"; }
+  try {
+    var resp = await fetch("https://api.jsonbin.io/v3/b/" + ACCESS.jbBinId + "/latest", {
+      headers: {"X-Master-Key": ACCESS.jbKey, "X-Bin-Meta": "false"}
+    });
+    if (!resp.ok) return;
+    var data = await resp.json();
+    // Pousser vers Firebase
+    await fbSet("config", "main", {
+      users:    data.users    || ACCESS.users,
+      logs:     data.logs     || [],
+      adminPwd: data.adminPwd || ACCESS.adminPwd || "",
+      updated:  new Date().toISOString()
+    });
+    if (data.data) {
+      for (var key in data.data) {
+        await fbSet("userdata", key, data.data[key]);
+      }
+    }
+    console.log("[Firebase] Migration depuis JSONBin terminée");
+  } catch(e) {
+    console.warn("[Firebase] Migration error:", e.message);
   }
 }
 
