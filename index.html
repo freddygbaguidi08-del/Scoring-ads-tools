@@ -1320,8 +1320,8 @@ input[type="text"] { color: #e2e8f0 !important; }
         <input type="password" id="admin-password" placeholder="Ton mot de passe" autocomplete="current-password" onkeydown="if(event.key==='Enter')doAdminLogin()">
       </div>
       <button class="login-btn" onclick="doAdminLogin()">Entrer en mode Admin &rarr;</button>
+      <div id="admin-err" style="font-size:12px;color:#f87272;min-height:18px;margin:.3rem 0;text-align:center"></div>
       <button class="login-btn secondary" onclick="showUserLogin()">&larr; Retour</button>
-      <div class="login-err" id="admin-err"></div>
     </div>
   </div>
 </div>
@@ -6168,8 +6168,7 @@ function initAccessControl() {
       ACCESS.currentUser = sess;
       // isAdmin detection — multiple fallbacks for backward compatibility
       ACCESS.isAdmin = sess.isAdmin === true
-        || sess.name === "Admin"
-        || !ACCESS.adminPwd;
+        || sess.name === "Admin";
       // Force save updated session with isAdmin flag
       if (ACCESS.isAdmin && !sess.isAdmin) {
         sess.isAdmin = true;
@@ -6335,40 +6334,43 @@ async function doLogin() {
 function doAdminLogin() {
   var pwd = (document.getElementById("admin-password").value || "").trim();
   var err = document.getElementById("admin-err");
+  if (!err) err = { textContent: "" };
+  err.textContent = "";
   if (!pwd) { err.textContent = "Entre le mot de passe admin."; return; }
-  if (!ACCESS.adminPwd) {
-    // Pas de mot de passe défini → première installation ou reset
+
+  var storedPwd = ACCESS.adminPwd;
+
+  // Si aucun mot de passe enregistré → première installation / reset
+  if (!storedPwd) {
     ACCESS.adminPwd = pwd;
-    // Sauvegarder localement
     var cfg2 = JSON.parse(localStorage.getItem("ac_config") || "{}");
     cfg2.adminPwd = pwd;
     localStorage.setItem("ac_config", JSON.stringify(cfg2));
-    ACCESS.jbBinId = cfg2.jbBinId || ACCESS.jbBinId;
-    ACCESS.jbKey   = cfg2.jbKey   || ACCESS.jbKey;
-    // Sauvegarder dans JSONBin si configuré
-    if (ACCESS.jbBinId && ACCESS.jbKey) {
-      scheduleSync && scheduleSync();
-    }
-    var expiry = new Date(); expiry.setDate(expiry.getDate() + 365);
-    var session = {name: "Admin", code: "ADMIN", role: "full", expires: expiry.toISOString(), isAdmin: true};
-    localStorage.setItem("ac_session", JSON.stringify(session));
-    ACCESS.currentUser = session; ACCESS.isAdmin = true;
-    hideLockScreen();
+    toastOK && toastOK({title:"Mot de passe admin défini", msg:"Conserve-le précieusement."});
+    loginAdmin();
     return;
   }
-  if (pwd !== ACCESS.adminPwd) {
+
+  // Vérification normale
+  if (pwd !== storedPwd) {
     err.textContent = "Mot de passe incorrect.";
-    setTimeout(function(){ err.textContent = ""; }, 2000);
+    var inp = document.getElementById("admin-password");
+    if (inp) { inp.style.borderColor = "rgba(248,114,114,.5)"; setTimeout(function(){ inp.style.borderColor = ""; }, 2000); }
     return;
   }
+  loginAdmin();
+}
+
+function loginAdmin() {
   var expiry = new Date(); expiry.setDate(expiry.getDate() + 365);
-  var session = {name: "Admin", code: "ADMIN", role: "full", expires: expiry.toISOString(), isAdmin: true};
+  var session = {name:"Admin", code:"ADMIN", role:"full", expires:expiry.toISOString(), isAdmin:true};
   localStorage.setItem("ac_session", JSON.stringify(session));
-  ACCESS.currentUser = session; ACCESS.isAdmin = true;
-  // Ensure admin tab visible
-  var admTab = document.getElementById("mtab-admin");
-  if (admTab) admTab.style.display = "";
-  logAccess("Admin", "connexion admin");
+  sess = session;
+  ACCESS.currentUser = session;
+  ACCESS.isAdmin = true;
+  // Sync adminPwd vers JSONBin
+  scheduleSync && scheduleSync();
+  logAccess && logAccess("Admin", "connexion admin");
   hideLockScreen();
 }
 
